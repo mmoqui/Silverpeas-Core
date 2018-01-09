@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 Created-By: Silverpeas
+Logging-Profile: Silverpeas
 Dependencies: org.jboss.as.naming,
   org.apache.xerces,
   org.bouncycastle,
