@@ -35,7 +35,7 @@
 
   <groupId>org.silverpeas</groupId>
   <artifactId>core</artifactId>
-  <version>6.0</version>
+  <version>6.0.1</version>
   <packaging>pom</packaging>
   <name>Silverpeas Core</name>
   <url>http://www.silverpeas.org/docs/core</url>
@@ -48,7 +48,7 @@
   <properties>
     <!-- pre release information for auto deployment. Prefix for build version numbers that will
     replace the SNAPSHOT value of the project version -->
-    <pre.release>6.0</pre.release>
+    <pre.release>6.0.1</pre.release>
   </properties>
 
   <scm>
