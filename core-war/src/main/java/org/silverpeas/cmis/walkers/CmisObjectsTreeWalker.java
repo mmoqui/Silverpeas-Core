@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.silverpeas.cmis.Filtering;
 import org.silverpeas.cmis.Paging;
 import org.silverpeas.core.cmis.model.CmisFile;
@@ -39,14 +40,16 @@ import org.silverpeas.core.util.ServiceProvider;
 import java.util.List;
 
 /**
- * A walker of a CMIS objects tree whose each node is mapped to a given Silverpeas organizational
- * resource or to a given user contribution. The root of the tree is a virtual container of all of
- * the Silverpeas root spaces. The walker provides a functional view to access the CMIS objects but
- * behind de scene it walks across the organizational schema of Silverpeas by using its different
- * services. Because the way to access an object in Silverpeas (and hence to browse the CMIS objects
- * tree) depends on the types of the Silverpeas objects implied in a walk of the CMIS tree, the
- * implementation of the walker is left to more concrete walkers specifically designed to handle a
- * peculiar type of a Silverpeas object.
+ * A walker of a CMIS objects tree whose each node and leaf are mapped to a given Silverpeas
+ * organizational resource or to a given user contribution. The root of the tree is a virtual
+ * container of all of the Silverpeas root spaces. The walker provides a functional view to access
+ * the CMIS objects but behind de scene it walks across the organizational schema of Silverpeas by
+ * using its different services. Because the way to access an object in Silverpeas (and hence to
+ * browse the CMIS objects tree) depends on the types of the Silverpeas objects implied in a walk of
+ * the CMIS tree, the implementation of the walker is left to more concrete walkers specifically
+ * designed to handle a peculiar type of Silverpeas objects. And consequently as each type of
+ * Silverpeas objects is mapped to a peculiar type of a CMIS object, those concrete walkers are also
+ * dedicated to handle, in their functional view, a peculiar type of CMIS objects.
  * @author mmoquillon
  */
 public interface CmisObjectsTreeWalker {
@@ -60,11 +63,22 @@ public interface CmisObjectsTreeWalker {
   }
 
   /**
+   * Creates into the specified CMIS folder a new {@link CmisObject} object from its specified CMIS
+   * data properties and in the given language.
+   * @param folderId the unique identifier of a folder in the CMIS objects tree.
+   * @param properties the CMIS properties of the object to create.
+   * @param language the ISO 639-1 code of the language in which the textual folder properties are
+   * expressed.
+   * @return the created {@link CmisObject} object corresponding to the given CMIS properties.
+   */
+  CmisObject createObjectData(String folderId, Properties properties, String language);
+
+  /**
    * Gets the CMIS data of the Silverpeas object uniquely identified by the specified identifier.
    * Only the data satisfying the given filtering rules are returned.
    * @param objectId the unique identifier of a Silverpeas object.
    * @param filtering the filtering rules to apply on the data.
-   * @return an {@link ObjectData} instance that provides the CMIS data of the specified Silverpeas
+   * @return a {@link CmisObject} instance that provides the CMIS data of the specified Silverpeas
    * object.
    */
   CmisObject getObjectData(String objectId, Filtering filtering);
@@ -142,7 +156,7 @@ public interface CmisObjectsTreeWalker {
    * Gets a stream on the content of the specified object, starting at the given offset position and
    * upto the given length.
    * @param objectId the unique identifier of the object in the CMIS objects tree.
-   * @param language the ISO 631-1 code of the language of the content to fetch. If no content
+   * @param language the ISO 639-1 code of the language of the content to fetch. If no content
    * exists in the specified language, then it is the content for the first language found that will
    * be returned (see {@link org.silverpeas.core.i18n.I18NHelper#allContentLanguageCodes}).
    * @param offset the position in bytes in the content to start the stream.
@@ -151,4 +165,5 @@ public interface CmisObjectsTreeWalker {
    * @return a {@link ContentStream} instance.
    */
   ContentStream getContentStream(String objectId, String language, long offset, long length);
+
 }

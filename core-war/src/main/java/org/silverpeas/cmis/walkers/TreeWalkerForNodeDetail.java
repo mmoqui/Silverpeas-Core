@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.silverpeas.cmis.Filtering;
 import org.silverpeas.cmis.Paging;
@@ -36,7 +37,9 @@ import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.cmis.CmisContributionsProvider;
 import org.silverpeas.core.cmis.model.CmisFolder;
+import org.silverpeas.core.cmis.model.CmisObject;
 import org.silverpeas.core.cmis.model.ContributionFolder;
+import org.silverpeas.core.cmis.model.TypeId;
 import org.silverpeas.core.contribution.model.ContributionIdentifier;
 import org.silverpeas.core.i18n.LocalizedResource;
 import org.silverpeas.core.node.model.NodeDetail;
@@ -74,6 +77,12 @@ public class TreeWalkerForNodeDetail extends AbstractCmisObjectsTreeWalker {
   }
 
   @Override
+  public CmisObject createObjectData(final String folderId, final Properties properties,
+      final String language) {
+    throw new CmisNotSupportedException("Creation of folders aren't supported");
+  }
+
+  @Override
   @SuppressWarnings("unchecked")
   protected NodeDetail getSilverpeasObjectById(final String objectId) {
     return nodeService.getDetail(asNodePk(objectId));
@@ -94,12 +103,17 @@ public class TreeWalkerForNodeDetail extends AbstractCmisObjectsTreeWalker {
   }
 
   @Override
-  protected boolean isSupported(final String objectId) {
+  protected boolean isObjectSupported(final String objectId) {
     try {
       return ContributionIdentifier.decode(objectId).getType().equals(NodeDetail.TYPE);
     } catch (IllegalArgumentException e) {
       return false;
     }
+  }
+
+  @Override
+  protected boolean isTypeSupported(final TypeId typeId) {
+    return typeId == TypeId.SILVERPEAS_FOLDER;
   }
 
   @Override

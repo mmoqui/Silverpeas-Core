@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.silverpeas.cmis.walkers.AbstractCmisObjectsTreeWalker;
 import org.silverpeas.cmis.walkers.CmisObjectsTreeWalker;
@@ -63,6 +64,25 @@ import java.util.List;
  */
 @Service
 public class SilverpeasCmisObjectManager {
+
+  /**
+   * Creates into the specified parent folder a {@link org.silverpeas.core.cmis.model.CmisObject}
+   * object from its specified CMIS properties expressed in the given language. The concrete type of
+   * the CMIS object to create is given by the
+   * {@link org.apache.chemistry.opencmis.commons.PropertyIds#OBJECT_TYPE_ID}
+   * property. If the creation of instances of such concrete type isn't supported, then a {@link
+   * org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException} exception is
+   * thrown.
+   * @param properties the CMIS properties of the object to create.
+   * @param language the ISO 639-1 code of the language in which the textual properties are
+   * expressed.
+   * @param folderId the unique identifier of the parent folder.
+   * @return the unique identifier of the newly created CMIS object.
+   */
+  public CmisObject createObject(final String folderId, final Properties properties,
+      final String language) {
+    return CmisObjectsTreeWalker.getInstance().createObjectData(folderId, properties, language);
+  }
 
   /**
    * Gets the specified object in Silverpeas.
@@ -148,6 +168,7 @@ public class SilverpeasCmisObjectManager {
    * Gets the content of the specified object starting at the given position and at the specified
    * size.
    * @param objectId the unique identifier of an object in Silverpeas.
+   * @param language the ISO 639-1 code of the language of the object's content to get.
    * @param start the starting position in bytes of the content to get.
    * @param size the size of the content, from the starting position, to get.
    * @return a stream on the object's content.

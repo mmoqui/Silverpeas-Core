@@ -28,6 +28,8 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderListImpl;
@@ -40,6 +42,7 @@ import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.cmis.model.CmisFolder;
 import org.silverpeas.core.cmis.model.CmisObject;
 import org.silverpeas.core.cmis.model.DocumentFile;
+import org.silverpeas.core.cmis.model.TypeId;
 import org.silverpeas.core.contribution.attachment.AttachmentService;
 import org.silverpeas.core.contribution.attachment.model.SimpleDocument;
 import org.silverpeas.core.contribution.model.ContributionIdentifier;
@@ -77,6 +80,12 @@ public class TreeWalkerForSimpleDocument extends AbstractCmisObjectsTreeWalker {
   private PublicationService publicationService;
   @Inject
   private NodeService nodeService;
+
+  @Override
+  public CmisObject createObjectData(final String folderId, final Properties properties,
+      final String language) {
+    throw new CmisNotSupportedException("Creation of document files aren't supported");
+  }
 
   @Override
   public ContentStream getContentStream(final String objectId, final String language,
@@ -131,12 +140,17 @@ public class TreeWalkerForSimpleDocument extends AbstractCmisObjectsTreeWalker {
   }
 
   @Override
-  protected boolean isSupported(final String objectId) {
+  protected boolean isObjectSupported(final String objectId) {
     try {
       return SimpleDocument.isASimpleDocument(ContributionIdentifier.decode(objectId));
     } catch (IllegalArgumentException e) {
       return false;
     }
+  }
+
+  @Override
+  protected boolean isTypeSupported(final TypeId typeId) {
+    return typeId == TypeId.SILVERPEAS_DOCUMENT;
   }
 
   @Override

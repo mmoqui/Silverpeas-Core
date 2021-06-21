@@ -90,4 +90,18 @@ public interface CmisContributionsProvider {
    */
   List<I18nContribution> getAllowedContributionsInFolder(final ContributionIdentifier folder,
       final User user);
+
+  /**
+   * Creates the specified contribution into the specified folder.
+   * If the application doesn't yet support the creation by CMIS of the specified contribution, then
+   * a {@link org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException} exception
+   * has to be thrown.
+   * @param contribution the localized contribution to create.
+   * @param folder the unique identifier of the folder in which the contribution has to be added
+   * once created.
+   * @return the instance of the created contribution. It can be different of the one passed as
+   * argument.
+   */
+  I18nContribution createContributionsInFolder(final I18nContribution contribution,
+      final ContributionIdentifier folder);
 }

@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -401,6 +402,24 @@ public class SilverpeasCmisRepository {
     return objectManager.getContentStream(objectId, language, start, size);
   }
 
+  /**
+   * Creates a folder object of the specified type (given by the cmis:objectTypeId property) in
+   * the specified location.
+   *
+   * @param properties
+   *            the property values that must be applied to the newly created
+   *            folder object
+   * @param folderId
+   *            the identifier for the parent folder
+   * @return the ID of the newly created folder
+   */
+  public String createFolder(final Properties properties, final String folderId) {
+    User currentUser = User.getCurrentRequester();
+    String language = currentUser.getUserPreferences().getLanguage();
+    CmisObject object = objectManager.createObject(folderId, properties, language);
+    return object.getId();
+  }
+
   private List<ObjectInFolderContainer> getObjectInFolderContainers(final String folderId,
       final BigInteger depth, final String filter, final Boolean includeAllowableActions,
       final IncludeRelationships includeRelationships, final Boolean includePathSegment,
@@ -518,5 +537,6 @@ public class SilverpeasCmisRepository {
 
     return pm;
   }
+
 }
   

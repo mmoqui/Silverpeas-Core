@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.silverpeas.cmis.Filtering;
 import org.silverpeas.cmis.Paging;
@@ -39,6 +40,8 @@ import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.cmis.CmisContributionsProvider;
 import org.silverpeas.core.cmis.model.Application;
 import org.silverpeas.core.cmis.model.CmisFolder;
+import org.silverpeas.core.cmis.model.CmisObject;
+import org.silverpeas.core.cmis.model.TypeId;
 import org.silverpeas.core.i18n.LocalizedResource;
 
 import javax.inject.Singleton;
@@ -66,6 +69,12 @@ public class TreeWalkerForComponentInst extends AbstractCmisObjectsTreeWalker {
   }
 
   @Override
+  public CmisObject createObjectData(final String folderId, final Properties properties,
+      final String language) {
+    throw new CmisNotSupportedException("Creation of applications aren't supported");
+  }
+
+  @Override
   @SuppressWarnings("unchecked")
   protected ComponentInstLight getSilverpeasObjectById(final String objectId) {
     return getController().getComponentInstLight(objectId);
@@ -78,13 +87,18 @@ public class TreeWalkerForComponentInst extends AbstractCmisObjectsTreeWalker {
   }
 
   @Override
-  protected boolean isSupported(final String objectId) {
+  protected boolean isObjectSupported(final String objectId) {
     try {
       CmisContributionsProvider provider = CmisContributionsProvider.getById(objectId);
       return provider != null;
     } catch (IllegalStateException e) {
       return false;
     }
+  }
+
+  @Override
+  protected boolean isTypeSupported(final TypeId typeId) {
+    return typeId == TypeId.SILVERPEAS_APPLICATION;
   }
 
   @Override

@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.jetbrains.annotations.NotNull;
 import org.silverpeas.cmis.Filtering;
@@ -41,6 +42,7 @@ import org.silverpeas.core.cmis.model.CmisFile;
 import org.silverpeas.core.cmis.model.CmisFolder;
 import org.silverpeas.core.cmis.model.CmisObject;
 import org.silverpeas.core.cmis.model.Space;
+import org.silverpeas.core.cmis.model.TypeId;
 import org.silverpeas.core.i18n.LocalizedResource;
 import org.silverpeas.core.security.authorization.ComponentAccessControl;
 import org.silverpeas.core.util.Pair;
@@ -83,8 +85,13 @@ public class TreeWalkerForSpaceInst extends AbstractCmisObjectsTreeWalker {
   }
 
   @Override
-  protected boolean isSupported(final String objectId) {
+  protected boolean isObjectSupported(final String objectId) {
     return Space.isSpace(objectId);
+  }
+
+  @Override
+  protected boolean isTypeSupported(final TypeId typeId) {
+    return typeId == TypeId.SILVERPEAS_SPACE;
   }
 
   @Override
@@ -162,6 +169,12 @@ public class TreeWalkerForSpaceInst extends AbstractCmisObjectsTreeWalker {
       final long offset, final long length) {
     throw new CmisNotSupportedException(
         "The content stream isn't supported by collaborative spaces");
+  }
+
+  @Override
+  public CmisObject createObjectData(final String folderId, final Properties properties,
+      final String language) {
+    throw new CmisNotSupportedException("Creation of collaborative spaces aren't supported");
   }
 
   @Override

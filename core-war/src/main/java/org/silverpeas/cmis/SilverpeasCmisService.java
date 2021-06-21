@@ -24,14 +24,7 @@
 
 package org.silverpeas.cmis;
 
-import org.apache.chemistry.opencmis.commons.data.ContentStream;
-import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.data.ObjectData;
-import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
-import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
-import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
-import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.data.*;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -259,6 +252,14 @@ public class SilverpeasCmisService extends AbstractCmisService
       final ExtensionsData extension) {
     final SilverpeasCmisRepository repository = getRepository(repositoryId);
     return repository.getContentStream(objectId, offset, length);
+  }
+
+  @Override
+  public String createFolder(final String repositoryId, final Properties properties,
+      final String folderId, final List<String> policies, final Acl addAces, final Acl removeAces,
+      final ExtensionsData extension) {
+    final SilverpeasCmisRepository repository = getRepository(repositoryId);
+    return repository.createFolder(properties, folderId);
   }
 
   private void buildObjectInfo(final SilverpeasCmisRepository repository, final String objectId,

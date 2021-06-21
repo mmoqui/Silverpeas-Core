@@ -28,20 +28,25 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.silverpeas.cmis.Filtering;
 import org.silverpeas.cmis.Paging;
+import org.silverpeas.cmis.util.CmisProperties;
 import org.silverpeas.core.ResourceIdentifier;
 import org.silverpeas.core.ResourceReference;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.annotation.Service;
+import org.silverpeas.core.cmis.CmisContributionsProvider;
 import org.silverpeas.core.cmis.model.CmisFolder;
 import org.silverpeas.core.cmis.model.CmisObject;
 import org.silverpeas.core.cmis.model.CmisObjectFactory;
 import org.silverpeas.core.cmis.model.Publication;
+import org.silverpeas.core.cmis.model.TypeId;
 import org.silverpeas.core.contribution.attachment.AttachmentService;
 import org.silverpeas.core.contribution.attachment.model.Document;
 import org.silverpeas.core.contribution.model.ContributionIdentifier;
+import org.silverpeas.core.contribution.model.I18nContribution;
 import org.silverpeas.core.contribution.publication.model.Location;
 import org.silverpeas.core.contribution.publication.model.PublicationDetail;
 import org.silverpeas.core.contribution.publication.model.PublicationPK;
@@ -53,6 +58,7 @@ import org.silverpeas.core.node.model.NodePK;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -81,6 +87,32 @@ public class TreeWalkerForPublicationDetail extends AbstractCmisObjectsTreeWalke
   }
 
   @Override
+  public CmisObject createObjectData(final String folderId, final Properties properties,
+      final String language) {
+    ContributionIdentifier folderIdentifier = ContributionIdentifier.decode(folderId);
+    CmisContributionsProvider contributionsProvider =
+        CmisContributionsProvider.getById(folderIdentifier.getComponentInstanceId());
+
+    CmisProperties cmisProperties = new CmisProperties(properties);
+    PublicationDetail publication = new PublicationDetail();
+    publication.setPk(
+        new PublicationPK(ResourceReference.UNKNOWN_ID, folderIdentifier.getComponentInstanceId()));
+    publication.setLanguage(language);
+    publication.setName(cmisProperties.getName());
+    publication.setDescription(cmisProperties.getDescription());
+    publication.setCreationDate(new Date());
+    publication.setCreatorId(User.getCurrentRequester().getId());
+    publication.setUpdateDate(publication.getCreationDate());
+    publication.setUpdaterId(publication.getCreatorId());
+    publication.setImportance(1);
+    publication.setInfoId("0");
+
+    I18nContribution created =
+        contributionsProvider.createContributionsInFolder(publication, folderIdentifier);
+    return getCmisObject(created, language);
+  }
+
+  @Override
   @SuppressWarnings("unchecked")
   protected PublicationDetail getSilverpeasObjectById(final String objectId) {
     return publicationService.getDetail(asPublicationPK(objectId));
@@ -105,7 +137,7 @@ public class TreeWalkerForPublicationDetail extends AbstractCmisObjectsTreeWalke
   }
 
   @Override
-  protected boolean isSupported(final String objectId) {
+  protected boolean isObjectSupported(final String objectId) {
     try {
       return ContributionIdentifier.decode(objectId)
           .getType()
@@ -113,6 +145,11 @@ public class TreeWalkerForPublicationDetail extends AbstractCmisObjectsTreeWalke
     } catch (IllegalArgumentException e) {
       return false;
     }
+  }
+
+  @Override
+  protected boolean isTypeSupported(final TypeId typeId) {
+    return typeId == TypeId.SILVERPEAS_PUBLICATION;
   }
 
   @Override
