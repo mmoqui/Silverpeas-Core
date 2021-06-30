@@ -28,11 +28,12 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.silverpeas.cmis.Filtering;
 import org.silverpeas.cmis.Paging;
+import org.silverpeas.cmis.util.CmisProperties;
 import org.silverpeas.core.ResourceIdentifier;
+import org.silverpeas.core.admin.component.model.ComponentInst;
 import org.silverpeas.core.admin.component.model.ComponentInstLight;
 import org.silverpeas.core.admin.space.SpaceInstLight;
 import org.silverpeas.core.admin.user.model.User;
@@ -42,6 +43,7 @@ import org.silverpeas.core.cmis.model.Application;
 import org.silverpeas.core.cmis.model.CmisFolder;
 import org.silverpeas.core.cmis.model.CmisObject;
 import org.silverpeas.core.cmis.model.TypeId;
+import org.silverpeas.core.contribution.model.I18nContribution;
 import org.silverpeas.core.i18n.LocalizedResource;
 
 import javax.inject.Singleton;
@@ -68,9 +70,44 @@ public class TreeWalkerForComponentInst extends AbstractCmisObjectsTreeWalker {
     throw new CmisNotSupportedException("The content stream isn't supported by applications");
   }
 
+  /**
+   * The walker takes in charge the creation of the contributions that the underlying Silverpeas
+   * application manages directly into the scope of the application.
+   * @param folderId the unique identifier of a Silverpeas application instance.
+   * @param properties the CMIS properties of the child to create. For instance a Silverpeas mapped
+   * to either a {@link org.silverpeas.core.cmis.model.ContributionFolder} or a
+   * {@link org.silverpeas.core.cmis.model.Publication}.
+   * @param contentStream a stream on a content. Should be null.
+   * @param language the ISO 639-1 code of the language in which the textual folder properties are
+   * expressed.
+   * @return either a {@link org.silverpeas.core.cmis.model.ContributionFolder} instance or a
+   * {@link org.silverpeas.core.cmis.model.Publication} instance.
+   */
   @Override
-  public CmisObject createObjectData(final String folderId, final Properties properties,
-      final String language) {
+  public CmisObject createChildData(final String folderId, final CmisProperties properties,
+      final ContentStream contentStream, final String language) {
+    ComponentInstLight app = getSilverpeasObjectById(folderId);
+    properties.setParentObjectId(folderId);
+    TypeId typeId = properties.getObjectTypeId();
+    AbstractCmisObjectsTreeWalker treeWalker = getTreeWalkerSelector().selectByTypeObjectId(typeId);
+    I18nContribution contribution = treeWalker.createSilverpeasObject(properties, language);
+    CmisContributionsProvider contributionsProvider = CmisContributionsProvider.getById(folderId);
+    I18nContribution created = contributionsProvider.createContribution(contribution,
+        app.getIdentifier());
+    return treeWalker.createCmisObject(created, language);
+  }
+
+  /**
+   * The creation of the Silverpeas application instance isn't supported by our CMIS implementation.
+   * @param properties the CMIS properties of the application instance to create.
+   * @param language the ISO 639-1 code of the language in which the textual properties are
+   * expressed.
+   * @return nothing. A {@link CmisNotSupportedException} exception is thrown.
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  protected ComponentInst createSilverpeasObject(
+      final CmisProperties properties, final String language) {
     throw new CmisNotSupportedException("Creation of applications aren't supported");
   }
 

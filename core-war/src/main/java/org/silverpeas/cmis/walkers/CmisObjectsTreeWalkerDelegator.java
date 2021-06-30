@@ -24,21 +24,16 @@
 
 package org.silverpeas.cmis.walkers;
 
-import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.data.Properties;
-import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.silverpeas.cmis.Filtering;
 import org.silverpeas.cmis.Paging;
 import org.silverpeas.cmis.util.CmisProperties;
 import org.silverpeas.core.cmis.model.CmisFile;
-import org.silverpeas.core.cmis.model.CmisFolder;
 import org.silverpeas.core.cmis.model.CmisObject;
 import org.silverpeas.core.cmis.model.Space;
-import org.silverpeas.core.cmis.model.TypeId;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -55,10 +50,10 @@ public class CmisObjectsTreeWalkerDelegator implements CmisObjectsTreeWalker {
   private TreeWalkerSelector selector;
 
   @Override
-  public CmisObject createObjectData(final String folderId, final Properties properties,
-      final String language) {
-    TypeId typeId = getCmisObjectTypeId(properties);
-    return selector.selectByTypeObjectId(typeId).createObjectData(folderId, properties, language);
+  public CmisObject createChildData(final String folderId, final CmisProperties properties,
+      final ContentStream contentStream, final String language) {
+    return selector.selectByObjectIdOrFail(folderId)
+        .createChildData(folderId, properties, contentStream, language);
   }
 
   @Override
@@ -93,11 +88,6 @@ public class CmisObjectsTreeWalkerDelegator implements CmisObjectsTreeWalker {
       final long offset, final long length) {
     return selector.selectByObjectIdOrFail(objectId)
         .getContentStream(objectId, language, offset, length);
-  }
-
-  protected final TypeId getCmisObjectTypeId(final Properties properties) {
-    CmisProperties cmisProperties = new CmisProperties(properties);
-    return cmisProperties.getObjectTypeId();
   }
 }
   

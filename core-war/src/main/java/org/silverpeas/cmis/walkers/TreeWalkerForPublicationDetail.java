@@ -28,7 +28,6 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.silverpeas.cmis.Filtering;
 import org.silverpeas.cmis.Paging;
@@ -37,7 +36,6 @@ import org.silverpeas.core.ResourceIdentifier;
 import org.silverpeas.core.ResourceReference;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.annotation.Service;
-import org.silverpeas.core.cmis.CmisContributionsProvider;
 import org.silverpeas.core.cmis.model.CmisFolder;
 import org.silverpeas.core.cmis.model.CmisObject;
 import org.silverpeas.core.cmis.model.CmisObjectFactory;
@@ -45,8 +43,8 @@ import org.silverpeas.core.cmis.model.Publication;
 import org.silverpeas.core.cmis.model.TypeId;
 import org.silverpeas.core.contribution.attachment.AttachmentService;
 import org.silverpeas.core.contribution.attachment.model.Document;
+import org.silverpeas.core.contribution.attachment.model.SimpleDocument;
 import org.silverpeas.core.contribution.model.ContributionIdentifier;
-import org.silverpeas.core.contribution.model.I18nContribution;
 import org.silverpeas.core.contribution.publication.model.Location;
 import org.silverpeas.core.contribution.publication.model.PublicationDetail;
 import org.silverpeas.core.contribution.publication.model.PublicationPK;
@@ -58,7 +56,6 @@ import org.silverpeas.core.node.model.NodePK;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -86,30 +83,54 @@ public class TreeWalkerForPublicationDetail extends AbstractCmisObjectsTreeWalke
     throw new CmisNotSupportedException("The content stream isn't supported by publications");
   }
 
+  /**
+   * The walker takes in charge both the creation of document files from the specified CMIS
+   * properties and its attachment to the publication identified by the given folder identifier.
+   * @param folderId the unique identifier of a publication in the CMIS objects tree.
+   * @param properties the CMIS properties of the {@link SimpleDocument} to create.
+   * @param contentStream a stream on the document's content. Must not be null.
+   * @param language the ISO 639-1 code of the language in which the textual folder properties are
+   * expressed.
+   * @return the {@link org.silverpeas.core.cmis.model.DocumentFile} instance that has been created
+   * and attached to the {@link Publication} object identified by the folderId parameter.
+   */
   @Override
-  public CmisObject createObjectData(final String folderId, final Properties properties,
-      final String language) {
-    ContributionIdentifier folderIdentifier = ContributionIdentifier.decode(folderId);
-    CmisContributionsProvider contributionsProvider =
-        CmisContributionsProvider.getById(folderIdentifier.getComponentInstanceId());
+  public CmisObject createChildData(final String folderId, final CmisProperties properties,
+      final ContentStream contentStream, final String language) {
+    PublicationDetail publication = getSilverpeasObjectById(folderId);
+    properties.setParentObjectId(folderId);
+    TypeId typeId = properties.getObjectTypeId();
+    AbstractCmisObjectsTreeWalker walker = getTreeWalkerSelector().selectByTypeObjectId(typeId);
+    Document document = walker.createSilverpeasObject(properties, language);
+    // TODO create attachment with attachmentService
 
-    CmisProperties cmisProperties = new CmisProperties(properties);
+    return walker.createCmisObject(document, language);
+  }
+
+  /**
+   * Creates a new {@link PublicationDetail} instance from the specified CMIS properties and in
+   * the given language.
+   * @param properties the CMIS properties of a {@link Publication} object.
+   * @param language the ISO 639-1 code of the language in which the textual properties are
+   * expressed.
+   * @return a {@link PublicationDetail} instance.
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  protected PublicationDetail createSilverpeasObject(
+      final CmisProperties properties, final String language) {
     PublicationDetail publication = new PublicationDetail();
-    publication.setPk(
-        new PublicationPK(ResourceReference.UNKNOWN_ID, folderIdentifier.getComponentInstanceId()));
+    publication.setPk(new PublicationPK(ResourceReference.UNKNOWN_ID));
     publication.setLanguage(language);
-    publication.setName(cmisProperties.getName());
-    publication.setDescription(cmisProperties.getDescription());
-    publication.setCreationDate(new Date());
+    publication.setName(properties.getName());
+    publication.setDescription(properties.getDescription());
+    publication.setCreationDate(properties.getCreationDate());
     publication.setCreatorId(User.getCurrentRequester().getId());
     publication.setUpdateDate(publication.getCreationDate());
     publication.setUpdaterId(publication.getCreatorId());
     publication.setImportance(1);
     publication.setInfoId("0");
-
-    I18nContribution created =
-        contributionsProvider.createContributionsInFolder(publication, folderIdentifier);
-    return getCmisObject(created, language);
+    return publication;
   }
 
   @Override

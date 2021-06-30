@@ -28,10 +28,12 @@ package org.silverpeas.cmis.util;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.MutableProperties;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
@@ -41,15 +43,17 @@ import org.silverpeas.core.cmis.model.TypeId;
 
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
 /**
  * Each object in CMIS are defined by properties whose some of them are common to all of the CMIS
- * objects (name and description for example). This class is dedicated to access for Silverpeas
- * these properties gathering in a {@link org.apache.chemistry.opencmis.commons.data.Properties}
- * object.
+ * objects (name and description for example). This class is dedicated to access these properties
+ * gathered in a {@link org.apache.chemistry.opencmis.commons.data.Properties} object for
+ * Silverpeas. It provides a centralized and a common way to set and to get the usual CMIS
+ * properties of the Silverpeas resources and contributions exposed in the CMIS objects tree.
  */
 public class CmisProperties {
 
@@ -58,6 +62,14 @@ public class CmisProperties {
 
   private final Properties properties;
   private final Set<String> filter;
+
+  /**
+   * Creates a {@link CmisProperties} instance wrapping by default a {@link MutableProperties}
+   * object that can be get with the {@link CmisProperties#getProperties()} method.
+   */
+  public CmisProperties() {
+    this(new PropertiesImpl());
+  }
 
   /**
    * Creates a {@link CmisProperties} instance from the {@link Properties} object so that the CMIS
@@ -99,6 +111,14 @@ public class CmisProperties {
   }
 
   /**
+   * Gets the unique identifier of the parent of the object.
+   * @return a {@link String} representation of the identifier of the parent object.
+   */
+  public String getParentObjectId() {
+    return getId(PropertyIds.PARENT_ID);
+  }
+
+  /**
    * Gets the name of the object described by the underlying properties.
    * @return the name of the CMIS object.
    */
@@ -112,6 +132,22 @@ public class CmisProperties {
    */
   public String getDescription() {
     return getString(PropertyIds.DESCRIPTION);
+  }
+
+  /**
+   * Gets the date at which the object has been created as it was set in the underlying properties.
+   * @return the creation date of the CMIS object.
+   */
+  public Date getCreationDate() {
+    return new Date(getDateTime(PropertyIds.CREATION_DATE));
+  }
+
+  public String getContentMimeType() {
+    return getString(PropertyIds.CONTENT_STREAM_MIME_TYPE);
+  }
+
+  public String getContentFileName() {
+    return getString(PropertyIds.CONTENT_STREAM_FILE_NAME);
   }
 
   /**
@@ -303,6 +339,7 @@ public class CmisProperties {
   /**
    * Gets the value of the specified identifier property.
    * @param propertyName the name of the property to get.
+   * @return the identifier as a {@link String} value.
    */
   private String getId(String propertyName) {
     PropertyId data = (PropertyId) properties.getProperties().get(propertyName);
@@ -312,10 +349,21 @@ public class CmisProperties {
   /**
    * Gets the value of the specified {@link String} property.
    * @param propertyName the name of the property to get.
+   * @return the {@link String} value.
    */
   private String getString(String propertyName) {
     PropertyString data = (PropertyString) properties.getProperties().get(propertyName);
     return data.getFirstValue();
+  }
+
+  /**
+   * Gets the value of the specified date time property.
+   * @param propertyName the name of the property to get.
+   * @return the date time in milliseconds from Epoch.
+   */
+  private long getDateTime(String propertyName) {
+    PropertyDateTime data = (PropertyDateTime) properties.getProperties().get(propertyName);
+    return CmisDateConverter.calendarToMillis(data.getFirstValue());
   }
 
   /**

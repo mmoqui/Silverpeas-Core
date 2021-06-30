@@ -29,6 +29,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
@@ -260,6 +261,15 @@ public class SilverpeasCmisService extends AbstractCmisService
       final ExtensionsData extension) {
     final SilverpeasCmisRepository repository = getRepository(repositoryId);
     return repository.createFolder(properties, folderId);
+  }
+
+  @Override
+  public String createDocument(final String repositoryId, final Properties properties,
+      final String folderId, final ContentStream contentStream,
+      final VersioningState versioningState, final List<String> policies, final Acl addAces,
+      final Acl removeAces, final ExtensionsData extension) {
+    final SilverpeasCmisRepository repository = getRepository(repositoryId);
+    return repository.createDocument(properties, folderId, contentStream);
   }
 
   private void buildObjectInfo(final SilverpeasCmisRepository repository, final String objectId,

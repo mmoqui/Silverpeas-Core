@@ -212,7 +212,7 @@ public class CmisObjectFactory {
       updater = document.getLastUpdater();
     }
     return new DocumentFile(document.getIdentifier(), document.getFilename(), document.getLanguage())
-        .setTitle(document.getName())
+        .setTitle(document.getTitle())
         .setLastComment(document.getComment())
         .setMimeType(document.getContentType())
         .setSize(document.getSize())

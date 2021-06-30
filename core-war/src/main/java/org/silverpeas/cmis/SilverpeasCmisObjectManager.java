@@ -30,6 +30,8 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
+import org.silverpeas.cmis.util.CmisProperties;
 import org.silverpeas.cmis.walkers.AbstractCmisObjectsTreeWalker;
 import org.silverpeas.cmis.walkers.CmisObjectsTreeWalker;
 import org.silverpeas.core.annotation.Service;
@@ -72,16 +74,42 @@ public class SilverpeasCmisObjectManager {
    * {@link org.apache.chemistry.opencmis.commons.PropertyIds#OBJECT_TYPE_ID}
    * property. If the creation of instances of such concrete type isn't supported, then a {@link
    * org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException} exception is
-   * thrown.
+   * thrown. If the object is a document, then an empty document file is created.
+   * @param folderId the unique identifier of the parent folder.
    * @param properties the CMIS properties of the object to create.
    * @param language the ISO 639-1 code of the language in which the textual properties are
    * expressed.
-   * @param folderId the unique identifier of the parent folder.
    * @return the unique identifier of the newly created CMIS object.
    */
   public CmisObject createObject(final String folderId, final Properties properties,
       final String language) {
-    return CmisObjectsTreeWalker.getInstance().createObjectData(folderId, properties, language);
+    CmisProperties cmisProperties = new CmisProperties(properties);
+    return CmisObjectsTreeWalker.getInstance()
+        .createChildData(folderId, cmisProperties, null, language);
+  }
+
+  /**
+   * Creates into the specified parent folder a {@link org.silverpeas.core.cmis.model.DocumentFile}
+   * object from its specified CMIS properties and from the specified content both expressed in the
+   * given language. The concrete type of the CMIS object to create is given by the {@link
+   * org.apache.chemistry.opencmis.commons.PropertyIds#OBJECT_TYPE_ID} property and must be {@link
+   * org.silverpeas.core.cmis.model.TypeId#SILVERPEAS_DOCUMENT} otherwise a {@link
+   * org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException} exception is
+   * thrown. If an error occurs while storing the content stream, then a {@link
+   * CmisStorageException} exception is thrown.
+   * @param folderId the unique identifier of the parent folder.
+   * @param properties the CMIS properties of the document to create.
+   * @param content a stream on the document's content to store into a file in Silverpeas. The
+   * stream is consumed but not closed by this method.
+   * @param language the ISO 639-1 code of the language in which the textual properties are
+   * expressed.
+   * @return the unique identifier of the newly created CMIS object.
+   */
+  public CmisObject createDocument(final String folderId, final Properties properties,
+      final ContentStream content, final String language) {
+    CmisProperties cmisProperties = new CmisProperties(properties);
+    return CmisObjectsTreeWalker.getInstance()
+        .createChildData(folderId, cmisProperties, content, language);
   }
 
   /**

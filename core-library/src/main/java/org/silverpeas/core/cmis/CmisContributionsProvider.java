@@ -92,6 +92,20 @@ public interface CmisContributionsProvider {
       final User user);
 
   /**
+   * Creates the specified contribution into the specified application.
+   * If the application doesn't yet support the creation by CMIS of the specified contribution, then
+   * a {@link org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException} exception
+   * has to be thrown.
+   * @param contribution the localized contribution to create.
+   * @param app the unique identifier of the Silverpeas application in which the contribution has
+   * to be created and then managed.
+   * @return the instance of the created contribution. It can be different of the one passed as
+   * argument.
+   */
+  I18nContribution createContribution(final I18nContribution contribution,
+      final ResourceIdentifier app);
+
+  /**
    * Creates the specified contribution into the specified folder.
    * If the application doesn't yet support the creation by CMIS of the specified contribution, then
    * a {@link org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException} exception
@@ -102,6 +116,6 @@ public interface CmisContributionsProvider {
    * @return the instance of the created contribution. It can be different of the one passed as
    * argument.
    */
-  I18nContribution createContributionsInFolder(final I18nContribution contribution,
+  I18nContribution createContributionInFolder(final I18nContribution contribution,
       final ContributionIdentifier folder);
 }

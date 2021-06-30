@@ -89,7 +89,7 @@ import static org.silverpeas.cmis.util.CmisDateConverter.millisToCalendar;
 @DisplayName(
     "Test the mapping between the CMIS objects tree and an organizational schema of Silverpeas " +
         "resources")
-class CmisObjectsTreeWalkerTest extends CMISEnvForTests {
+class ObjectMappingInTreeWalkerTest extends CMISEnvForTests {
 
   @Test
   @DisplayName("Getting the CMIS data of a Silverpeas object not exposed through the CMIS should " +
@@ -960,10 +960,11 @@ class CmisObjectsTreeWalkerTest extends CMISEnvForTests {
     assertThat(props.get(PropertyIds.IS_LATEST_VERSION).getFirstValue(), is(true));
     assertThat(props.get(PropertyIds.IS_MAJOR_VERSION).getFirstValue(), is(true));
     assertThat(props.get(PropertyIds.IS_LATEST_MAJOR_VERSION).getFirstValue(), is(true));
-    assertThat(props.get(PropertyIds.VERSION_LABEL).getFirstValue(), is(doc.getTitle()));
+    assertThat(props.get(PropertyIds.VERSION_LABEL).getFirstValue(), nullValue());
     assertThat(props.get(PropertyIds.VERSION_SERIES_ID).getFirstValue(),
-        is(doc.getIdentifier().asString()));
-    assertThat(props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT).getFirstValue(), is(false));
+        is(doc.getIdentifier().asString() + ":versions"));
+    assertThat(props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT).getFirstValue(),
+        is(false));
     assertThat(props.get(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY).getFirstValue(), nullValue());
     assertThat(props.get(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID).getFirstValue(), nullValue());
     assertThat(props.get(PropertyIds.CHECKIN_COMMENT).getFirstValue(), is(comment));
@@ -975,7 +976,8 @@ class CmisObjectsTreeWalkerTest extends CMISEnvForTests {
         is(doc.getContentType()));
     assertThat(props.get(PropertyIds.CONTENT_STREAM_FILE_NAME).getFirstValue(),
         is(doc.getFilename()));
-    assertThat(props.get(PropertyIds.CONTENT_STREAM_ID).getFirstValue(), nullValue());
+    assertThat(props.get(PropertyIds.CONTENT_STREAM_ID).getFirstValue(),
+        is(doc.getIdentifier().asString() + ":content"));
   }
 }
   

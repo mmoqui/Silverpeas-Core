@@ -415,8 +415,32 @@ public class SilverpeasCmisRepository {
    */
   public String createFolder(final Properties properties, final String folderId) {
     User currentUser = User.getCurrentRequester();
-    String language = currentUser.getUserPreferences().getLanguage();
+    String language = currentUser.getUserPreferences()
+        .getLanguage();
     CmisObject object = objectManager.createObject(folderId, properties, language);
+    return object.getId();
+  }
+
+  /**
+   * Creates a document object of the specified type (given by the cmis:objectTypeId property) in
+   * the specified location and with the given content.
+   *
+   * @param properties
+   *            the property values that must be applied to the newly created
+   *            folder object
+   * @param folderId
+   *            the identifier for the parent folder
+   * @param stream
+   *            the stream on the document's content. The stream is consumed but not closed by this
+   *            method.
+   * @return the ID of the newly created document
+   */
+  public String createDocument(final Properties properties, final String folderId,
+      final ContentStream stream) {
+    User currentUser = User.getCurrentRequester();
+    String language = currentUser.getUserPreferences()
+        .getLanguage();
+    CmisObject object = objectManager.createDocument(folderId, properties, stream, language);
     return object.getId();
   }
 

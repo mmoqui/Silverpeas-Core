@@ -188,32 +188,38 @@ public class UploadedFile {
     String lang = I18NHelper.checkLanguage(contributionLanguage);
 
     // Title and description
-    String title = defaultStringIfNotDefined(getTitle());
-    String description = defaultStringIfNotDefined(getDescription());
+    String theTitle = defaultStringIfNotDefined(getTitle());
+    String theDescription = defaultStringIfNotDefined(getDescription());
     if (AttachmentSettings.isUseFileMetadataForAttachmentDataEnabled() &&
-        !StringUtil.isDefined(title)) {
+        !StringUtil.isDefined(theTitle)) {
       MetadataExtractor extractor = MetadataExtractor.get();
       MetaData metadata = extractor.extractMetadata(getFile());
       if (StringUtil.isDefined(metadata.getTitle())) {
-        title = metadata.getTitle();
+        theTitle = metadata.getTitle();
       }
-      if (!StringUtil.isDefined(description) && StringUtil.isDefined(metadata.getSubject())) {
-        description = metadata.getSubject();
+      if (!StringUtil.isDefined(theDescription) && StringUtil.isDefined(metadata.getSubject())) {
+        theDescription = metadata.getSubject();
       }
     }
     // Simple document PK
     SimpleDocumentPK pk = new SimpleDocumentPK(null, resourcePk);
 
     // Simple document
-    SimpleDocument document = new SimpleDocument(pk, resourcePk.getId(), 0, false, null,
-        new SimpleAttachment(getFile().getName(), lang, title, description, getFile().length(),
-            FileUtil.getMimeType(getFile().getPath()), uploader, DateUtil.getNow(), null)
-    );
+    SimpleAttachment attachment = SimpleAttachment.builder(lang)
+        .setFilename(getFile().getName())
+        .setTitle(theTitle)
+        .setDescription(theDescription)
+        .setSize(getFile().length())
+        .setContentType(FileUtil.getMimeType(getFile().getPath()))
+        .setCreationData(uploader, DateUtil.getNow())
+        .build();
+    SimpleDocument document =
+        new SimpleDocument(pk, resourcePk.getId(), 0, false, null, attachment);
 
     // Simple document details
     document.setLanguage(lang);
-    document.setTitle(title);
-    document.setDescription(description);
+    document.setTitle(theTitle);
+    document.setDescription(theDescription);
     document.setSize(getFile().length());
 
     // Result

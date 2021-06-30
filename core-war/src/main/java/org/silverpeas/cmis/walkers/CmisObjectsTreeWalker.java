@@ -30,11 +30,12 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.silverpeas.cmis.Filtering;
 import org.silverpeas.cmis.Paging;
+import org.silverpeas.cmis.util.CmisProperties;
 import org.silverpeas.core.cmis.model.CmisFile;
 import org.silverpeas.core.cmis.model.CmisObject;
+import org.silverpeas.core.i18n.I18n;
 import org.silverpeas.core.util.ServiceProvider;
 
 import java.util.List;
@@ -63,15 +64,30 @@ public interface CmisObjectsTreeWalker {
   }
 
   /**
-   * Creates into the specified CMIS folder a new {@link CmisObject} object from its specified CMIS
-   * data properties and in the given language.
+   * Creates into the specified CMIS folder a new {@link CmisObject} child from the specified CMIS
+   * data properties and in the given language. If the child is a document then the content stream
+   * must be not null, otherwise, for any other object types, it is ignored even if it is set.
+   * <p>
+   * If the content stream isn't set whereas the object to create is a document, then a
+   * {@link org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException} is thrown.
+   * </p>
+   * <p>
+   * If the content stream is set whereas the object to create isn't a document, it is simply
+   * ignored.
+   * </p>
+   * <p>
+   * If an error occurs while registering the content from the specified content stream, then
+   * a {@link org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException} is thrown.
+   * </p>
    * @param folderId the unique identifier of a folder in the CMIS objects tree.
-   * @param properties the CMIS properties of the object to create.
-   * @param language the ISO 639-1 code of the language in which the textual folder properties are
-   * expressed.
+   * @param properties the CMIS properties of the child to create.
+   * @param contentStream a stream on a content from which a document has to be created.
+   * @param language the ISO 639-1 code of the language in which the textual properties of the
+   * object as well as the content (if any) are expressed.
    * @return the created {@link CmisObject} object corresponding to the given CMIS properties.
    */
-  CmisObject createObjectData(String folderId, Properties properties, String language);
+  CmisObject createChildData(String folderId, CmisProperties properties,
+      ContentStream contentStream, String language);
 
   /**
    * Gets the CMIS data of the Silverpeas object uniquely identified by the specified identifier.
@@ -158,7 +174,7 @@ public interface CmisObjectsTreeWalker {
    * @param objectId the unique identifier of the object in the CMIS objects tree.
    * @param language the ISO 639-1 code of the language of the content to fetch. If no content
    * exists in the specified language, then it is the content for the first language found that will
-   * be returned (see {@link org.silverpeas.core.i18n.I18NHelper#allContentLanguageCodes}).
+   * be returned (see {@link I18n#getSupportedLanguages()}).
    * @param offset the position in bytes in the content to start the stream.
    * @param length the length in bytes of the stream, id est the length of the content to read by
    * the stream.

@@ -181,6 +181,22 @@ public abstract class AbstractCmisObjectsTreeWalker implements CmisObjectsTreeWa
   protected abstract <T extends LocalizedResource & Securable> T getSilverpeasObjectById(final String objectId);
 
   /**
+   * Creates a new Silverpeas object from the specified CMIS properties and in the given language.
+   * The object isn't yet saved into Silverpeas; it is transient. If the creation of objects of the
+   * CMIS type provided by the properties isn't supported, then a
+   * {@link org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException} exception
+   * is thrown.
+   * @param properties the CMIS properties of the child to create. It contains the CMIS type
+   * of the object to create.
+   * @param language the ISO 639-1 code of the language in which the textual properties are
+   * expressed.
+   * @param <T> the concrete type of the object to return.
+   * @return a Silverpeas object
+   */
+  protected abstract <T extends LocalizedResource & Securable> T createSilverpeasObject(
+      final CmisProperties properties, final String language);
+
+  /**
    * Builds the CMIS data corresponding to all of the specified Silverpeas object by taking into
    * account the filtering that indicates the properties to return and the paging that indicates
    * both from which object the build is started and the number of objects to build (and return).
@@ -438,7 +454,7 @@ public abstract class AbstractCmisObjectsTreeWalker implements CmisObjectsTreeWa
       } else {
         // document properties
         DocumentFile document = (DocumentFile) file;
-        String versionSeriesId = document.getId() + ":version";
+        String versionSeriesId = document.getId() + ":versions";
         String streamContentId = document.getName() == null ? null : document.getId() + ":content";
         properties.setImmutability(false)
             .setVersioningData(versionSeriesId, null, document.getLastComment(), true, true, true)

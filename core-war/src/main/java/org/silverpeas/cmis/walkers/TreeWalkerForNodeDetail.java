@@ -28,10 +28,10 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
-import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.silverpeas.cmis.Filtering;
 import org.silverpeas.cmis.Paging;
+import org.silverpeas.cmis.util.CmisProperties;
 import org.silverpeas.core.ResourceIdentifier;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.annotation.Service;
@@ -41,6 +41,7 @@ import org.silverpeas.core.cmis.model.CmisObject;
 import org.silverpeas.core.cmis.model.ContributionFolder;
 import org.silverpeas.core.cmis.model.TypeId;
 import org.silverpeas.core.contribution.model.ContributionIdentifier;
+import org.silverpeas.core.contribution.model.I18nContribution;
 import org.silverpeas.core.i18n.LocalizedResource;
 import org.silverpeas.core.node.model.NodeDetail;
 import org.silverpeas.core.node.model.NodePK;
@@ -76,8 +77,42 @@ public class TreeWalkerForNodeDetail extends AbstractCmisObjectsTreeWalker {
     throw new CmisNotSupportedException("The content stream isn't supported by folders");
   }
 
+  /**
+   * The walker takes in charge the creation of the contributions that can be added into a
+   * folder/topic/category represented by a {@link NodeDetail} object for a given Silverpeas
+   * application instance.
+   * @param folderId the unique identifier of the {@link NodeDetail} instance.
+   * @param properties the CMIS properties of the child to create.
+   * @param contentStream a stream on a content. Should be null.
+   * @param language the ISO 639-1 code of the language in which the textual folder properties are
+   * expressed.
+   * @return the {@link org.silverpeas.core.cmis.model.Publication} instance that has been created
+   * and added into the {@link ContributionFolder} identified by the given folderId parameter.
+   */
   @Override
-  public CmisObject createObjectData(final String folderId, final Properties properties,
+  public CmisObject createChildData(final String folderId, final CmisProperties properties,
+      final ContentStream contentStream, final String language) {
+    NodeDetail folder = getSilverpeasObjectById(folderId);
+    properties.setParentObjectId(folderId);
+    TypeId typeId = properties.getObjectTypeId();
+    AbstractCmisObjectsTreeWalker walker = getTreeWalkerSelector().selectByTypeObjectId(typeId);
+    I18nContribution contribution = walker.createSilverpeasObject(properties, language);
+    CmisContributionsProvider provider =
+        CmisContributionsProvider.getById(folder.getIdentifier().getComponentInstanceId());
+    I18nContribution created = provider.createContributionInFolder(contribution, folder.getIdentifier());
+    return walker.createCmisObject(created, language);
+  }
+
+  /**
+   * The creation of a {@link NodeDetail} instance isn't supported by our CMIS implementation.
+   * @param properties the CMIS properties of the {@link NodeDetail} object to create.
+   * @param language the ISO 639-1 code of the language in which the textual properties are
+   * expressed.
+   * @return nothing. A {@link CmisNotSupportedException} exception is thrown.
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  protected NodeDetail createSilverpeasObject(final CmisProperties properties,
       final String language) {
     throw new CmisNotSupportedException("Creation of folders aren't supported");
   }
