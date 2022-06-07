@@ -23,7 +23,6 @@
  */
 package org.silverpeas.core.webapi.password;
 
-import org.silverpeas.web.ResourceCreationTest;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.security.authentication.password.constant.PasswordRuleType;
 import org.silverpeas.core.web.test.WarBuilder4WebCore;
+import org.silverpeas.web.ResourceCreationTest;
 
 import javax.ws.rs.core.Response;
 
