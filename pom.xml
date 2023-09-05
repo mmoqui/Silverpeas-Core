@@ -30,12 +30,12 @@
   <parent>
     <groupId>org.silverpeas</groupId>
     <artifactId>silverpeas-project</artifactId>
-    <version>1.6-build230623</version>
+    <version>1.6-feature13271</version>
   </parent>
 
   <groupId>org.silverpeas</groupId>
   <artifactId>core</artifactId>
-  <version>6.4-SNAPSHOT</version>
+  <version>6.4-feature13271</version>
   <packaging>pom</packaging>
   <name>Silverpeas Core</name>
   <url>https://www.silverpeas.org/docs/core</url>
@@ -82,8 +82,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
+      <groupId>jakarta.platform</groupId>
+      <artifactId>jakarta.jakartaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>io.opencensus</groupId>
