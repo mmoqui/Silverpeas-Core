@@ -43,12 +43,12 @@ import org.silverpeas.core.util.lang.SystemWrapper;
 import org.silverpeas.core.util.logging.LoggerConfigurationManager;
 import org.silverpeas.core.util.logging.SilverLoggerProvider;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.concurrent.ManagedThreadFactory;
-import javax.enterprise.inject.AmbiguousResolutionException;
-import javax.inject.Inject;
-import javax.inject.Qualifier;
-import javax.inject.Singleton;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.enterprise.inject.AmbiguousResolutionException;
+import jakarta.inject.Inject;
+import jakarta.inject.Qualifier;
+import jakarta.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -59,6 +59,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -358,9 +360,30 @@ public class SilverTestEnv implements TestInstancePostProcessor, ParameterResolv
     try {
       Constructor<ManagedThreadPool> managedThreadPoolConstructor =
           ManagedThreadPool.class.getDeclaredConstructor();
-      managedThreadPoolConstructor.setAccessible(true);
+      managedThreadPoolConstructor.trySetAccessible();
       ManagedThreadPool managedThreadPool = managedThreadPoolConstructor.newInstance();
-      ManagedThreadFactory managedThreadFactory = Thread::new;
+      ManagedThreadFactory managedThreadFactory = new ManagedThreadFactory() {
+
+        private final ForkJoinPool pool = new ForkJoinPool();
+
+        @Override
+        public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+          try {
+            Constructor<ForkJoinWorkerThread> forkJoinWorkerThreadConstructor =
+                ForkJoinWorkerThread.class.getDeclaredConstructor(ForkJoinPool.class);
+            forkJoinWorkerThreadConstructor.trySetAccessible();
+            return forkJoinWorkerThreadConstructor.newInstance(pool);
+          } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
+                   InvocationTargetException e) {
+            throw new RuntimeException(e);
+          }
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+          return new Thread(r);
+        }
+      };
       FieldUtils.writeField(managedThreadPool, "managedThreadFactory", managedThreadFactory, true);
       when(TestBeanContainer.getMockedBeanContainer()
           .getBeanByType(ManagedThreadPool.class)).thenReturn(managedThreadPool);

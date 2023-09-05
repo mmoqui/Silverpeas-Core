@@ -26,8 +26,8 @@ package org.silverpeas.core.util;
 import org.apache.commons.lang3.StringUtils;
 import org.silverpeas.core.SilverpeasException;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
@@ -651,13 +651,13 @@ public class StringUtil extends StringUtils {
    * <p> Returns <tt>true</tt> only if
    * <ul>
    * <li><tt>aEmailAddress</tt> can successfully construct an
-   * {@link javax.mail.internet.InternetAddress}</li>
+   * {@link jakarta.mail.internet.InternetAddress}</li>
    * <li>when parsed with "@" as delimiter, <tt>aEmailAddress</tt> contains two tokens which
    * satisfy</li>
    * </ul>
    * <p>
    * The second condition arises since local email addresses, simply of the form "<tt>albert</tt>",
-   * for example, are valid for {@link javax.mail.internet.InternetAddress}, but almost always
+   * for example, are valid for {@link jakarta.mail.internet.InternetAddress}, but almost always
    * undesired.
    * @param aEmailAddress the address to be validated
    * @return true is the address is a valid email address - false otherwise.

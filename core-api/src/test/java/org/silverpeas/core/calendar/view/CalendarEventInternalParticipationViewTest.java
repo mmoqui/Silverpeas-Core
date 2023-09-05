@@ -12,7 +12,7 @@ import org.silverpeas.core.persistence.datasource.model.jpa.JpaUpdateOperation;
 import org.silverpeas.core.test.TestBeanContainer;
 import org.silverpeas.core.test.TestUserProvider;
 
-import javax.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.util.AnnotationLiteral;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

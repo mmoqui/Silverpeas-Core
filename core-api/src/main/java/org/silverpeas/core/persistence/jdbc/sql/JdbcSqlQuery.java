@@ -29,7 +29,7 @@ import org.silverpeas.core.util.CollectionUtil;
 import org.silverpeas.core.util.ListSlice;
 import org.silverpeas.core.util.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;

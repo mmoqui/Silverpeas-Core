@@ -99,7 +99,7 @@ public class VariableValueSet implements Collection<VariableScheduledValue> {
   /**
    * Adds the specified variable value into the variable's values set and saves automatically the
    * set. This method can be invoked only with an already persisted variable otherwise a
-   * {@link javax.persistence.PersistenceException} will be thrown. Useful when just to add a new
+   * {@link jakarta.persistence.PersistenceException} will be thrown. Useful when just to add a new
    * value to the underlying variable for a given period.
    * @param value the value, defined in a given period, to add in this set.
    * @return the persisted variable value.

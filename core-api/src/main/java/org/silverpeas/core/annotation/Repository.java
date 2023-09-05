@@ -23,8 +23,8 @@
  */
 package org.silverpeas.core.annotation;
 
-import javax.enterprise.inject.Stereotype;
-import javax.inject.Singleton;
+import jakarta.enterprise.inject.Stereotype;
+import jakarta.inject.Singleton;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

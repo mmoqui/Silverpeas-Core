@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.persistence.jdbc;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

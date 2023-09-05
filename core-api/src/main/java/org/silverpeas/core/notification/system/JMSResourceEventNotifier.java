@@ -24,8 +24,8 @@
 package org.silverpeas.core.notification.system;
 
 
-import javax.jms.Destination;
-import javax.jms.JMSProducer;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSProducer;
 import java.io.Serializable;
 
 /**

@@ -26,7 +26,7 @@ package org.silverpeas.core.util.logging;
 import org.silverpeas.core.annotation.Provider;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * A provider of a {@link SilverLogger}. It is managed by the underlying IoD subsystem. It is used

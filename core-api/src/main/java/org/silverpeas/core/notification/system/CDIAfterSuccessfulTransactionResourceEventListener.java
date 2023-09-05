@@ -27,9 +27,9 @@ package org.silverpeas.core.notification.system;
 import org.silverpeas.core.persistence.Transaction;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.enterprise.event.Observes;
+import jakarta.enterprise.event.Observes;
 
-import static javax.enterprise.event.TransactionPhase.AFTER_SUCCESS;
+import static jakarta.enterprise.event.TransactionPhase.AFTER_SUCCESS;
 
 /**
  * A synchronous event listener using the notification bus of CDI. This bus is based on the

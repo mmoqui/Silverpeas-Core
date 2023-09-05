@@ -33,18 +33,18 @@ import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.Optional;
 
 /**
  * A provider of objets implementing the {@link ApplicationService} interface. The provider looks
  * for an implementation of the {@link ApplicationService} interface by the identifier of the
  * application instance. In order the discovery of such a service succeeds, it is required that each
- * implementation are annotated by the @{@link javax.inject.Named} annotation with as value the name
+ * implementation are annotated by the @{@link jakarta.inject.Named} annotation with as value the name
  * of the component with the first character in lowercase following by the term
  * <code>Service</code>; for example an application <code>Toto</code> should provide an
  * implementation of the {@link ApplicationService} interface named (with the {@link
- * javax.inject.Named} annotation) <code>totoService</code>.
+ * jakarta.inject.Named} annotation) <code>totoService</code>.
  * @author mmoquillon
  */
 @Provider
@@ -56,7 +56,7 @@ public class ApplicationServiceProvider {
 
   /**
    * The suffix to use when naming a service satisfying the {@link ApplicationService} interface
-   * with the {@link javax.inject.Named} annotation.
+   * with the {@link jakarta.inject.Named} annotation.
    */
   public static final String SERVICE_NAME_SUFFIX = "Service";
 

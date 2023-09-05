@@ -43,8 +43,8 @@ import org.silverpeas.core.test.TestBeanContainer;
 import org.silverpeas.core.util.BeanContainer;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.enterprise.util.AnnotationLiteral;
-import javax.persistence.EntityManager;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.persistence.EntityManager;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Date;

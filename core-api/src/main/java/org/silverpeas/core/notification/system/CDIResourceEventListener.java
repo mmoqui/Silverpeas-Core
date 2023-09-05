@@ -25,7 +25,7 @@ package org.silverpeas.core.notification.system;
 
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.enterprise.event.Observes;
+import jakarta.enterprise.event.Observes;
 
 /**
  * A synchronous event listener using the notification bus of CDI. This bus is based on the

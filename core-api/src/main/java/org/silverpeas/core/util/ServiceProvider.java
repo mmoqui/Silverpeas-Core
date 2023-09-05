@@ -27,7 +27,7 @@ import org.silverpeas.core.SilverpeasRuntimeException;
 import org.silverpeas.core.admin.component.model.SilverpeasComponentDataProvider;
 import org.silverpeas.core.admin.component.model.SilverpeasComponentInstance;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.lang.annotation.Annotation;
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -83,7 +83,7 @@ public final class ServiceProvider {
    * instance of an implementation of interfaces which are dealing with typed types
    * (<code>ApplicationService&lt;T&gt;</code> for example).<br>
    * To deal with this kind of interfaces, please use the
-   * {@link javax.enterprise.inject.Instance} method. An example can be found into core-library
+   * {@link jakarta.enterprise.inject.Instance} method. An example can be found into core-library
    * project at ApplicationServiceTest class.
    * @param type the type of the bean.
    * @param qualifiers zero, one or more qualifiers annotating the bean to look for.
@@ -102,7 +102,7 @@ public final class ServiceProvider {
    * <p>
    *   But in that case, the caller is knowingly requesting a singleton. It has to be SURE that
    *   the service it requests can be processed as a singleton behavior.<br/>
-   *   Indeed, a lot of service implementations are {@link javax.inject.Singleton} annotated, but
+   *   Indeed, a lot of service implementations are {@link jakarta.inject.Singleton} annotated, but
    *   in some cases, for memory reasons or others, some implementations are not.
    * </p>
    * <p>
@@ -137,7 +137,7 @@ public final class ServiceProvider {
    * instance of an implementation of interfaces which are dealing with typed types
    * (<code>ApplicationService&lt;T&gt;</code> for example).<br>
    * To deal with this kind of interfaces, please use the
-   * {@link javax.enterprise.inject.Instance} method. An example can be found into core-library
+   * {@link jakarta.enterprise.inject.Instance} method. An example can be found into core-library
    * project at ApplicationServiceTest class.
    * @param name the name of the bean.
    * @param <T> the type of the bean to return.
@@ -156,7 +156,7 @@ public final class ServiceProvider {
    * <p>
    *   But in that case, the caller is knowingly requesting a singleton. It has to be SURE that
    *   the service it requests can be processed as a singleton behavior.<br/>
-   *   Indeed, a lot of service implementations are {@link javax.inject.Singleton} annotated, but
+   *   Indeed, a lot of service implementations are {@link jakarta.inject.Singleton} annotated, but
    *   in some cases, for memory reasons or others, some implementations are not.
    * </p>
    * <p>
@@ -187,7 +187,7 @@ public final class ServiceProvider {
    * instance implementations of interfaces which are dealing with typed types
    * (<code>ApplicationService&lt;T&gt;</code> for example).<br>
    * To deal with this kind of interfaces, please use the
-   * {@link javax.enterprise.inject.Instance} method. An example can be found into core-library
+   * {@link jakarta.enterprise.inject.Instance} method. An example can be found into core-library
    * project at ApplicationServiceTest class.
    * @param type the type of the bean.
    * @param qualifiers zero, one or more qualifiers annotating the bean to look for.

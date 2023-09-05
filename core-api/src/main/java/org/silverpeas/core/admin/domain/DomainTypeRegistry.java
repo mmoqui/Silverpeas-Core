@@ -25,8 +25,8 @@ package org.silverpeas.core.admin.domain;
 
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
 

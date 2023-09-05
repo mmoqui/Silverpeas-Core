@@ -32,14 +32,14 @@ import org.silverpeas.core.persistence.datasource.model.IdentifiableEntity;
 import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.EmbeddedId;
-import javax.persistence.EntityManager;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreRemove;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 

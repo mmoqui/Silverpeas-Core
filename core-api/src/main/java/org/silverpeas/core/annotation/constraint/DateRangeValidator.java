@@ -25,8 +25,8 @@ package org.silverpeas.core.annotation.constraint;
 
 import org.silverpeas.core.date.TemporalConverter;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;

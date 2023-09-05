@@ -35,10 +35,12 @@ import org.silverpeas.core.util.lang.SystemWrapper;
 import org.silverpeas.core.util.logging.LoggerConfigurationManager;
 import org.silverpeas.core.util.logging.SilverLoggerProvider;
 
-import javax.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -119,9 +121,30 @@ public class CommonAPIRule implements TestRule {
     try {
       Constructor<ManagedThreadPool> managedThreadPoolConstructor =
           ManagedThreadPool.class.getDeclaredConstructor();
-      managedThreadPoolConstructor.setAccessible(true);
+      managedThreadPoolConstructor.trySetAccessible();
       ManagedThreadPool managedThreadPool = managedThreadPoolConstructor.newInstance();
-      ManagedThreadFactory managedThreadFactory = Thread::new;
+      ManagedThreadFactory managedThreadFactory = new ManagedThreadFactory() {
+
+        private final ForkJoinPool pool = new ForkJoinPool();
+
+        @Override
+        public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+          try {
+            Constructor<ForkJoinWorkerThread> forkJoinWorkerThreadConstructor =
+                ForkJoinWorkerThread.class.getDeclaredConstructor(ForkJoinPool.class);
+            forkJoinWorkerThreadConstructor.trySetAccessible();
+            return forkJoinWorkerThreadConstructor.newInstance(pool);
+          } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
+                   InvocationTargetException e) {
+            throw new RuntimeException(e);
+          }
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+          return new Thread(r);
+        }
+      };
       FieldUtils.writeField(managedThreadPool, "managedThreadFactory", managedThreadFactory, true);
       when(TestBeanContainer.getMockedBeanContainer()
           .getBeanByType(ManagedThreadPool.class)).thenReturn(managedThreadPool);

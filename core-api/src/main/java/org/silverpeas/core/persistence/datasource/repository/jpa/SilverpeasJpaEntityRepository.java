@@ -25,7 +25,7 @@ package org.silverpeas.core.persistence.datasource.repository.jpa;
 
 import org.silverpeas.core.persistence.datasource.model.jpa.SilverpeasJpaEntity;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 /**
  * A repository of Silverpeas {@link org.silverpeas.core.persistence.datasource.model.Entity}

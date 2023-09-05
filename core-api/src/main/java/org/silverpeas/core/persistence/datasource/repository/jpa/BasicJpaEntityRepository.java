@@ -26,7 +26,7 @@ package org.silverpeas.core.persistence.datasource.repository.jpa;
 import org.silverpeas.core.persistence.datasource.model.jpa.BasicJpaEntity;
 import org.silverpeas.core.persistence.datasource.repository.WithSaveAndFlush;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 /**
  * It represents the repositories taken in charge the persistence of the business entities in

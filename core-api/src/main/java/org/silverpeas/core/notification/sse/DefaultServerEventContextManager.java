@@ -26,7 +26,7 @@ package org.silverpeas.core.notification.sse;
 
 import org.silverpeas.core.annotation.Service;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

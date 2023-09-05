@@ -26,11 +26,11 @@ package org.silverpeas.core.calendar;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.util.CollectionUtil;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;

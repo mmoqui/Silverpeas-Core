@@ -26,7 +26,7 @@ package org.silverpeas.core.persistence.datasource.model.jpa;
 import org.silverpeas.core.persistence.datasource.model.EntityIdentifier;
 import org.silverpeas.core.persistence.datasource.model.IdentifiableEntity;
 
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.MappedSuperclass;
 
 /**
  * This abstract class must be extended by all basic JPA entities that don't fit to the persistence

@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.annotation;
 
-import javax.inject.Qualifier;
+import jakarta.inject.Qualifier;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 

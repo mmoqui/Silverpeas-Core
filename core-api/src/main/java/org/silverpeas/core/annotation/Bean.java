@@ -24,16 +24,13 @@
 
 package org.silverpeas.core.annotation;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Stereotype;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Stereotype;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 
 /**
  * This annotation is to tag an object as to be managed by the underlying IoC container with the

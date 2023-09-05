@@ -26,8 +26,8 @@ package org.silverpeas.core.persistence.datasource.repository.jpa;
 import org.silverpeas.core.persistence.datasource.repository.Parameters;
 import org.silverpeas.core.util.CollectionUtil;
 
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
+import jakarta.persistence.Query;
+import jakarta.persistence.TemporalType;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;

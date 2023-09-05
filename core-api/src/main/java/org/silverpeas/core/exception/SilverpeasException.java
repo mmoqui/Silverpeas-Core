@@ -25,7 +25,7 @@ package org.silverpeas.core.exception;
 
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;

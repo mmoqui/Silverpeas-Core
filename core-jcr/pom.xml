@@ -48,8 +48,8 @@
   <dependencies>
     <!-- JEE API -->
     <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
+      <groupId>jakarta.platform</groupId>
+      <artifactId>jakarta.jakartaee-api</artifactId>
     </dependency>
 
     <!-- Silverpeas Core API -->
@@ -135,8 +135,8 @@
       <artifactId>httpcore</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-fileupload2-jakarta</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>

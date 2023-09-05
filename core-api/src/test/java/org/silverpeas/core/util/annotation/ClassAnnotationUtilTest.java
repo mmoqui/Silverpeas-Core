@@ -25,7 +25,7 @@ package org.silverpeas.core.util.annotation;
 
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;

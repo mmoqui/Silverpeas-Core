@@ -26,7 +26,7 @@ package org.silverpeas.core.initialization;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.enterprise.inject.Any;
+import jakarta.enterprise.inject.Any;
 import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
