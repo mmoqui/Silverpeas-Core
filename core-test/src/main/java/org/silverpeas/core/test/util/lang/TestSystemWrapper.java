@@ -26,17 +26,17 @@ package org.silverpeas.core.test.util.lang;
 import org.apache.commons.io.FileUtils;
 import org.silverpeas.core.util.lang.SystemWrapper;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Priority;
-import javax.enterprise.inject.Alternative;
-import javax.inject.Singleton;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.inject.Singleton;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static javax.interceptor.Interceptor.Priority.APPLICATION;
+import static jakarta.interceptor.Interceptor.Priority.APPLICATION;
 
 /**
  * Default implementation that is nothing more than a delegate of {@link System} class.

@@ -24,6 +24,8 @@
 
 package org.silverpeas.core.test.unit.extention;
 
+import jakarta.enterprise.inject.Instance.Handle;
+import jakarta.enterprise.inject.spi.Bean;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -47,16 +49,16 @@ import org.silverpeas.core.util.logging.LoggerConfigurationManager;
 import org.silverpeas.core.util.logging.SilverLoggerProvider;
 
 import javax.annotation.Nonnull;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.concurrent.ManagedThreadFactory;
-import javax.enterprise.inject.AmbiguousResolutionException;
-import javax.enterprise.inject.Default;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.util.TypeLiteral;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Qualifier;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.enterprise.inject.AmbiguousResolutionException;
+import jakarta.enterprise.inject.Default;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.util.TypeLiteral;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Qualifier;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -72,6 +74,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -505,7 +509,28 @@ public class SilverTestEnv
           ManagedThreadPool.class.getDeclaredConstructor();
       managedThreadPoolConstructor.trySetAccessible();
       ManagedThreadPool managedThreadPool = managedThreadPoolConstructor.newInstance();
-      ManagedThreadFactory managedThreadFactory = Thread::new;
+      ManagedThreadFactory managedThreadFactory = new ManagedThreadFactory() {
+
+        private final ForkJoinPool pool = new ForkJoinPool();
+
+        @Override
+        public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+          try {
+            Constructor<ForkJoinWorkerThread> forkJoinWorkerThreadConstructor =
+                ForkJoinWorkerThread.class.getDeclaredConstructor(ForkJoinPool.class);
+            forkJoinWorkerThreadConstructor.trySetAccessible();
+            return forkJoinWorkerThreadConstructor.newInstance(pool);
+          } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
+                   InvocationTargetException e) {
+            throw new RuntimeException(e);
+          }
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+          return new Thread(r);
+        }
+      };
       FieldUtils.writeField(managedThreadPool, "managedThreadFactory", managedThreadFactory, true);
       when(TestBeanContainer.getMockedBeanContainer()
           .getBeanByType(ManagedThreadPool.class)).thenReturn(managedThreadPool);
@@ -661,6 +686,16 @@ public class SilverTestEnv
       // nothing to do
     }
 
+    @Override
+    public Handle<T> getHandle() {
+      return new HandleImpl<>(beansType);
+    }
+
+    @Override
+    public Iterable<? extends Handle<T>> handles() {
+      return Collections.singleton(getHandle());
+    }
+
     @Nonnull
     @Override
     public Iterator<T> iterator() {
@@ -680,6 +715,40 @@ public class SilverTestEnv
       } else {
         return mock(beansType);
       }
+    }
+  }
+
+  private static class HandleImpl<T> implements Handle<T> {
+
+    private final Class<T> beansType;
+
+    HandleImpl(Class<T> beansType) {
+      this.beansType = beansType;
+    }
+
+    @Override
+    public T get() {
+      Set<T> beans = TestBeanContainer.getMockedBeanContainer().getAllBeansByType(beansType);
+      if (!beans.isEmpty()) {
+        return beans.iterator().next();
+      } else {
+        return mock(beansType);
+      }
+    }
+
+    @Override
+    public Bean<T> getBean() {
+      return null;
+    }
+
+    @Override
+    public void destroy() {
+      // nothing to do
+    }
+
+    @Override
+    public void close() {
+      // nothing to do
     }
   }
 }

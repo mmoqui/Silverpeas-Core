@@ -26,6 +26,7 @@ package org.silverpeas.core.test.unit.extention;
 
 import org.silverpeas.core.test.unit.TestBeanContainer;
 
+import jakarta.annotation.PostConstruct;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -37,7 +38,7 @@ import java.lang.annotation.Target;
  * This annotation is used to indicate that a field or a parameter has to be instantiated and then
  * registered into the bean container used in the test before executing that test. For doing, the
  * bean type must have a default constructor. Once instantiated, if the bean has a
- * {@link javax.annotation.PostConstruct} annotated method, then this method will be invoked.
+ * {@link PostConstruct} annotated method, then this method will be invoked.
  * This annotation is for classes for which an instance is preferred to a mock in unit tests.
  * The difference between such beans and those annotated with {@link TestedBean} is that the
  * injection points in the former aren't resolved; indeed, {@link TestManagedBean} annotated beans
@@ -45,7 +46,7 @@ import java.lang.annotation.Target;
  * <p>
  * Any field annotated with this annotation can be explicitly instantiated, in that case it is that
  * instance that will be registered into the bean container and no
- * {@link javax.annotation.PostConstruct} annotated method will be invoked. If the test class
+ * {@link PostConstruct} annotated method will be invoked. If the test class
  * declares several annotated fields having a common type among their ancestor, then the fields
  * will be registered for that type and they could be get by using the
  * {@link TestBeanContainer#getAllBeansByType(Class, Annotation...)}

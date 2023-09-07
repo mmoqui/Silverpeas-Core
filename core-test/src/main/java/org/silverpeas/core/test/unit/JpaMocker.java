@@ -32,7 +32,7 @@ import org.silverpeas.core.persistence.datasource.model.jpa.EntityManagerProvide
 import org.silverpeas.core.persistence.datasource.repository.jpa.AbstractJpaEntityRepository;
 import org.silverpeas.core.util.Mutable;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.lang.reflect.ParameterizedType;
 
 import static org.mockito.ArgumentMatchers.any;
