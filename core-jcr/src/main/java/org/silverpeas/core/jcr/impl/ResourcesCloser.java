@@ -30,8 +30,8 @@ import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.logging.SilverLogger;
 
 import javax.annotation.Nullable;
-import javax.annotation.PreDestroy;
-import javax.inject.Singleton;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Singleton;
 import java.io.Closeable;
 import java.util.ArrayDeque;
 import java.util.Deque;

@@ -30,8 +30,8 @@ import org.silverpeas.core.jcr.impl.RepositorySettings;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Produces;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.inject.Produces;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.RepositoryFactory;
@@ -67,18 +67,7 @@ public class RepositoryProvider {
 
   @PostConstruct
   private void openRepository() {
-    RepositorySettings settings = new RepositorySettings();
-    Map<String, String> parameters = new HashMap<>();
-    parameters.put(RepositorySettings.JCR_HOME, settings.getJCRHomeDirectory());
-    parameters.put(RepositorySettings.JCR_CONF, settings.getJCRConfigurationFile());
-
-    Function<RepositoryFactory, Repository> repositoryGetter = f -> {
-      try {
-        return f.getRepository(parameters);
-      } catch (RepositoryException e) {
-        throw new SilverpeasRuntimeException(e);
-      }
-    };
+    RepositoryProducer repositoryProducer = getRepositoryProducer();
     SilverpeasRepositoryFactory factory = ServiceLoader.load(RepositoryFactory.class).stream()
         .map(ServiceLoader.Provider::get)
         .filter(SilverpeasRepositoryFactory.class::isInstance)
@@ -86,15 +75,33 @@ public class RepositoryProvider {
         .findFirst()
         .orElseThrow(() -> new SilverpeasRuntimeException("No JCR backend found!"));
 
-    Repository jcr = Optional.ofNullable(repositoryGetter.apply(factory))
+    Repository jcr = Optional.ofNullable(repositoryProducer.apply(factory))
         .orElseThrow(() -> new SilverpeasRuntimeException("No JCR backend found!"));
 
     SilverLogger.getLogger(this).info("Open connection to the JCR");
     repository = SilverpeasRepository.wrap(jcr);
   }
 
+  private static RepositoryProducer getRepositoryProducer() {
+    RepositorySettings settings = new RepositorySettings();
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put(RepositorySettings.JCR_HOME, settings.getJCRHomeDirectory());
+    parameters.put(RepositorySettings.JCR_CONF, settings.getJCRConfigurationFile());
+
+    return f -> {
+      try {
+        return f.getRepository(parameters);
+      } catch (RepositoryException e) {
+        throw new SilverpeasRuntimeException(e);
+      }
+    };
+  }
+
   @Produces
   public SilverpeasRepository getRepository() {
     return repository;
+  }
+
+  private interface RepositoryProducer extends Function<RepositoryFactory, Repository> {
   }
 }
