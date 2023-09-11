@@ -25,7 +25,7 @@ package org.silverpeas.core.admin.quota.service;
 
 import org.silverpeas.core.annotation.Service;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * @author Yohann Chastagnier

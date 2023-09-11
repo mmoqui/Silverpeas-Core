@@ -26,7 +26,7 @@ package org.silverpeas.core.notification.user.client.model;
 import org.silverpeas.core.annotation.Repository;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Repository
 public class NotificationSchema {

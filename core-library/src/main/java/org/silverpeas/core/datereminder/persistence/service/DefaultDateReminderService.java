@@ -31,9 +31,9 @@ import org.silverpeas.core.datereminder.persistence.repository
     .PersistentResourceDateReminderRepository;
 import org.silverpeas.core.persistence.EntityReference;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import java.util.Collection;
 import java.util.Date;
 

@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.contribution.content.form.displayers;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.ecs.xhtml.div;
 import org.silverpeas.core.contribution.content.form.Field;
 import org.silverpeas.core.contribution.content.form.FieldDisplayer;
@@ -133,8 +133,7 @@ public class MultipleUserFieldDisplayer extends AbstractFieldDisplayer<MultipleU
    * Updates the value of the field. The fieldName must be used to retrieve the HTTP parameter from
    * the request.
    *
-   * @throw FormException if the field type is not a managed type.
-   * @throw FormException if the field doesn't accept the new value.
+   * @throws FormException if the field type is not a managed type or doesn't accept the new value
    */
   @Override
   public List<String> update(String newIds, MultipleUserField field, FieldTemplate template,
@@ -153,7 +152,8 @@ public class MultipleUserFieldDisplayer extends AbstractFieldDisplayer<MultipleU
   }
 
   @Override
-  public List<String> update(List<FileItem> items, MultipleUserField field, FieldTemplate template,
+  public List<String> update(List<FileItem<?>> items, MultipleUserField field,
+      FieldTemplate template,
       PagesContext pageContext) throws FormException {
     String itemName = template.getFieldName();
     String value = FileUploadUtil.getParameter(items, itemName);
@@ -164,21 +164,11 @@ public class MultipleUserFieldDisplayer extends AbstractFieldDisplayer<MultipleU
     return update(value, field, template, pageContext);
   }
 
-  /**
-   * Method declaration
-   *
-   * @return
-   */
   @Override
   public boolean isDisplayedMandatory() {
     return true;
   }
 
-  /**
-   * Method declaration
-   *
-   * @return
-   */
   @Override
   public int getNbHtmlObjectsDisplayed(FieldTemplate template,
       PagesContext pagesContext) {

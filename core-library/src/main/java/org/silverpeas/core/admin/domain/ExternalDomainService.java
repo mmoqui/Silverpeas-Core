@@ -31,8 +31,8 @@ import org.silverpeas.core.admin.domain.exception.DomainDeletionException;
 import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.util.StringUtil;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
 @Service
 @Singleton

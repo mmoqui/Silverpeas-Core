@@ -34,7 +34,7 @@ import org.silverpeas.core.index.search.model.IndexSearcher;
 import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Date;
 import java.util.List;
 

@@ -39,8 +39,8 @@ import org.silverpeas.core.util.MemoizedSupplier;
 import org.silverpeas.core.util.Pair;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;

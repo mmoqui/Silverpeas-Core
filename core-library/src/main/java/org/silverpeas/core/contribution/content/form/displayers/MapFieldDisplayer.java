@@ -52,17 +52,18 @@ import java.util.Map;
  */
 public class MapFieldDisplayer extends AbstractTextFieldDisplayer {
 
-  public final static String PARAM_MAP = "map";
-  public final static String PARAM_HEIGHT = "height";
-  public final static String PARAM_WIDTH = "width";
-  public final static String PARAM_KIND = "kind";
-  public final static String PARAM_ZOOM = "zoom";
-  public final static String PARAM_ENLARGE = "enlarge";
+  public static final String PARAM_MAP = "map";
+  public static final String PARAM_HEIGHT = "height";
+  public static final String PARAM_WIDTH = "width";
+  public static final String PARAM_KIND = "kind";
+  public static final String PARAM_ZOOM = "zoom";
+  public static final String PARAM_ENLARGE = "enlarge";
 
-  public final static String KIND_NORMAL = "m";
-  public final static String KIND_SATELLITE = "k";
-  public final static String KIND_HYBRID = "h";
-  public final static String KIND_RELIEF = "t";
+  public static final String KIND_NORMAL = "m";
+  public static final String KIND_SATELLITE = "k";
+  public static final String KIND_HYBRID = "h";
+  public static final String KIND_RELIEF = "t";
+  private static final String AMP = "&amp;";
 
   /**
    * Prints the HTML value of the field. The displayed value must be updatable by the end user. The
@@ -71,7 +72,7 @@ public class MapFieldDisplayer extends AbstractTextFieldDisplayer {
    * <ul>
    * <li>the field type is not a managed type.</li>
    * </ul>
-   * @throws FormException
+   * @throws FormException if an error occurs
    */
   @Override
   public void display(PrintWriter out, TextField field, FieldTemplate template,
@@ -95,15 +96,15 @@ public class MapFieldDisplayer extends AbstractTextFieldDisplayer {
       if (template.isReadOnly()) {
         StringBuilder src = new StringBuilder(50);
         src.append("https://maps.google.fr/maps?");
-        src.append("hl=").append(pageContext.getLanguage()).append("&amp;");
+        src.append("hl=").append(pageContext.getLanguage()).append(AMP);
         src.append("source=embed&amp;");
         src.append("layer=c&amp;");
         src.append("t=").append(getParameterValue(parameters, PARAM_KIND, KIND_NORMAL))
-            .append("&amp;");
-        src.append("q=").append(value).append("&amp;");
+            .append(AMP);
+        src.append("q=").append(value).append(AMP);
         String zoom = getParameterValue(parameters, PARAM_ZOOM, null);
         if (StringUtil.isDefined(zoom)) {
-          src.append("z=").append(zoom).append("&amp;");
+          src.append("z=").append(zoom).append(AMP);
         }
         src.append("iwloc=dummy");
         String link = src.toString();
@@ -121,8 +122,8 @@ public class MapFieldDisplayer extends AbstractTextFieldDisplayer {
 
         if (map) {
           iframe anIFrame = new iframe();
-          anIFrame.addAttribute("width", getParameterValue(parameters, PARAM_WIDTH, "425"));
-          anIFrame.addAttribute("height", getParameterValue(parameters, PARAM_HEIGHT, "350"));
+          anIFrame.addAttribute(PARAM_WIDTH, getParameterValue(parameters, PARAM_WIDTH, "425"));
+          anIFrame.addAttribute(PARAM_HEIGHT, getParameterValue(parameters, PARAM_HEIGHT, "350"));
           anIFrame.setFrameBorder(false);
           anIFrame.setScrolling(frame.no);
           anIFrame.setMarginHeight(0);
@@ -140,7 +141,7 @@ public class MapFieldDisplayer extends AbstractTextFieldDisplayer {
           container.addElement(href);
         }
 
-        out.print(container.toString());
+        out.print(container);
       } else if (!template.isDisabled()) {
 
         input textInput = new input();
@@ -169,9 +170,9 @@ public class MapFieldDisplayer extends AbstractTextFieldDisplayer {
           container.addElement(textInput);
           container.addElement("&nbsp;");
           container.addElement(image);
-          out.println(container.toString());
+          out.println(container);
         } else {
-          out.println(textInput.toString());
+          out.println(textInput);
         }
 
       }
@@ -179,7 +180,7 @@ public class MapFieldDisplayer extends AbstractTextFieldDisplayer {
   }
 
   private String getParameterValue(Map<String, String> parameters, String name, String defaultValue) {
-    return parameters.containsKey(name) ? parameters.get(name) : defaultValue;
+    return parameters.getOrDefault(name, defaultValue);
   }
 
 }

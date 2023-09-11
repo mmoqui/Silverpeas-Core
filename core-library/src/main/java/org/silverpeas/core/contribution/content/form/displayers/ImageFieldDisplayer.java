@@ -63,13 +63,14 @@ public class ImageFieldDisplayer extends AbstractFileFieldDisplayer {
 
   private static final SettingBundle settings =
       ResourceLocator.getSettingBundle("org.silverpeas.lookAndFeel.generalLook");
+  private static final String JQUERY_ID_TOKEN = "$(\"#";
 
   /**
    * Prints the HTML value of the field. The displayed value must be updatable by the end user. The
    * value format may be adapted to a local language. The fieldName must be used to name the html
    * form input. Never throws an Exception but log a silvertrace and writes an empty string when :
    * <UL> <LI>the field type is not a managed type. </UL>
-   * @throws FormException
+   * @throws FormException if an error occurs
    */
   @Override
   public void display(PrintWriter out, FileField field, FieldTemplate template,
@@ -126,7 +127,7 @@ public class ImageFieldDisplayer extends AbstractFileFieldDisplayer {
         if (!StringUtil.isDefined(size)) {
           size = "x50";
         }
-        String thumbnailURL = imageURL;
+        String thumbnailURL;
         if (imageURL != null) {
           thumbnailURL = FileServerUtils.getImageURL(imageURL, size);
         } else {
@@ -178,8 +179,8 @@ public class ImageFieldDisplayer extends AbstractFileFieldDisplayer {
 
   private void displayImage(Map<String, String> parameters, String imageURL, PrintWriter out, boolean useOriginalDimension) {
     if (!useOriginalDimension) {
-      String height = (parameters.containsKey("height") ? parameters.get("height") : "");
-      String width = (parameters.containsKey("width") ? parameters.get("width") : "");
+      String height = parameters.getOrDefault("height", "");
+      String width = parameters.getOrDefault("width", "");
       String size = width + "x" + height;
       if (size.length() <= 1) {
         size = settings.getString("image.size.xmlform", null);
@@ -223,16 +224,16 @@ public class ImageFieldDisplayer extends AbstractFileFieldDisplayer {
             .append(fieldNameFunction).append("('").append(component.getId()).append("')\" title=\"")
             .append(title).append("\">").append(label).append("</a>");
       }
-      out.println(stringBuilder.toString());
+      out.println(stringBuilder);
 
       out.println("<script type=\"text/javascript\">");
       GalleryHelper.getJavaScript(fieldNameFunction, fieldName, language, out);
       out.println("function choixImageInGallery" + fieldNameFunction + "(url){");
-      out.println("$(\"#" + fieldName + "ThumbnailArea\").css(\"display\", \"block\");");
-      out.println("$(\"#" + fieldName + "Thumbnail\").attr(\"src\", url);");
-      out.println("$(\"#" + fieldName + "ThumbnailLink\").attr(\"href\", url);");
-      out.println("$(\"#" + fieldName + FileField.PARAM_ID_SUFFIX + "\").attr(\"value\", url);");
-      out.println("$(\"#" + fieldName + OPERATION_KEY + "\").attr(\"value\", \"" +
+      out.println(JQUERY_ID_TOKEN + fieldName + "ThumbnailArea\").css(\"display\", \"block\");");
+      out.println(JQUERY_ID_TOKEN + fieldName + "Thumbnail\").attr(\"src\", url);");
+      out.println(JQUERY_ID_TOKEN + fieldName + "ThumbnailLink\").attr(\"href\", url);");
+      out.println(JQUERY_ID_TOKEN + fieldName + FileField.PARAM_ID_SUFFIX + "\").attr(\"value\", url);");
+      out.println(JQUERY_ID_TOKEN + fieldName + OPERATION_KEY + "\").attr(\"value\", \"" +
           originalOperation.name() + "\");");
       out.println("}");
       out.println("</script>");

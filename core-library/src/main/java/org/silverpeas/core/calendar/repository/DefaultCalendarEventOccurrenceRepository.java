@@ -30,13 +30,12 @@ import org.silverpeas.core.date.Period;
 import org.silverpeas.core.persistence.datasource.repository.jpa.BasicJpaEntityRepository;
 import org.silverpeas.core.persistence.datasource.repository.jpa.NamedParameters;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static org.silverpeas.core.date.TemporalConverter.asInstant;
-import static org.silverpeas.core.date.TemporalConverter.asOffsetDateTime;
 
 /**
  * @author mmoquillon

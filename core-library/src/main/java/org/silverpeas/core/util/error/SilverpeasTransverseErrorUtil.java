@@ -31,7 +31,7 @@ import org.silverpeas.core.admin.component.exception.ComponentFileFilterExceptio
 import org.silverpeas.core.admin.space.quota.process.check.exception.DataStorageQuotaException;
 import org.silverpeas.core.util.UnitUtil;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 
 /**

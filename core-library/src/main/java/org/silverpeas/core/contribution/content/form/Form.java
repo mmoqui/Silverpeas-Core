@@ -23,9 +23,9 @@
  */
 package org.silverpeas.core.contribution.content.form;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.util.List;
 
 /**
@@ -69,7 +69,7 @@ public interface Form {
    * @throws FormException if the field type is not a managed type or if the field doesn't accept
    * the new value.
    */
-  List<String> updateWysiwyg(List<FileItem> items,
+  List<String> updateWysiwyg(List<FileItem<?>> items,
       DataRecord record, PagesContext pagesContext)
       throws FormException;
 
@@ -80,7 +80,7 @@ public interface Form {
    * @throws FormException if the field type is not a managed type or if the field doesn't accept
    * the new value.
    */
-  List<String> update(List<FileItem> items,
+  List<String> update(List<FileItem<?>> items,
       DataRecord record, PagesContext pagesContext)
       throws FormException;
 
@@ -91,7 +91,7 @@ public interface Form {
    * @throws FormException if the field type is not a managed type or  if the field doesn't
    * accept the new value.
    */
-  List<String> update(List<FileItem> items,
+  List<String> update(List<FileItem<?>> items,
       DataRecord record, PagesContext pagesContext, boolean updateWysiwyg)
       throws FormException;
 
@@ -110,7 +110,7 @@ public interface Form {
 
   String toString(PagesContext pagesContext);
 
-  boolean isEmpty(List<FileItem> items, DataRecord record, PagesContext pagesContext);
+  boolean isEmpty(List<FileItem<?>> items, DataRecord record, PagesContext pagesContext);
 
   void setFormName(String name);
 

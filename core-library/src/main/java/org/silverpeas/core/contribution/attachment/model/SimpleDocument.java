@@ -51,7 +51,7 @@ import org.silverpeas.core.util.file.FileServerUtils;
 import org.silverpeas.core.util.file.FileUtil;
 import org.silverpeas.core.wbe.WbeHostManager;
 
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Arrays;

@@ -31,7 +31,7 @@ import org.silverpeas.core.scheduler.Scheduler;
 import org.silverpeas.core.scheduler.trigger.JobTrigger;
 import org.silverpeas.core.scheduler.trigger.TimeUnit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 
 import static org.silverpeas.core.notification.sse.ServerEventDispatcherTask.getContextSnapshot;

@@ -44,7 +44,7 @@ import org.silverpeas.core.personalization.dao.PersonalizationMatcher;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 import java.time.ZoneId;
 

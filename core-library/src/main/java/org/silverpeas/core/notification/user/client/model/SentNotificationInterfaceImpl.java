@@ -29,8 +29,8 @@ import org.silverpeas.core.notification.user.client.UserRecipient;
 import org.silverpeas.core.personalization.service.PersonalizationServiceProvider;
 import org.silverpeas.core.security.authorization.ForbiddenRuntimeException;
 
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;

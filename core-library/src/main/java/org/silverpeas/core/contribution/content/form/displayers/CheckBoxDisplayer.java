@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.contribution.content.form.displayers;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.silverpeas.core.contribution.content.form.Field;
 import org.silverpeas.core.contribution.content.form.FieldDisplayer;
 import org.silverpeas.core.contribution.content.form.FieldTemplate;
@@ -53,11 +53,7 @@ import java.util.StringTokenizer;
  */
 public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
 
-  /**
-   * Constructeur
-   */
-  public CheckBoxDisplayer() {
-  }
+  private static final String VALUES = "values";
 
   /**
    * Returns the name of the managed types.
@@ -67,17 +63,18 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
   }
 
   /**
-   * Prints the javascripts which will be used to control the new value given to the named field.
+   * Prints the javascript code which will be used to control the new value given to the named
+   * field.
    * The error messages may be adapted to a local language. The FieldTemplate gives the field type
-   * and constraints. The FieldTemplate gives the local labeld too. Never throws an Exception but
-   * log a silvertrace and writes an empty string when :
+   * and constraints. The FieldTemplate gives the local labeled too. Never throws an exception but
+   * log a message and writes an empty string when:
    * <ul>
    * <li>the fieldName is unknown by the template.
    * <li>the field type is not a managed type.
    * </ul>
-   * @param out
-   * @param template
-   * @param pagesContext
+   * @param out the output
+   * @param template the field template
+   * @param pagesContext the pages context.
    */
   @Override
   public void displayScripts(PrintWriter out, FieldTemplate template, PagesContext pagesContext) {
@@ -103,15 +100,15 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
   /**
    * Prints the HTML value of the field. The displayed value must be updatable by the end user. The
    * value format may be adapted to a local language. The fieldName must be used to name the html
-   * form input. Never throws an Exception but log a silvertrace and writes an empty string when :
+   * form input. Never throws an Exception but log a message and writes an empty string when:
    * <ul>
    * <li>the field type is not a managed type.</li>
    * </ul>
-   * @param out
-   * @param field
-   * @param template
-   * @param PagesContext
-   * @throws FormException
+   * @param out the output
+   * @param field the text field
+   * @param template the field template
+   * @param pageContext the page context
+   * @throws FormException if an error occurs
    */
   @Override
   public void display(PrintWriter out, TextField field, FieldTemplate template,
@@ -137,8 +134,8 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
     if (parameters.containsKey("keys")) {
       keys = parameters.get("keys");
     }
-    if (parameters.containsKey("values")) {
-      values = parameters.get("values");
+    if (parameters.containsKey(VALUES)) {
+      values = parameters.get(VALUES);
     }
     String cssClass = null;
     if (parameters.containsKey("class")) {
@@ -150,11 +147,10 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
 
     try {
       if (parameters.containsKey("cols")) {
-        cols = Integer.valueOf(parameters.get("cols"));
+        cols = Integer.parseInt(parameters.get("cols"));
       }
     } catch (NumberFormatException nfe) {
       SilverLogger.getLogger(this).error("Illegal Parameter cols: {0}", parameters.get("cols"));
-      cols = 1;
     }
 
     String defaultValue = getDefaultValue(template, pageContext);
@@ -201,11 +197,8 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
         if (template.isDisabled() || template.isReadOnly()) {
           html.append(" disabled=\"disabled\" ");
         }
-        boolean mustBeChecked = false;
-        if (valuesFromDB.isEmpty() && !pageContext.isIgnoreDefaultValues() && (
-            optKey.equals(defaultValue) || optValue.equals(defaultValue))) {
-          mustBeChecked = true;
-        }
+        boolean mustBeChecked = valuesFromDB.isEmpty() && !pageContext.isIgnoreDefaultValues() && (
+            optKey.equals(defaultValue) || optValue.equals(defaultValue));
 
         if (valuesFromDB.contains(optKey)) {
           mustBeChecked = true;
@@ -218,11 +211,10 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
         html.append("/>&nbsp;").append(optValue);
 
         // last checkBox
-        if (i == nbTokens - 1) {
-          if (template.isMandatory() && !template.isDisabled() && !template.isReadOnly() &&
-              !template.isHidden() && pageContext.useMandatory()) {
+        if (i == nbTokens - 1 &&
+            (template.isMandatory() && !template.isDisabled() && !template.isReadOnly() &&
+              !template.isHidden() && pageContext.useMandatory())) {
             html.append(Util.getMandatorySnippet());
-          }
         }
         html.append("</td>");
         html.append("\n");
@@ -240,13 +232,13 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
   }
 
   @Override
-  public List<String> update(List<FileItem> items, TextField field, FieldTemplate template,
+  public List<String> update(List<FileItem<?>> items, TextField field, FieldTemplate template,
       PagesContext pageContext) throws FormException {
     StringBuilder value = new StringBuilder();
-    Iterator<FileItem> iter = items.iterator();
+    Iterator<FileItem<?>> iter = items.iterator();
     String parameterName = template.getFieldName();
     while (iter.hasNext()) {
-      FileItem item = iter.next();
+      FileItem<?> item = iter.next();
       if (parameterName.equals(item.getFieldName())) {
         if (value.length() > 0) {
           value.append("##");
@@ -263,14 +255,14 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
 
   @Override
   public List<String> update(String valuesToInsert, TextField field, FieldTemplate template,
-      PagesContext PagesContext) throws FormException {
+      PagesContext pagesContext) throws FormException {
     if (!TextField.TYPE.equals(field.getTypeName())) {
       throw new FormException("CheckBoxDisplayer.update", "form.EX_NOT_CORRECT_TYPE",
           TextField.TYPE);
     }
 
-    if (field.acceptValue(valuesToInsert, PagesContext.getLanguage())) {
-      field.setValue(valuesToInsert, PagesContext.getLanguage());
+    if (field.acceptValue(valuesToInsert, pagesContext.getLanguage())) {
+      field.setValue(valuesToInsert, pagesContext.getLanguage());
     } else {
       throw new FormException("CheckBoxDisplayer.update", "form.EX_NOT_CORRECT_VALUE",
           TextField.TYPE);
@@ -291,13 +283,13 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
     if (parameters.containsKey("keys")) {
       keys = parameters.get("keys");
     }
-    if (parameters.containsKey("values")) {
-      values = parameters.get("values");
+    if (parameters.containsKey(VALUES)) {
+      values = parameters.get(VALUES);
     }
 
     // if either keys or values is not filled
     // take the same for keys and values
-    if (keys.equals("") && !values.equals("")) {
+    if (keys.isEmpty() && !values.isEmpty()) {
       keys = values;
     }
 

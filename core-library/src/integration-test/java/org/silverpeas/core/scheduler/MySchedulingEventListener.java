@@ -25,7 +25,7 @@ package org.silverpeas.core.scheduler;
 
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import static org.junit.Assert.assertNotNull;
 

@@ -35,8 +35,8 @@ import org.silverpeas.core.util.UnitUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 import org.silverpeas.core.util.time.Duration;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

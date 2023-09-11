@@ -27,7 +27,7 @@ import org.silverpeas.core.admin.quota.model.Quota;
 import org.silverpeas.core.annotation.Repository;
 import org.silverpeas.core.persistence.datasource.repository.jpa.BasicJpaEntityRepository;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * @author Yohann Chastagnier

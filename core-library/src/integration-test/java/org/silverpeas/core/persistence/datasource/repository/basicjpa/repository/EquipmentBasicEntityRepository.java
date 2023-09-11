@@ -27,7 +27,7 @@ import org.silverpeas.core.annotation.Repository;
 import org.silverpeas.core.persistence.datasource.repository.basicjpa.model.EquipmentBasicEntity;
 import org.silverpeas.core.persistence.datasource.repository.jpa.BasicJpaEntityRepository;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * User: Yohann Chastagnier

@@ -27,7 +27,7 @@ package org.silverpeas.core.xml;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * The FieldHandler for the Date class

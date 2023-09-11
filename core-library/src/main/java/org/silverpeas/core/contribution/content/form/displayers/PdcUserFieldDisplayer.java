@@ -68,15 +68,15 @@ public class PdcUserFieldDisplayer extends AbstractFieldDisplayer<PdcUserField> 
    * </UL>
    */
   @Override
-  public void displayScripts(PrintWriter out, FieldTemplate template, PagesContext PagesContext) {
-    String language = PagesContext.getLanguage();
+  public void displayScripts(PrintWriter out, FieldTemplate template, PagesContext pagesContext) {
+    String language = pagesContext.getLanguage();
 
     String fieldName = template.getFieldName();
     String label = WebEncodeHelper.javaStringToJsString(template.getLabel(language));
 
-    if (template.isMandatory() && PagesContext.useMandatory()) {
+    if (template.isMandatory() && pagesContext.useMandatory()) {
       out.println("   if (isWhitespace(stripInitialWhitespace(document.forms['"
-          + PagesContext.getFormName() + "'].elements['"
+          + pagesContext.getFormName() + "'].elements['"
           + fieldName + "$$id'].value))) {");
       out.println("      errorMsg+=\"  - '"
           + label
@@ -86,7 +86,7 @@ public class PdcUserFieldDisplayer extends AbstractFieldDisplayer<PdcUserField> 
       out.println("   }");
     }
 
-    Util.getJavascriptChecker(template.getFieldName(), PagesContext, out);
+    Util.getJavascriptChecker(template.getFieldName(), pagesContext, out);
   }
 
   /**
@@ -99,9 +99,9 @@ public class PdcUserFieldDisplayer extends AbstractFieldDisplayer<PdcUserField> 
    */
   @Override
   public void display(PrintWriter out, PdcUserField field, FieldTemplate template,
-      PagesContext PagesContext) throws FormException {
+      PagesContext pagesContext) throws FormException {
 
-    String language = PagesContext.getLanguage();
+    String language = pagesContext.getLanguage();
     String mandatoryImg = Util.getIcon("mandatoryField");
     String selectUserImg = Util.getIcon("userPanel");
     String selectUserLab = Util.getString("userPanel", language);
@@ -137,7 +137,7 @@ public class PdcUserFieldDisplayer extends AbstractFieldDisplayer<PdcUserField> 
       html +=
           "&nbsp;<a href=\"#\" onclick=\"javascript:SP_openWindow('" + URLUtil.
           getApplicationURL() + "/RpdcSearchUserWrapper/jsp/Open"
-          + "?formName=" + PagesContext.getFormName()
+          + "?formName=" + pagesContext.getFormName()
           + "&elementId=" + fieldName + "$$id"
           + "&elementName=" + fieldName + "$$name"
           + "&selectedUsers=" + ((userCardIds == null) ? "" : userCardIds)
@@ -147,7 +147,7 @@ public class PdcUserFieldDisplayer extends AbstractFieldDisplayer<PdcUserField> 
           + selectUserLab + "\" align=\"absmiddle\" title=\""
           + selectUserLab + "\"></a>";
 
-      if (template.isMandatory() && PagesContext.useMandatory()) {
+      if (template.isMandatory() && pagesContext.useMandatory()) {
         html += "&nbsp;<img src=\"" + mandatoryImg
             + "\" width=\"5\" height=\"5\" border=\"0\"/>";
       }

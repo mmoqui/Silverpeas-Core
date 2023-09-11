@@ -33,7 +33,7 @@ import org.silverpeas.core.node.coordinates.model.CoordinateRuntimeException;
 import org.silverpeas.core.node.coordinates.persistence.CoordinatesDAO;
 import org.silverpeas.core.persistence.jdbc.DBUtil;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;

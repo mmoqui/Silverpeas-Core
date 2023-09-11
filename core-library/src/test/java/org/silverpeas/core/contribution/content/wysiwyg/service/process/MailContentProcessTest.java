@@ -46,9 +46,9 @@ import org.silverpeas.core.test.unit.extention.TestManagedBean;
 import org.silverpeas.core.util.URLUtil;
 import org.silverpeas.core.util.file.FileUtil;
 
-import javax.activation.FileDataSource;
-import javax.activation.URLDataSource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.activation.FileDataSource;
+import jakarta.activation.URLDataSource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;

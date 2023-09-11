@@ -28,7 +28,7 @@ import org.silverpeas.core.persistence.datasource.repository.jpa.SilverpeasJpaEn
 import org.silverpeas.core.persistence.datasource.repository.jpa.model.Animal;
 import org.silverpeas.core.persistence.datasource.repository.jpa.model.Person;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.List;
 
 /**

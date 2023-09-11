@@ -69,7 +69,7 @@ import static org.junit.Assert.assertThrows;
  * Entities :
  * - Person (Uuid identifier, has a bag of animal without cascade behaviour)
  * - Animal (Unique Id identifier, attached to a person and has a bag of equipment with {@link
- * javax.persistence.CascadeType#ALL} behaviour)
+ * jakarta.persistence.CascadeType#ALL} behaviour)
  * - Equipment (Uuid identifier, attached to an animal)
  * <p>
  * User: Yohann Chastagnier

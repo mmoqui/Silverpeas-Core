@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.notification.system;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

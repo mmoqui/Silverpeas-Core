@@ -27,8 +27,8 @@ import org.silverpeas.core.SilverpeasRuntimeException;
 import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.annotation.Technical;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Singleton;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;

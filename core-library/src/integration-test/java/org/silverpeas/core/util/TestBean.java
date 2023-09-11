@@ -23,7 +23,6 @@
  */
 package org.silverpeas.core.util;
 
-import javax.xml.bind.annotation.XmlElement;
 import java.util.Date;
 
 /**

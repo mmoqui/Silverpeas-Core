@@ -53,7 +53,7 @@ import org.silverpeas.core.contribution.content.form.FieldTemplate;
 import org.silverpeas.core.contribution.content.form.FormException;
 import org.silverpeas.core.contribution.content.form.PagesContext;
 import org.silverpeas.core.contribution.content.form.Util;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.silverpeas.core.index.indexing.model.FullIndexEntry;
 import org.silverpeas.core.util.WebEncodeHelper;
 import org.silverpeas.core.util.file.FileUploadUtil;
@@ -71,10 +71,10 @@ import java.util.Map;
 public abstract class AbstractFieldDisplayer<T extends Field> implements FieldDisplayer<T> {
 
   @Override
-  public List<String> update(List<FileItem> items, T field, FieldTemplate template,
+  public List<String> update(List<FileItem<?>> items, T field, FieldTemplate template,
           PagesContext pageContext) throws FormException {
     String fieldName = Util.getFieldOccurrenceName(template.getFieldName(), field.getOccurrence());
-    String value = FileUploadUtil.getParameter(items, fieldName, null, pageContext.getEncoding());
+    String value = FileUploadUtil.getParameter(items, fieldName, null, pageContext.getCharset());
     if (pageContext.getUpdatePolicy() == PagesContext.ON_UPDATE_IGNORE_EMPTY_VALUES
             && !StringUtil.isDefined(value)) {
       return new ArrayList<>(0);
@@ -102,8 +102,8 @@ public abstract class AbstractFieldDisplayer<T extends Field> implements FieldDi
       String label = WebEncodeHelper.javaStringToJsString(template.getLabel(language));
       out.println(
           "   if (!ignoreMandatory && isWhitespace(stripInitialWhitespace(field.value))) {\n");
-      out.println((new StringBuilder()).append("      errorMsg+=\"  - '").append(label).append("' ")
-          .append(Util.getString("GML.MustBeFilled", language)).append("\\n\";\n").toString());
+      out.println("      errorMsg+=\"  - '" + label + "' " +
+          Util.getString("GML.MustBeFilled", language) + "\\n\";\n");
       out.println("      errorNb++;\n");
       out.println("   }\n");
     }

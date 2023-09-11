@@ -46,8 +46,8 @@ import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.expression.PrefixedNotationExpressionEngine;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

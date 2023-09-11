@@ -40,7 +40,7 @@ import org.silverpeas.core.util.CollectionUtil;
 import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -90,17 +90,17 @@ public class XmlSearchForm extends AbstractForm {
    * </ul>
    */
   @Override
-  public String toString(PagesContext pagesContext, DataRecord record) {
+  public String toString(PagesContext pagesContext, DataRecord dataRecord) {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw, true);
-    display(pw, pagesContext, record);
+    display(pw, pagesContext, dataRecord);
     return sw.toString();
   }
 
   @Override
-  public void display(JspWriter jw, PagesContext pageContext, DataRecord record) {
+  public void display(JspWriter jw, PagesContext pageContext, DataRecord dataRecord) {
     PrintWriter out = new PrintWriter(jw, true);
-    display(out, pageContext, record);
+    display(out, pageContext, dataRecord);
   }
 
   /**
@@ -112,7 +112,7 @@ public class XmlSearchForm extends AbstractForm {
    * <LI>a field has not the required type.
    * </UL>
    */
-  private void display(PrintWriter jw, PagesContext pagesContext, DataRecord record) {
+  private void display(PrintWriter jw, PagesContext pagesContext, DataRecord dataRecord) {
     String language = pagesContext.getLanguage();
     PrintWriter out = new PrintWriter(jw, true);
 
@@ -152,7 +152,7 @@ public class XmlSearchForm extends AbstractForm {
         listFields.add(fieldSpace);
       }
 
-      displayFields(out, record, listFields, language, pc);
+      displayFields(out, dataRecord, listFields, language, pc);
 
       out.println("</ul>");
       out.println(DIV_TAG_END);
@@ -161,7 +161,7 @@ public class XmlSearchForm extends AbstractForm {
     }
   }
 
-  private void displayFields(final PrintWriter out, final DataRecord record,
+  private void displayFields(final PrintWriter out, final DataRecord dataRecord,
       final List<FieldTemplate> listFields, final String language, final PagesContext pc) {
     for (FieldTemplate fieldTemplate : listFields) {
       String fieldName = fieldTemplate.getFieldName();
@@ -184,7 +184,7 @@ public class XmlSearchForm extends AbstractForm {
         out.println("<div class=\"fieldInput\">");
 
         try {
-          fieldDisplayer.display(out, record.getField(fieldName), fieldTemplate, pc);
+          fieldDisplayer.display(out, dataRecord.getField(fieldName), fieldTemplate, pc);
         } catch (FormException fe) {
           SilverLogger.getLogger(this).error(fe.getMessage(), fe);
         }

@@ -44,9 +44,9 @@ import org.silverpeas.core.util.ResourceLocator;
 import org.silverpeas.core.util.SettingBundle;
 import org.silverpeas.core.util.StringUtil;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -612,7 +612,7 @@ public class DefaultNodeService implements NodeService, ComponentInstanceDeletio
    * @param nd the NodeDetail which contains data
    * @return the NodePK of the new Node
    * @see NodeDetail
-   * @throws javax.ejb.CreateException
+   * @throws jakarta.ejb.CreateException
    * @since 1.0
    */
   private NodePK save(NodeDetail nd) {

@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.util;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
  * A bean that has to be managed by CDI. It is here for testing purpose.

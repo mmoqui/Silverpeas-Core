@@ -37,7 +37,7 @@ import org.silverpeas.core.persistence.Transaction;
 import org.silverpeas.core.persistence.TransactionRuntimeException;
 import org.silverpeas.core.util.Process;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @author Yohann Chastagnier

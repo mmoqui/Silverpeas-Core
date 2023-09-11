@@ -29,10 +29,10 @@ import org.mockito.Mockito;
 import org.silverpeas.core.test.unit.UnitTest;
 import org.silverpeas.core.util.Charsets;
 
-import javax.activation.DataHandler;
-import javax.mail.Multipart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.activation.DataHandler;
+import jakarta.mail.Multipart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.util.ArrayList;
 import java.util.List;
 

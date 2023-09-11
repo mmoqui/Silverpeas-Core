@@ -27,7 +27,7 @@ package org.silverpeas.core.contribution.content;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.StringDataExtractor.RegexpPatternDirective;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;

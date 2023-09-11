@@ -35,7 +35,7 @@ import org.silverpeas.core.contribution.content.form.record.GenericFieldTemplate
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -290,11 +290,11 @@ public class HtmlForm extends AbstractForm {
    * </ul>
    */
   @Override
-  public void display(JspWriter jw, PagesContext pagesContext, DataRecord record) {
+  public void display(JspWriter jw, PagesContext pagesContext, DataRecord dataRecord) {
     String recordId = "";
     try {
-      recordId = record.getId();
-      jw.write(toString(pagesContext, record));
+      recordId = dataRecord.getId();
+      jw.write(toString(pagesContext, dataRecord));
     } catch (IOException fe) {
       SilverLogger.getLogger(this).error(failureOnRendering("record data", recordId), fe);
     }
@@ -311,22 +311,22 @@ public class HtmlForm extends AbstractForm {
    * @return the string to be displayed
    */
   @Override
-  public String toString(PagesContext pageContext, DataRecord record) {
-    this.record = record;
+  public String toString(PagesContext pageContext, DataRecord dataRecord) {
+    this.record = dataRecord;
     this.pagesContext = pageContext;
     ByteArrayOutputStream buffer = new ByteArrayOutputStream(2048);
     try {
       PrintWriter out = new PrintWriter(new OutputStreamWriter(buffer, Charsets.UTF_8), true);
       out.println(getSkippableSnippet(pageContext));
-      out.println("<input type=\"hidden\" name=\"id\" value=\"" + record.getId() + "\"/>");
+      out.println("<input type=\"hidden\" name=\"id\" value=\"" + dataRecord.getId() + "\"/>");
       parseFile(out);
       out.flush();
     } catch (FileNotFoundException fe) {
-      SilverLogger.getLogger(this).error(failureOnOpeningFile("from record"), fe);
+      SilverLogger.getLogger(this).error(failureOnOpeningFile("from dataRecord"), fe);
     } catch (IOException fe) {
-      SilverLogger.getLogger(this).error(failureOnRendering("record data for HTML layer", ""), fe);
+      SilverLogger.getLogger(this).error(failureOnRendering("dataRecord data for HTML layer", ""), fe);
     }
-    return new String(buffer.toByteArray(), Charsets.UTF_8);
+    return buffer.toString(Charsets.UTF_8);
   }
 
   /**

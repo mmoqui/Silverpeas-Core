@@ -26,7 +26,7 @@ package org.silverpeas.core.security.authorization;
 
 import org.silverpeas.core.annotation.Base;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * @author silveryocha

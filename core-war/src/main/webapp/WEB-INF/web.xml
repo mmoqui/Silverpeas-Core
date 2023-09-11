@@ -238,7 +238,7 @@
     <listener-class>org.silverpeas.core.web.mvc.SilverListener</listener-class>
   </listener>
   <listener>
-    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+    <listener-class>org.apache.commons.fileupload2.servlet.FileCleanerCleanup</listener-class>
   </listener>
 
   <!-- Context listener for CMIS -->

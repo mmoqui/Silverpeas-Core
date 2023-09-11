@@ -31,8 +31,8 @@ import org.silverpeas.core.util.annotation.SourceObject;
 import org.silverpeas.core.util.annotation.TargetPK;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.ejb.Stateless;
-import javax.transaction.Transactional;
+import jakarta.ejb.Stateless;
+import jakarta.transaction.Transactional;
 
 /**
  * @author Yohann Chastagnier

@@ -29,7 +29,7 @@
   <parent>
     <groupId>org.silverpeas</groupId>
     <artifactId>core</artifactId>
-    <version>6.4-SNAPSHOT</version>
+    <version>6.4-feature13271</version>
   </parent>
 
   <groupId>org.silverpeas.core</groupId>
@@ -99,11 +99,11 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
+      <artifactId>bcprov-jdk18on</artifactId>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcmail-jdk15on</artifactId>
+      <artifactId>bcmail-jdk18on</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -214,14 +214,6 @@
     <dependency>
       <groupId>com.drewnoakes</groupId>
       <artifactId>metadata-extractor</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.social</groupId>
-      <artifactId>spring-social-linkedin</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.social</groupId>
-      <artifactId>spring-social-facebook</artifactId>
     </dependency>
 
     <dependency>

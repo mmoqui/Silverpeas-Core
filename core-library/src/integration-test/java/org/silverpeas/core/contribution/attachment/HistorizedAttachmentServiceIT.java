@@ -49,7 +49,7 @@ import org.silverpeas.core.util.DateUtil;
 import org.silverpeas.core.util.MimeTypes;
 import org.silverpeas.core.jcr.JCRSession;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import java.io.ByteArrayInputStream;

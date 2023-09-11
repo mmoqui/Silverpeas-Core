@@ -29,12 +29,12 @@ import org.silverpeas.core.admin.service.DefaultOrganizationController;
 import org.silverpeas.core.admin.user.model.UserDetail;
 import org.silverpeas.core.annotation.Service;
 
-import javax.annotation.Priority;
-import javax.enterprise.inject.Alternative;
-import javax.inject.Singleton;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.inject.Singleton;
 import java.util.Optional;
 
-import static javax.interceptor.Interceptor.Priority.APPLICATION;
+import static jakarta.interceptor.Interceptor.Priority.APPLICATION;
 import static org.silverpeas.core.subscription.AbstractCommonSubscriptionIntegrationTest.GROUPID_WITH_ONE_USER;
 import static org.silverpeas.core.subscription.AbstractCommonSubscriptionIntegrationTest.USERID_OF_GROUP_WITH_ONE_USER;
 

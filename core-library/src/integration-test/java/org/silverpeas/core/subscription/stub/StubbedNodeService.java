@@ -29,11 +29,11 @@ import org.silverpeas.core.node.model.NodePath;
 import org.silverpeas.core.node.model.NodePK;
 import org.silverpeas.core.node.service.DefaultNodeService;
 
-import javax.annotation.Priority;
-import javax.enterprise.inject.Alternative;
-import javax.inject.Singleton;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.inject.Singleton;
 
-import static javax.interceptor.Interceptor.Priority.APPLICATION;
+import static jakarta.interceptor.Interceptor.Priority.APPLICATION;
 
 /**
  * Stubbed node service implementation in order to simulate treatment behavior without setting all

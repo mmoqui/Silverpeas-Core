@@ -25,7 +25,7 @@ package org.silverpeas.core.security.authentication.password.encryption;
 
 import org.silverpeas.core.security.authentication.password.PasswordEncryption;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.Random;

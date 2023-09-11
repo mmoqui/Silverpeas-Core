@@ -1,12 +1,13 @@
 package org.silverpeas.core.util.file;
 
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
 import org.apache.commons.io.FileCleaningTracker;
 
 import java.io.File;
+import java.nio.file.Path;
 
 /**
- * A provider of a {@link org.apache.commons.fileupload.disk.DiskFileItemFactory} factory. Its goal
+ * A provider of a {@link org.apache.commons.fileupload2.core.DiskFileItemFactory} factory. Its goal
  * is to initialize this factory with some default parameters for the particular use
  * of Silverpeas:
  * <ul>
@@ -24,10 +25,10 @@ public class DiskFileItemFactoryProvider {
    * @return a {@link DiskFileItemFactory} object.
    */
   public DiskFileItemFactory provide() {
-    DiskFileItemFactory factory = new DiskFileItemFactory();
-    factory.setSizeThreshold(THRESHOLD_SIZE);
-    factory.setRepository(new File(FileRepositoryManager.getTemporaryPath()));
-    factory.setFileCleaningTracker(new FileCleaningTracker());
-    return factory;
+    return DiskFileItemFactory.builder()
+        .setFileCleaningTracker(new FileCleaningTracker())
+        .setBufferSize(THRESHOLD_SIZE)
+        .setPath(Path.of(FileRepositoryManager.getTemporaryPath()))
+        .get();
   }
 }

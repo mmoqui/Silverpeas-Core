@@ -31,7 +31,7 @@ import org.silverpeas.core.initialization.Initialization;
 import org.silverpeas.core.util.SettingBundle;
 import org.silverpeas.core.util.StringUtil;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.stream.Stream;
 
 import static org.silverpeas.core.util.ResourceLocator.getSettingBundle;

@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.contribution.content.form;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.Div;
 import org.apache.ecs.html.Input;
@@ -34,10 +34,12 @@ import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.error.SilverpeasTransverseErrorUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
+
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,7 +50,7 @@ import java.util.List;
  */
 public abstract class AbstractForm implements Form {
 
-  private List<FieldTemplate> fieldTemplates;
+  private final List<FieldTemplate> fieldTemplates;
   private String title = "";
   private String name = "";
   private String formName = "";
@@ -62,6 +64,7 @@ public abstract class AbstractForm implements Form {
 
   /**
    * Creates a new form from the specified template of records.
+   *
    * @param template the record template.
    * @throws FormException if an error occurs while setting up the form.
    */
@@ -92,6 +95,7 @@ public abstract class AbstractForm implements Form {
 
   /**
    * Gets the title of this form.
+   *
    * @return the title of this form or an empty string if it isn't set.
    */
   @Override
@@ -101,6 +105,7 @@ public abstract class AbstractForm implements Form {
 
   /**
    * Sets the form title.
+   *
    * @param title the new title of the form.
    */
   public void setTitle(final String title) {
@@ -116,6 +121,7 @@ public abstract class AbstractForm implements Form {
    * <LI>a field is unknown by the template.
    * <LI>a field has not the required type.
    * </UL>
+   *
    * @param jw the JSP writer into which the javascript is written.
    * @param pagesContext the JSP page context.
    */
@@ -128,7 +134,7 @@ public abstract class AbstractForm implements Form {
 
       boolean jsAdded = false;
       if (StringUtil.isDefined(pagesContext.getComponentId()) && StringUtil.isDefined(getName())) {
-        ComponentInstLight component =  OrganizationControllerProvider.getOrganisationController()
+        ComponentInstLight component = OrganizationControllerProvider.getOrganisationController()
             .getComponentInstLight(pagesContext.getComponentId());
         if (component != null && component.isWorkflow()) {
           out.append("<script type=\"text/javascript\" src=\"/weblib/workflows/")
@@ -162,7 +168,7 @@ public abstract class AbstractForm implements Form {
 
       String functionName = "ifCorrectFormExecute";
       if (pagesContext.isMultiFormInPage()) {
-        functionName = "ifCorrectForm"+pagesContext.getFormIndex()+"Execute";
+        functionName = "ifCorrectForm" + pagesContext.getFormIndex() + "Execute";
       }
 
       String initFunctionName = functionName.replaceAll("Execute$", "Init");
@@ -183,7 +189,8 @@ public abstract class AbstractForm implements Form {
           String fieldType = fieldTemplate.getTypeName();
           String fieldName = fieldTemplate.getFieldName();
           boolean mandatory = fieldTemplate.isMandatory();
-          displayFieldTemplate(out, pc, fieldTemplate, fieldDisplayerName, fieldType, fieldName, mandatory);
+          displayFieldTemplate(out, pc, fieldTemplate, fieldDisplayerName, fieldType, fieldName,
+              mandatory);
         }
       }
 
@@ -240,13 +247,14 @@ public abstract class AbstractForm implements Form {
 
       if (fieldDisplayer != null) {
         int nbFieldsToDisplay = fieldTemplate.getMaximumNumberOfOccurrences();
-        for (int i=0; i<nbFieldsToDisplay; i++) {
+        for (int i = 0; i < nbFieldsToDisplay; i++) {
           String currentFieldName = Util.getFieldOccurrenceName(fieldName, i);
           ((GenericFieldTemplate) fieldTemplate).setFieldName(currentFieldName);
           if (i > 0) {
             ((GenericFieldTemplate) fieldTemplate).setMandatory(false);
           }
-          out.append("  field = document.getElementById(\"").append(currentFieldName).append("\");\n");
+          out.append("  field = document.getElementById(\"").append(currentFieldName).append("\")" +
+              ";\n");
           out.append("  if (field == null) {\n");
           // try to find field by name
           out.append("  var $field = $(\"input[name='").append(currentFieldName).append("']\");\n");
@@ -270,6 +278,7 @@ public abstract class AbstractForm implements Form {
   /**
    * Prints this form into the specified JSP writer according to the specified records of data that
    * populate the form fields.
+   *
    * @param out the JSP writer.
    * @param pagesContext the JSP page context.
    * @param record the record the data records embbed the form fields.
@@ -280,6 +289,7 @@ public abstract class AbstractForm implements Form {
   /**
    * Prints this form into the specified JSP writer according to the specified records of data that
    * populate the form fields.
+   *
    * @param out the JSP writer.
    * @param pagesContext the JSP page context.
    */
@@ -292,12 +302,14 @@ public abstract class AbstractForm implements Form {
    * Updates the values of the dataRecord using the RecordTemplate to extra control information
    * (readOnly or mandatory status). The fieldName must be used to retrieve the HTTP parameter from
    * the request.
+   *
    * @param items the item of a form in which is embedded multipart data.
    * @param record the record of data.
    * @param pagesContext the page context.
    */
   @Override
-  public List<String> update(List<FileItem> items, DataRecord record, PagesContext pagesContext) {
+  public List<String> update(List<FileItem<?>> items, DataRecord record,
+      PagesContext pagesContext) {
     return update(items, record, pagesContext, true);
   }
 
@@ -305,13 +317,14 @@ public abstract class AbstractForm implements Form {
    * Updates the values of the dataRecord using the RecordTemplate to extra control information
    * (readOnly or mandatory status). The fieldName must be used to retrieve the HTTP parameter from
    * the request.
+   *
    * @param items the item of a form in which is embbeded multipart data.
    * @param record the record of data.
    * @param pagesContext the page context.
    * @param updateWysiwyg flag indicating if all of WYSIWYG data can be updated.
    */
   @Override
-  public List<String> update(List<FileItem> items, DataRecord record, PagesContext pagesContext,
+  public List<String> update(List<FileItem<?>> items, DataRecord record, PagesContext pagesContext,
       boolean updateWysiwyg) {
     List<String> attachmentIds = new ArrayList<>();
 
@@ -328,7 +341,7 @@ public abstract class AbstractForm implements Form {
     return attachmentIds;
   }
 
-  private void updateField(final List<FileItem> items, final DataRecord record,
+  private void updateField(final List<FileItem<?>> items, final DataRecord record,
       final PagesContext pagesContext, final boolean updateWysiwyg,
       final List<String> attachmentIds, final FieldTemplate fieldTemplate) {
     String fieldName = fieldTemplate.getFieldName();
@@ -339,9 +352,10 @@ public abstract class AbstractForm implements Form {
         fieldDisplayerName = getTypeManager().getDisplayerName(fieldType);
       }
       if (!"wysiwyg".equals(fieldDisplayerName) || updateWysiwyg) {
-        FieldDisplayer<Field> fieldDisplayer = getTypeManager().getDisplayer(fieldType, fieldDisplayerName);
+        FieldDisplayer<Field> fieldDisplayer = getTypeManager().getDisplayer(fieldType,
+            fieldDisplayerName);
         if (fieldDisplayer != null) {
-          for (int occ = 0; occ< fieldTemplate.getMaximumNumberOfOccurrences(); occ++) {
+          for (int occ = 0; occ < fieldTemplate.getMaximumNumberOfOccurrences(); occ++) {
             attachmentIds.addAll(fieldDisplayer.update(items, record.getField(fieldName, occ),
                 fieldTemplate, pagesContext));
           }
@@ -357,12 +371,13 @@ public abstract class AbstractForm implements Form {
    * Updates the values of the dataRecord using the RecordTemplate to extra control information
    * (readOnly or mandatory status). The fieldName must be used to retrieve the HTTP parameter from
    * the request.
+   *
    * @param items the item of a form in which is embbeded multipart data.
    * @param record the record of data.
    * @param pagesContext the page context.
    */
   @Override
-  public List<String> updateWysiwyg(List<FileItem> items, DataRecord record,
+  public List<String> updateWysiwyg(List<FileItem<?>> items, DataRecord record,
       PagesContext pagesContext) {
     List<String> attachmentIds = new ArrayList<>();
     for (FieldTemplate fieldTemplate : fieldTemplates) {
@@ -371,7 +386,7 @@ public abstract class AbstractForm implements Form {
     return attachmentIds;
   }
 
-  private void updateWysiwygField(final List<FileItem> items, final DataRecord record,
+  private void updateWysiwygField(final List<FileItem<?>> items, final DataRecord record,
       final PagesContext pagesContext, final List<String> attachmentIds,
       final FieldTemplate fieldTemplate) {
     FieldDisplayer<Field> fieldDisplayer;
@@ -399,17 +414,18 @@ public abstract class AbstractForm implements Form {
   /**
    * Is the form is empty? A form is empty if all of its fields aren't valued (no data associated
    * with them).
+   *
    * @param items the items embbeding multipart data in the form.
    * @param record the record of data.
    * @param pagesContext the page context.
    * @return true if one of the form field has no data.
    */
   @Override
-  public boolean isEmpty(List<FileItem> items, DataRecord record, PagesContext pagesContext) {
+  public boolean isEmpty(List<FileItem<?>> items, DataRecord record, PagesContext pagesContext) {
     boolean isEmpty = true;
     for (FieldTemplate fieldTemplate : fieldTemplates) {
       if (fieldTemplate != null) {
-        isEmpty = checkFieldIsEmpty(items, pagesContext, isEmpty, fieldTemplate);
+        isEmpty = checkFieldIsEmpty(items, pagesContext, fieldTemplate);
       }
       if (!isEmpty) {
         break;
@@ -418,11 +434,12 @@ public abstract class AbstractForm implements Form {
     return isEmpty;
   }
 
-  private boolean checkFieldIsEmpty(final List<FileItem> items, final PagesContext pagesContext,
-      boolean isEmpty, final FieldTemplate fieldTemplate) {
+  private boolean checkFieldIsEmpty(final List<FileItem<?>> items, final PagesContext pagesContext,
+      final FieldTemplate fieldTemplate) {
     FieldDisplayer<? extends Field> fieldDisplayer;
     String fieldType = fieldTemplate.getTypeName();
     String fieldDisplayerName = fieldTemplate.getDisplayerName();
+    boolean isEmpty = true;
     try {
       if (!StringUtil.isDefined(fieldDisplayerName)) {
         fieldDisplayerName = getTypeManager().getDisplayerName(fieldType);
@@ -430,11 +447,11 @@ public abstract class AbstractForm implements Form {
       fieldDisplayer = getTypeManager().getDisplayer(fieldType, fieldDisplayerName);
       if (fieldDisplayer != null) {
         String itemName = fieldTemplate.getFieldName();
-        FileItem item = getParameter(items, itemName);
+        FileItem<?> item = getParameter(items, itemName);
         if (item != null && !item.isFormField() && StringUtil.isDefined(item.getName())) {
           isEmpty = false;
         } else {
-          String itemValue = getParameterValue(items, itemName, pagesContext.getEncoding());
+          String itemValue = getParameterValue(items, itemName, pagesContext.getCharset());
           isEmpty = !StringUtil.isDefined(itemValue);
         }
       }
@@ -446,32 +463,33 @@ public abstract class AbstractForm implements Form {
 
   /**
    * Gets the value of the specified parameter from the specified items.
-   * @param items the items of the form embbeding multipart data.
+   *
+   * @param items the items of the form embedding multipart data.
    * @param parameterName the name of the parameter.
-   * @param encoding the encoding at which the value must be in.
+   * @param charset the charset in which the value must be encoded.
    * @return the value of the specified parameter in the given encoding. or null if no such
    * parameter is defined in this form.
-   * @throws UnsupportedEncodingException if the encoding at which the value should be in isn't
-   * supported.
+   * @throws java.io.IOException if an I/O error occurs while getting the parameter value.
    */
-  private String getParameterValue(List<FileItem> items, String parameterName, String encoding)
-      throws UnsupportedEncodingException {
-    FileItem item = getParameter(items, parameterName);
+  private String getParameterValue(List<FileItem<?>> items, String parameterName, Charset charset)
+      throws IOException {
+    FileItem<?> item = getParameter(items, parameterName);
     if (item != null && item.isFormField()) {
-      return item.getString(encoding);
+      return item.getString(charset);
     }
     return null;
   }
 
   /**
    * Gets the multipart data of the specified parameter.
+   *
    * @param items the items of the form with all of the multipart data.
    * @param parameterName the name of the parameter.
    * @return the item corresponding to the specified parameter.
    */
-  private FileItem getParameter(final List<FileItem> items, final String parameterName) {
-    FileItem fileItem = null;
-    for (FileItem item : items) {
+  private FileItem<?> getParameter(final List<FileItem<?>> items, final String parameterName) {
+    FileItem<?> fileItem = null;
+    for (FileItem<?> item : items) {
       if (parameterName.equals(item.getFieldName())) {
         fileItem = item;
         break;

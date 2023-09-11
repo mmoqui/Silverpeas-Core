@@ -32,7 +32,7 @@ import org.silverpeas.core.cache.service.CacheServiceProvider;
 import org.silverpeas.core.util.Mutable;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.util.AnnotationLiteral;
 import java.util.Set;
 
 /**
@@ -47,7 +47,7 @@ import java.util.Set;
  * </p>
  * <p>
  * Any application that requires to implement this interface MUST qualify with the
- * {@link javax.inject.Named} annotation by a name satisfying the following convention
+ * {@link jakarta.inject.Named} annotation by a name satisfying the following convention
  * <code>[COMPONENT NAME]InstanceAccessControlExtension</code>. For example, for an
  * application Kmelia, the implementation must be qualified with <code>@Named
  * ("kmeliaInstanceAccessControlExtension")

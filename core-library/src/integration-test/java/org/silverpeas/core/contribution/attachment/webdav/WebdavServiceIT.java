@@ -37,7 +37,7 @@ import org.silverpeas.core.test.jcr.JcrIntegrationIT;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.jcr.JCRSession;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.jcr.Node;
 
 import static javax.jcr.Property.*;

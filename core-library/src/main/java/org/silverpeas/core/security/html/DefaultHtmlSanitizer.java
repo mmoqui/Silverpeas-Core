@@ -26,8 +26,8 @@ package org.silverpeas.core.security.html;
 
 import org.silverpeas.core.contribution.content.wysiwyg.service.WysiwygContentTransformer;
 
-import javax.enterprise.inject.Default;
-import javax.inject.Singleton;
+import jakarta.enterprise.inject.Default;
+import jakarta.inject.Singleton;
 
 /**
  * @author silveryocha

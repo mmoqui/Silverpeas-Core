@@ -29,8 +29,8 @@ import org.silverpeas.core.annotation.Provider;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * A provider of DomainService objects. Its aim is to manage the life-cycle of such objects and so

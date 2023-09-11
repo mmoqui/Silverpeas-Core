@@ -36,7 +36,7 @@ import org.silverpeas.core.test.integration.rule.LoggerReaderRule;
 import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
 import org.silverpeas.core.util.lang.SystemWrapper;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;

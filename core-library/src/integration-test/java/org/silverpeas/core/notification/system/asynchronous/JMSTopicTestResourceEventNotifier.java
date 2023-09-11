@@ -28,11 +28,11 @@ import org.silverpeas.core.notification.system.ResourceEvent;
 import org.silverpeas.core.notification.system.TestResource;
 import org.silverpeas.core.notification.system.TestResourceEvent;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Observes;
-import javax.jms.Destination;
-import javax.jms.Topic;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.event.Observes;
+import jakarta.jms.Destination;
+import jakarta.jms.Topic;
 
 /**
  * A stateless EJB producing notification (according to the JEE spec, the definition of a queue

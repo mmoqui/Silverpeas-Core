@@ -30,7 +30,7 @@ import org.silverpeas.core.cache.service.CacheServiceProvider;
 import org.silverpeas.core.util.Mutable;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.util.AnnotationLiteral;
 
 /**
  * This interface extends access controller extension for a SimpleDocument resource.
@@ -44,7 +44,7 @@ import javax.enterprise.util.AnnotationLiteral;
  * </p>
  * <p>
  * Any application that requires to implement this interface MUST qualify with the
- * {@link javax.inject.Named} annotation by a name satisfying the following convention
+ * {@link jakarta.inject.Named} annotation by a name satisfying the following convention
  * <code>[COMPONENT NAME]InstanceSimpleDocumentAccessControlExtension</code>. For example, for an
  * application Kmelia, the implementation must be qualified with <code>@Named
  * ("kmeliaInstanceSimpleDocumentAccessControlExtension")

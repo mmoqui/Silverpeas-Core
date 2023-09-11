@@ -26,7 +26,7 @@ package org.silverpeas.core.calendar;
 
 import org.silverpeas.core.annotation.Service;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.Optional;
 
 /**

@@ -28,7 +28,7 @@ import org.silverpeas.core.admin.user.model.SilverpeasRole;
 import org.silverpeas.core.annotation.Base;
 import org.silverpeas.core.contribution.publication.model.PublicationDetail;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import static org.silverpeas.core.admin.user.model.SilverpeasRole.WRITER;
 

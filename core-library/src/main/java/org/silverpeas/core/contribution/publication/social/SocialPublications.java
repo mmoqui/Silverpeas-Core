@@ -32,7 +32,7 @@ import org.silverpeas.core.security.authorization.PublicationAccessControl;
 import org.silverpeas.core.socialnetwork.model.SocialInformation;
 import org.silverpeas.core.socialnetwork.provider.SocialPublicationProvider;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;

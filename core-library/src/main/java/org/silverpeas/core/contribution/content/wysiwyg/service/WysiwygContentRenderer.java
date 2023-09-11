@@ -29,7 +29,7 @@ import org.silverpeas.core.contribution.content.renderer.ContributionContentRend
 import org.silverpeas.core.contribution.model.ContributionContent;
 import org.silverpeas.core.contribution.model.WysiwygContent;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
  * This renderer is instantiated as explained into

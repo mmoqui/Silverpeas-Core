@@ -24,7 +24,7 @@
 
 package org.silverpeas.core.util;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
  * @author mmoquillon

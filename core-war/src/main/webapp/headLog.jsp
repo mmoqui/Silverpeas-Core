@@ -27,7 +27,6 @@
 <%@page import="org.silverpeas.core.admin.user.model.User" %>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
-<%@ page import="org.silverpeas.core.socialnetwork.model.SocialNetworkID" %>
 <%@ page import="org.silverpeas.core.util.LocalizationBundle" %>
 <%@ page import="org.silverpeas.core.util.ResourceLocator" %>
 <%@ page import="org.silverpeas.core.util.SettingBundle" %>
@@ -74,10 +73,7 @@
   boolean newRegistrationActive = registrationSettings.isUserSelfRegistrationEnabled();
   boolean virtualKeyboardActive = ResourceLocator.getGeneralSettingBundle().getBoolean("web.tool.virtualKeyboard", false);
 
-// active social networks
-  boolean facebookEnabled = SocialNetworkID.FACEBOOK.isEnabled();
-  boolean linkedInEnabled = SocialNetworkID.LINKEDIN.isEnabled();
-  boolean registrationPartActive = newRegistrationActive || facebookEnabled || linkedInEnabled;
+  boolean registrationPartActive = newRegistrationActive;
 // Get a AuthenticationService object
 Authentication lpAuth = Authentication.get();
 // list of domains

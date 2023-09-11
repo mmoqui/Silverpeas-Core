@@ -26,8 +26,9 @@ package org.silverpeas.core.contribution.content.form;
 import org.silverpeas.core.util.URLUtil;
 import org.silverpeas.core.contribution.attachment.util.SharingContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -325,6 +326,10 @@ public class PagesContext implements Serializable {
 
   public final void setEncoding(String encoding) {
     this.encoding = encoding;
+  }
+
+  public final Charset getCharset() {
+    return Charset.forName(encoding);
   }
 
   public boolean isCreation() {

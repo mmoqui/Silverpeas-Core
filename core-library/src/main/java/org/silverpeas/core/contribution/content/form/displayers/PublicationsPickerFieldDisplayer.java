@@ -23,8 +23,7 @@
  */
 package org.silverpeas.core.contribution.content.form.displayers;
 
-import net.htmlparser.jericho.Source;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.silverpeas.core.contribution.content.form.FieldTemplate;
 import org.silverpeas.core.contribution.content.form.FormException;
 import org.silverpeas.core.contribution.content.form.PagesContext;
@@ -84,7 +83,7 @@ public class PublicationsPickerFieldDisplayer
    * <ul>
    * <li>the field type is not a managed type.</li>
    * </ul>
-   * @throws FormException
+   * @throws FormException if an error occurs
    */
   @Override
   public void display(PrintWriter out, PublicationsPickerField field, FieldTemplate template,
@@ -95,7 +94,6 @@ public class PublicationsPickerFieldDisplayer
     String deleteImg = Util.getIcon("delete");
     String deleteLabel = Util.getString("GML.delete", language);
 
-    String displayedValue = "";
     String rawRefs = "";
     StringBuilder html = new StringBuilder();
 
@@ -103,9 +101,6 @@ public class PublicationsPickerFieldDisplayer
 
     if (field.getTypeName().equals(PublicationsPickerField.TYPE)) {
       rawRefs = field.getRawResouceReferences();
-    }
-    if (!field.isNull()) {
-      displayedValue = field.getValue(language);
     }
     html.append("<input type=\"hidden\" id=\"").append(fieldName).append("\"");
     html.append(" name=\"").append(fieldName).append("\"");
@@ -200,7 +195,7 @@ public class PublicationsPickerFieldDisplayer
   }
 
   @Override
-  public List<String> update(List<FileItem> items, PublicationsPickerField field,
+  public List<String> update(List<FileItem<?>> items, PublicationsPickerField field,
       FieldTemplate template, PagesContext pageContext) throws FormException {
     String itemName = template.getFieldName();
     String value = FileUploadUtil.getParameter(items, itemName);

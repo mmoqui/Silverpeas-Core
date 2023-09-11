@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.io.upload;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.silverpeas.core.ResourceReference;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.contribution.attachment.AttachmentServiceProvider;
@@ -41,6 +41,7 @@ import org.silverpeas.core.util.file.FileRepositoryManager;
 import org.silverpeas.core.util.file.FileUtil;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 
 import static org.silverpeas.core.util.StringUtil.defaultStringIfNotDefined;
@@ -104,6 +105,14 @@ public class UploadedFile {
   }
 
   /**
+   * Gets the path to the uploaded file.
+   * @return the path of the uploaded file.
+   */
+  public Path getPath() {
+    return getFile().toPath();
+  }
+
+  /**
    * Gets the title filled by the user for the uploaded file.
    * @return the title of the content of the file.
    */
@@ -123,7 +132,7 @@ public class UploadedFile {
    * Converts the current instance into a {@link FileItem} one.
    * @return a {@link FileItem} instance.
    */
-  public FileItem asFileItem() {
+  public FileItem<?> asFileItem() {
     return new UploadedFileItem(this);
   }
 

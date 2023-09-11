@@ -95,7 +95,7 @@ public class JdbcFieldDisplayer extends AbstractFieldDisplayer<JdbcField> {
    * <ul>
    * <li>the field type is not a managed type.</li>
    * </ul>
-   * @throws FormException
+   * @throws FormException if an error occurs
    */
   @Override
   public void display(PrintWriter out, JdbcField field, FieldTemplate template,
@@ -129,7 +129,7 @@ public class JdbcFieldDisplayer extends AbstractFieldDisplayer<JdbcField> {
       generateDefaultView(html, template, fieldName, valueFieldType);
 
     }
-    out.println(html.toString());
+    out.println(html);
 
   }
 
@@ -163,7 +163,7 @@ public class JdbcFieldDisplayer extends AbstractFieldDisplayer<JdbcField> {
 
   private Collection<String> getResponses(final String currentUserId, final JdbcField field,
       final Map<String, String> parameters) throws FormException {
-    Collection<String> listRes = null;
+    Collection<String> listRes;
     Connection jdbcConnection = null;
     try {
       jdbcConnection =

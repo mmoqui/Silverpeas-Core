@@ -31,7 +31,7 @@ import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.subscription.service.ComponentSubscriptionResource;
 import org.silverpeas.core.util.StringUtil;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * Listener of the events on the deletion or on an update of a component instance. If the component

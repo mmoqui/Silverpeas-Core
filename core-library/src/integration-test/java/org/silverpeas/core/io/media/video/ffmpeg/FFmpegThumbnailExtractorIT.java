@@ -45,7 +45,7 @@ import org.silverpeas.core.util.exec.ExternalExecutionException;
 import org.silverpeas.core.util.time.Duration;
 import org.silverpeas.core.util.time.DurationConversionBoardKey;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 
 import static org.hamcrest.CoreMatchers.notNullValue;

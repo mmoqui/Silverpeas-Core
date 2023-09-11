@@ -53,13 +53,7 @@ import java.util.Map;
 public class LdapFieldDisplayer extends AbstractFieldDisplayer<LdapField> {
 
   private static final String[] MANAGED_TYPES = new String[]{LdapField.TYPE};
-  private static final String mandatoryImg = Util.getIcon("mandatoryField");
-
-  /**
-   * Constructeur
-   */
-  public LdapFieldDisplayer() {
-  }
+  private static final String MANDATORY_IMG = Util.getIcon("mandatoryField");
 
   /**
    * Returns the name of the managed types.
@@ -221,7 +215,7 @@ public class LdapFieldDisplayer extends AbstractFieldDisplayer<LdapField> {
 
       if (template.isMandatory() && !template.isDisabled() && !template.isReadOnly()
           && !template.isHidden() && pagesContext.useMandatory()) {
-        html.append("<img src=\"").append(mandatoryImg).append("\" width=\"5\" height=\"5\" ");
+        html.append("<img src=\"").append(MANDATORY_IMG).append("\" width=\"5\" height=\"5\" ");
         html.append("border=\"0\" alt=\"\" style=\"position:absolute;left:16em;top:5px\"/>\n");
       }
 
@@ -279,7 +273,7 @@ public class LdapFieldDisplayer extends AbstractFieldDisplayer<LdapField> {
 
         if ((template.isMandatory()) && (!template.isDisabled()) && (!template.isReadOnly())
             && (!template.isHidden())) {
-          html.append("&nbsp;<img src=\"").append(mandatoryImg).append(
+          html.append("&nbsp;<img src=\"").append(MANDATORY_IMG).append(
               "\" width=\"5\" height=\"5\" border=\"0\" alt=\"\"/>&nbsp;\n");
         }
       } else {
@@ -290,7 +284,7 @@ public class LdapFieldDisplayer extends AbstractFieldDisplayer<LdapField> {
         html.append(" />\n");
         if ((template.isMandatory()) && (!template.isDisabled()) && (!template.isReadOnly())
             && (!template.isHidden())) {
-          html.append("&nbsp;<img src=\"").append(mandatoryImg);
+          html.append("&nbsp;<img src=\"").append(MANDATORY_IMG);
           html.append("\" width=\"5\" height=\"5\" border=\"0\" alt=\"\"/>&nbsp;\n");
         }
       }

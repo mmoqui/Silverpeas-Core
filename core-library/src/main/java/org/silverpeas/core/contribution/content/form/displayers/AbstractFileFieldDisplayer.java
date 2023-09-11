@@ -23,10 +23,9 @@
  */
 package org.silverpeas.core.contribution.content.form.displayers;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.silverpeas.core.contribution.attachment.AttachmentServiceProvider;
 import org.silverpeas.core.contribution.attachment.model.DocumentType;
-import org.silverpeas.core.contribution.attachment.model.HistorisedDocument;
 import org.silverpeas.core.contribution.attachment.model.SimpleAttachment;
 import org.silverpeas.core.contribution.attachment.model.SimpleDocument;
 import org.silverpeas.core.contribution.attachment.model.SimpleDocumentPK;
@@ -63,8 +62,8 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
     ADD, UPDATE, DELETION
   }
 
-  protected SimpleDocument createSimpleDocument(String objectId, String componentId, FileItem item,
-      String fileName, String userId, boolean versionned) throws IOException {
+  protected SimpleDocument createSimpleDocument(String objectId, String componentId,
+      FileItem<?> item, String fileName, String userId) throws IOException {
     SimpleDocumentPK documentPk = new SimpleDocumentPK(null, componentId);
     SimpleAttachment attachment = SimpleAttachment.builder()
         .setFilename(fileName)
@@ -72,12 +71,7 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
         .setContentType(FileUtil.getMimeType(fileName))
         .setCreationData(userId, new Date())
         .build();
-    SimpleDocument document;
-    if (versionned) {
-      document = new HistorisedDocument(documentPk, objectId, 0, attachment);
-    } else {
-      document = new SimpleDocument(documentPk, objectId, 0, false, null, attachment);
-    }
+    SimpleDocument document = new SimpleDocument(documentPk, objectId, 0, false, null, attachment);
     document.setDocumentType(DocumentType.form);
     try (InputStream in = item.getInputStream()) {
       return AttachmentServiceProvider.getAttachmentService()
@@ -120,7 +114,6 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
   @Override
   public void displayScripts(final PrintWriter out, final FieldTemplate template,
       final PagesContext pageContext) {
-    checkFieldType(template.getTypeName(), "AbstractFileFieldDisplayer.displayScripts");
     String language = pageContext.getLanguage();
     String fieldName = template.getFieldName();
     String label = WebEncodeHelper.javaStringToJsString(template.getLabel(language));
@@ -149,18 +142,16 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
   }
 
   @Override
-  public List<String> update(List<FileItem> items, FileField field, FieldTemplate template,
+  public List<String> update(List<FileItem<?>> items, FileField field, FieldTemplate template,
       PagesContext pageContext) throws FormException {
-    List<String> attachmentIds = new ArrayList<>();
 
     String attachmentId = processInput(items, field, pageContext);
 
-    attachmentIds.addAll(update(attachmentId, field, template, pageContext));
-
-    return attachmentIds;
+    return new ArrayList<>(update(attachmentId, field, template, pageContext));
   }
 
-  protected String processInput(List<FileItem> items, FileField field, PagesContext pageContext) {
+  protected String processInput(List<FileItem<?>> items, FileField field,
+      PagesContext pageContext) {
     try {
       String currentAttachmentId = field.getAttachmentId();
       String inputName = Util.getFieldOccurrenceName(field.getName(), field.getOccurrence());
@@ -232,21 +223,10 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
     return StringUtil.isDefined(attachmentId) && operation == Operation.DELETION;
   }
 
-  /**
-   * Is the specified operation is an update?
-   *
-   * @param operation the operation.
-   * @param attachmentId the identifier of the attachment on which the operation is.
-   * @return true if the operation is an update, false otherwise.
-   */
-  protected boolean isUpdate(final Operation operation, final String attachmentId) {
-    return StringUtil.isDefined(attachmentId) && operation == Operation.UPDATE;
-  }
-
-  protected String processUploadedFile(List<FileItem> items, String parameterName,
+  protected String processUploadedFile(List<FileItem<?>> items, String parameterName,
       PagesContext pagesContext) throws IOException {
     String attachmentId = null;
-    FileItem item = FileUploadUtil.getFile(items, parameterName);
+    FileItem<?> item = FileUploadUtil.getFile(items, parameterName);
     if (item != null && !item.isFormField()) {
       String componentId = pagesContext.getComponentId();
       String userId = pagesContext.getUserId();
@@ -256,7 +236,7 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
         long size = item.getSize();
         if (size > 0L) {
           SimpleDocument document = createSimpleDocument(objectId, componentId, item, fileName,
-              userId, false);
+              userId);
           attachmentId = document.getId();
         }
       }
@@ -267,16 +247,5 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
   @Override
   public boolean isDisplayedMandatory() {
     return true;
-  }
-
-  /**
-   * Checks the type of the field is as expected. The field must be of type file.
-   *
-   * @param typeName the name of the type.
-   * @param contextCall the context of the call: which is the caller of this method. This parameter
-   * is used for trace purpose.
-   */
-  protected void checkFieldType(final String typeName, final String contextCall) {
-    // nothing for instance
   }
 }

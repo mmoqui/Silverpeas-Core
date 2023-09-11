@@ -27,7 +27,7 @@ import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.initialization.Initialization;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Initializes the Administration layer of Silverpeas. It sets up the administration service.

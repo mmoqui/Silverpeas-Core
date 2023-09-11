@@ -29,7 +29,7 @@ import org.silverpeas.core.contribution.converter.ToPDFConverter;
 import org.silverpeas.core.util.MimeTypes.MimeTypeRegistry;
 import org.silverpeas.core.util.SettingBundle;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.io.File;
 
 import static org.silverpeas.core.contribution.converter.DocumentFormat.pdf;

@@ -52,12 +52,6 @@ import java.util.StringTokenizer;
 public class ListBoxFieldDisplayer extends AbstractFieldDisplayer<TextField> {
 
   /**
-   * Constructeur
-   */
-  public ListBoxFieldDisplayer() {
-  }
-
-  /**
    * Returns the name of the managed types.
    */
   public String[] getManagedTypes() {
@@ -177,15 +171,15 @@ public class ListBoxFieldDisplayer extends AbstractFieldDisplayer<TextField> {
 
   @Override
   public List<String> update(String newValue, TextField field, FieldTemplate template,
-      PagesContext PagesContext) throws FormException {
+      PagesContext pagesContext) throws FormException {
 
     if (!TextField.TYPE.equals(field.getTypeName())) {
       throw new FormException("TextAreaFieldDisplayer.update", "form.EX_NOT_CORRECT_TYPE",
           TextField.TYPE);
     }
 
-    if (field.acceptValue(newValue, PagesContext.getLanguage())) {
-      field.setValue(newValue, PagesContext.getLanguage());
+    if (field.acceptValue(newValue, pagesContext.getLanguage())) {
+      field.setValue(newValue, pagesContext.getLanguage());
     } else {
       throw new FormException("TextAreaFieldDisplayer.update", "form.EX_NOT_CORRECT_VALUE",
           TextField.TYPE);

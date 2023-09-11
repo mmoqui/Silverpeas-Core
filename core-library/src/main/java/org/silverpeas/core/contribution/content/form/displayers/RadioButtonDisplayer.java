@@ -51,26 +51,21 @@ import java.util.StringTokenizer;
  */
 public class RadioButtonDisplayer extends AbstractFieldDisplayer<TextField> {
 
-  /**
-   * Constructeur
-   */
-  public RadioButtonDisplayer() {
-  }
+  private static final String VALUES = "values";
+  private static final String DELIM = "##";
 
   /**
    * Returns the name of the managed types.
    */
   public String[] getManagedTypes() {
-    String[] s = new String[0];
-    s[0] = TextField.TYPE;
-    return s;
+    return new String[] { TextField.TYPE };
   }
 
   /**
-   * Prints the javascripts which will be used to control the new value given to the named field.
+   * Prints the javascript which will be used to control the new value given to the named field.
    * The error messages may be adapted to a local language. The FieldTemplate gives the field type
-   * and constraints. The FieldTemplate gives the local labeld too. Never throws an Exception but
-   * log a silvertrace and writes an empty string when :
+   * and constraints. The FieldTemplate gives the local labeled too. Never throws an Exception but
+   * log a message and writes an empty string when:
    * <UL>
    * <LI>the fieldName is unknown by the template.
    * <LI>the field type is not a managed type.
@@ -109,7 +104,7 @@ public class RadioButtonDisplayer extends AbstractFieldDisplayer<TextField> {
       throws FormException {
     String keys = "";
     String values = "";
-    String html = "";
+    StringBuilder html = new StringBuilder();
     int cols = 1;
     String language = pageContext.getLanguage();
     String cssClass = null;
@@ -121,8 +116,8 @@ public class RadioButtonDisplayer extends AbstractFieldDisplayer<TextField> {
       keys = parameters.get("keys");
     }
 
-    if (parameters.containsKey("values")) {
-      values = parameters.get("values");
+    if (parameters.containsKey(VALUES)) {
+      values = parameters.get(VALUES);
     }
 
     if (parameters.containsKey("class")) {
@@ -134,12 +129,11 @@ public class RadioButtonDisplayer extends AbstractFieldDisplayer<TextField> {
 
     try {
       if (parameters.containsKey("cols")) {
-        cols = Integer.valueOf(parameters.get("cols"));
+        cols = Integer.parseInt(parameters.get("cols"));
       }
     } catch (NumberFormatException nfe) {
       SilverLogger.getLogger(this)
           .error("Illegal parameter column: " + parameters.get("cols"), nfe);
-      cols = 1;
     }
 
     String defaultValue = getDefaultValue(template, pageContext);
@@ -151,74 +145,74 @@ public class RadioButtonDisplayer extends AbstractFieldDisplayer<TextField> {
 
     // if either keys or values is not filled
     // take the same for keys and values
-    if (keys.equals("") && !values.equals("")) {
+    if (keys.isEmpty() && !values.isEmpty()) {
       keys = values;
     }
-    if (values.equals("") && !keys.equals("")) {
+    if (values.isEmpty() && !keys.isEmpty()) {
       values = keys;
     }
 
-    StringTokenizer stKeys = new StringTokenizer(keys, "##");
-    StringTokenizer stValues = new StringTokenizer(values, "##");
+    StringTokenizer stKeys = new StringTokenizer(keys, DELIM);
+    StringTokenizer stValues = new StringTokenizer(values, DELIM);
     String optKey;
     String optValue;
     int nbTokens = getNbHtmlObjectsDisplayed(template, pageContext);
 
     if (stKeys.countTokens() == stValues.countTokens()) {
-      html += "<table border=\"0\">";
+      html.append("<table border=\"0\">");
       int col = 0;
       for (int i = 0; i < nbTokens; i++) {
         if (col == 0) {
-          html += "<tr>";
+          html.append("<tr>");
         }
 
         col++;
-        html += "<td>";
+        html.append("<td>");
         optKey = stKeys.nextToken();
         optValue = stValues.nextToken();
 
         if (StringUtil.isDefined(cssClass)) {
-          html += "<span " + cssClass + ">";
+          html.append("<span ").append(cssClass).append(">");
         }
-        html +=
-            "<input type=\"radio\" id=\"" + fieldName + "_" + i + "\" name=\"" + fieldName
-            + "\" value=\"" + optKey + "\" ";
+        html.append("<input type=\"radio\" id=\"")
+            .append(fieldName).append("_").append(i).append("\" ")
+            .append("name=\"").append(fieldName).append("\" value=\"").append(optKey).append("\"")
+            .append(" ");
 
         if (template.isDisabled() || template.isReadOnly()) {
-          html += " disabled=\"disabled\" ";
+          html.append(" disabled=\"disabled\" ");
         }
 
         if (optKey.equals(value)) {
-          html += " checked=\"checked\" ";
+          html.append(" checked=\"checked\" ");
         }
 
-        html += "/>&nbsp;" + optValue;
+        html.append("/>&nbsp;").append(optValue);
 
         if (StringUtil.isDefined(cssClass)) {
-          html += "</span>";
+          html.append("</span>");
         }
 
-        if (i == nbTokens - 1) {
-          if (template.isMandatory() && !template.isDisabled() && !template.isReadOnly()
-              && !template.isHidden() && pageContext.useMandatory()) {
-            html += Util.getMandatorySnippet();
-          }
+        if (i == nbTokens - 1 &&
+            (template.isMandatory() && !template.isDisabled() && !template.isReadOnly()
+              && !template.isHidden() && pageContext.useMandatory())) {
+            html.append(Util.getMandatorySnippet());
+
         }
 
-        // html += "\n";
-        html += "</td>";
+        html.append("</td>");
 
         if (col == cols) {
-          html += "</tr>";
+          html.append("</tr>");
           col = 0;
         }
       }
 
       if (col != 0) {
-        html += "</tr>";
+        html.append("</tr>");
       }
 
-      html += "</table>";
+      html.append("</table>");
     }
     out.println(html);
   }
@@ -232,14 +226,14 @@ public class RadioButtonDisplayer extends AbstractFieldDisplayer<TextField> {
    */
   @Override
   public List<String> update(String newValue, TextField field, FieldTemplate template,
-      PagesContext PagesContext) throws FormException {
+      PagesContext pagesContext) throws FormException {
 
     if (!TextField.TYPE.equals(field.getTypeName())) {
       throw new FormException("TextAreaFieldDisplayer.update", "form.EX_NOT_CORRECT_TYPE",
           TextField.TYPE);
     }
-    if (field.acceptValue(newValue, PagesContext.getLanguage())) {
-      field.setValue(newValue, PagesContext.getLanguage());
+    if (field.acceptValue(newValue, pagesContext.getLanguage())) {
+      field.setValue(newValue, pagesContext.getLanguage());
     } else {
       throw new FormException("TextAreaFieldDisplayer.update", "form.EX_NOT_CORRECT_VALUE",
           TextField.TYPE);
@@ -260,18 +254,18 @@ public class RadioButtonDisplayer extends AbstractFieldDisplayer<TextField> {
     if (parameters.containsKey("keys")) {
       keys = parameters.get("keys");
     }
-    if (parameters.containsKey("values")) {
-      values = parameters.get("values");
+    if (parameters.containsKey(VALUES)) {
+      values = parameters.get(VALUES);
     }
 
     // if either keys or values is not filled
     // take the same for keys and values
-    if (keys.equals("") && !values.equals("")) {
+    if (keys.isEmpty() && !values.isEmpty()) {
       keys = values;
     }
 
     // Calculate numbers of html elements
-    StringTokenizer stKeys = new StringTokenizer(keys, "##");
+    StringTokenizer stKeys = new StringTokenizer(keys, DELIM);
     return stKeys.countTokens();
   }
 }

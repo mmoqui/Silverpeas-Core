@@ -37,8 +37,8 @@ import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.LoggerReaderRule;
 import org.silverpeas.core.util.logging.Level;
 
-import javax.ejb.EJBException;
-import javax.inject.Inject;
+import jakarta.ejb.EJBException;
+import jakarta.inject.Inject;
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;

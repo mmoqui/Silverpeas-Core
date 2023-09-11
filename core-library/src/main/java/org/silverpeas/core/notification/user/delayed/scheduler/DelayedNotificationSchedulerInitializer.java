@@ -30,7 +30,7 @@ import org.silverpeas.core.notification.user.client.NotificationURLProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.silverpeas.core.initialization.Initialization;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.silverpeas.core.notification.user.client.NotificationManagerSettings
     .getCronOfDelayedNotificationSending;

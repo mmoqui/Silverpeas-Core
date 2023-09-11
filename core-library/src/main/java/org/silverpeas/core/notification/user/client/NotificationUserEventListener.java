@@ -34,9 +34,9 @@ import org.silverpeas.core.notification.user.client.model.NotifDefaultAddressTab
 import org.silverpeas.core.notification.user.client.model.NotificationSchema;
 import org.silverpeas.core.util.StringUtil;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import java.sql.SQLException;
 import java.util.Optional;
 

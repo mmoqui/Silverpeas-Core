@@ -71,7 +71,7 @@ import org.silverpeas.core.security.authentication.password.PasswordEncryption;
 import org.silverpeas.core.util.ArrayUtil;
 import org.silverpeas.core.util.Charsets;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.text.MessageFormat;
 import java.util.Random;
 import java.util.regex.Matcher;

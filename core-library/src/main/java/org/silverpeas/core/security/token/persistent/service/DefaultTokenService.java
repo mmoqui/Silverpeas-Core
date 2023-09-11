@@ -32,9 +32,9 @@ import org.silverpeas.core.security.token.exception.TokenException;
 import org.silverpeas.core.security.token.persistent.PersistentResourceToken;
 import org.silverpeas.core.security.token.persistent.repository.PersistentResourceTokenRepository;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 
 import static org.silverpeas.core.security.token.persistent.PersistentResourceTokenGenerator.RESOURCE_PARAM;
 

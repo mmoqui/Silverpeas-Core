@@ -48,7 +48,7 @@ import org.silverpeas.core.util.MimeTypes;
 import org.silverpeas.core.util.Pair;
 import org.silverpeas.core.jcr.JCRSession;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;

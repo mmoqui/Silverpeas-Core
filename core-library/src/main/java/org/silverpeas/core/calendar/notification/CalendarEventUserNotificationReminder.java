@@ -35,8 +35,8 @@ import org.silverpeas.core.reminder.Reminder;
 import org.silverpeas.core.reminder.ReminderProcessName;
 import org.silverpeas.core.template.SilverpeasTemplate;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;

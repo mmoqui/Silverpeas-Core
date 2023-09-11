@@ -28,9 +28,9 @@ import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.notification.system.JMSOperation;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.annotation.Resource;
-import javax.jms.Queue;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.jms.Queue;
+import jakarta.jms.TextMessage;
 import java.util.HashMap;
 import java.util.Map;
 

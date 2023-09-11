@@ -34,7 +34,7 @@ import org.silverpeas.core.contribution.model.SilverpeasToolContent;
 import org.silverpeas.core.html.PermalinkRegistry;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

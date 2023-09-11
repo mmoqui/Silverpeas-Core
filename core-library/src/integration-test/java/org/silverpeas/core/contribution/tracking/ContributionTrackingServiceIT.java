@@ -42,7 +42,7 @@ import org.silverpeas.core.contribution.tracking.TestContext.TrackingEventRecord
 import org.silverpeas.core.persistence.Transaction;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;

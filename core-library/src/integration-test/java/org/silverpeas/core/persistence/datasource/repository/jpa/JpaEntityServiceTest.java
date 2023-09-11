@@ -32,10 +32,10 @@ import org.silverpeas.core.persistence.datasource.repository.jpa.repository.Anim
 import org.silverpeas.core.persistence.datasource.repository.jpa.repository.EquipmentRepository;
 import org.silverpeas.core.persistence.datasource.repository.jpa.repository.PersonRepository;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import java.util.List;
 
 /**

@@ -29,8 +29,8 @@ import org.silverpeas.core.importexport.Exporter;
 import org.silverpeas.core.importexport.NoDataToExportException;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.io.Writer;
 import java.util.function.Supplier;
 

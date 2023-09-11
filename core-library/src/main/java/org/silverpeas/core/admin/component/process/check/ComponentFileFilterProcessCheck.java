@@ -40,7 +40,7 @@ import org.silverpeas.core.process.management.AbstractFileProcessCheck;
 import org.silverpeas.core.process.management.ProcessExecutionContext;
 import org.silverpeas.core.util.error.SilverpeasTransverseErrorUtil;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.util.Collection;
 import java.util.Set;

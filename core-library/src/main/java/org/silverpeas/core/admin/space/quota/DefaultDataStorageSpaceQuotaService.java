@@ -33,7 +33,7 @@ import org.silverpeas.core.util.SettingBundle;
 import org.silverpeas.core.util.UnitUtil;
 import org.silverpeas.core.util.memory.MemoryUnit;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;

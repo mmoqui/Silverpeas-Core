@@ -29,7 +29,7 @@ import org.silverpeas.core.node.model.NodeDetail;
 import org.silverpeas.core.node.notification.NodeEvent;
 import org.silverpeas.core.subscription.service.NodeSubscriptionResource;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * Listener of events on the deletion of a node in a component instance to delete all subscriptions

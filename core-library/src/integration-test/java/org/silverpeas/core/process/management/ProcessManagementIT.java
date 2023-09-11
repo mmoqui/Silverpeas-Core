@@ -43,8 +43,8 @@ import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.core.util.ResourceLocator;
 
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 

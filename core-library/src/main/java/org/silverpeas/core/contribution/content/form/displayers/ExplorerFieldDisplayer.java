@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.contribution.content.form.displayers;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.silverpeas.core.contribution.content.form.Field;
 import org.silverpeas.core.contribution.content.form.FieldDisplayer;
 import org.silverpeas.core.contribution.content.form.FieldTemplate;
@@ -88,7 +88,7 @@ public class ExplorerFieldDisplayer extends AbstractFieldDisplayer<ExplorerField
    * <ul>
    * <li>the field type is not a managed type.</li>
    * </ul>
-   * @throws FormException
+   * @throws FormException if an error occurs
    */
   @Override
   public void display(PrintWriter out, ExplorerField field, FieldTemplate template,
@@ -178,7 +178,7 @@ public class ExplorerFieldDisplayer extends AbstractFieldDisplayer<ExplorerField
   }
 
   @Override
-  public List<String> update(List<FileItem> items, ExplorerField field, FieldTemplate template,
+  public List<String> update(List<FileItem<?>> items, ExplorerField field, FieldTemplate template,
       PagesContext pageContext) throws FormException {
     String itemName = template.getFieldName();
     String value = FileUploadUtil.getParameter(items, itemName);

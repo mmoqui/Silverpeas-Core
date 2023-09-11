@@ -28,10 +28,10 @@ import org.silverpeas.core.scheduler.quartz.VolatileQuartScheduler;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.annotation.PreDestroy;
-import javax.enterprise.inject.Default;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.inject.Default;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /***
  * Initializer of all the scheduler implementations for the integration tests.

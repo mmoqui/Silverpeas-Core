@@ -25,7 +25,7 @@ package org.silverpeas.core.scheduler;
 
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * Execution context of a job. Because only the class name of the job is persisted with the

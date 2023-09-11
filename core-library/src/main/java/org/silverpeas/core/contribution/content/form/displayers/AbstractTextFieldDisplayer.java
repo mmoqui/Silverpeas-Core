@@ -102,7 +102,7 @@ public abstract class AbstractTextFieldDisplayer extends AbstractFieldDisplayer<
         append(Util.getString("Characters", language)).append(JS_CARRIAGE_RETURN);
     script.append(JS_NB_ERROR_INCREMENT);
     script.append(JS_CLOSING_BRACE);
-    out.print(script.toString());
+    out.print(script);
 
     Util.getJavascriptChecker(template.getFieldName(), pagesContext, out);
   }

@@ -31,8 +31,8 @@ import org.silverpeas.core.util.CollectionUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 
 import javax.annotation.Nonnull;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;

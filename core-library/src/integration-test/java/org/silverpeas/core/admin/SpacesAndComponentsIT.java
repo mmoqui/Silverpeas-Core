@@ -60,7 +60,7 @@ import org.silverpeas.core.util.lang.SystemWrapper;
 import org.silverpeas.core.util.memory.MemoryData;
 import org.silverpeas.core.util.memory.MemoryUnit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;

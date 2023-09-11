@@ -38,8 +38,8 @@ import org.silverpeas.core.notification.system.TestResourceEventBucket;
 import org.silverpeas.core.notification.user.UserSubscriptionNotificationSendingHandler;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
 import java.time.Instant;
 import java.util.Date;
 

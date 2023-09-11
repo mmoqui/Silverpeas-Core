@@ -38,7 +38,7 @@ import org.silverpeas.core.contribution.attachment.permalinks.model.DocumentPerm
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 
 import static org.hamcrest.Matchers.is;

@@ -28,8 +28,8 @@ import org.silverpeas.core.persistence.jdbc.LongText;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 
 /**
  * @author neysseri

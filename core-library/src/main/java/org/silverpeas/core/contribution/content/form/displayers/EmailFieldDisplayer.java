@@ -52,11 +52,8 @@ import java.util.Map;
  */
 public class EmailFieldDisplayer extends AbstractTextFieldDisplayer {
 
-  public final static String PARAM_MAILTO = "mailto";
-  public final static String PARAM_SIZE = "size";
-
-  public EmailFieldDisplayer() {
-  }
+  public static final String PARAM_MAILTO = "mailto";
+  public static final String PARAM_SIZE = "size";
 
   @Override
   public void addSpecificScript(PrintWriter out, FieldTemplate template, PagesContext pageContext) {
@@ -64,15 +61,13 @@ public class EmailFieldDisplayer extends AbstractTextFieldDisplayer {
     String label = template.getLabel(language);
 
     if (template.isMandatory() && pageContext.useMandatory()) {
-      StringBuilder script = new StringBuilder(10000);
+      String script = "   if (!checkemail(field.value)) {\n" +
+          "     errorMsg+=\"  - '" + label + "' " +
+          Util.getString("GML.MustContainsEmail", language) + "\\n\";\n" +
+          "     errorNb++;\n" +
+          "   }\n";
 
-      script.append("   if (!checkemail(field.value)) {\n");
-      script.append("     errorMsg+=\"  - '").append(label).append("' ").
-          append(Util.getString("GML.MustContainsEmail", language)).append("\\n\";\n");
-      script.append("     errorNb++;\n");
-      script.append("   }\n");
-
-      out.print(script.toString());
+      out.print(script);
     }
   }
 
@@ -102,7 +97,7 @@ public class EmailFieldDisplayer extends AbstractTextFieldDisplayer {
           a mailto = new a();
           mailto.setHref("mailto:"+value);
           mailto.addElement(value);
-          out.println(mailto.toString());
+          out.println(mailto);
         } else {
           out.println(value);
         }
@@ -114,7 +109,7 @@ public class EmailFieldDisplayer extends AbstractTextFieldDisplayer {
       inputField.setValue(WebEncodeHelper.javaStringToHtmlString(value));
       inputField.setType(template.isHidden() ? input.hidden : input.text);
       inputField.setMaxlength(100);
-      inputField.setSize(parameters.containsKey(PARAM_SIZE) ? parameters.get(PARAM_SIZE) : "50");
+      inputField.setSize(parameters.getOrDefault(PARAM_SIZE, "50"));
       if (parameters.containsKey("border")) {
         inputField.setBorder(Integer.parseInt(parameters.get("border")));
       }
@@ -140,9 +135,9 @@ public class EmailFieldDisplayer extends AbstractTextFieldDisplayer {
         container.addElement(inputField);
         container.addElement("&nbsp;");
         container.addElement(image);
-        out.println(container.toString());
+        out.println(container);
       } else {
-        out.println(inputField.toString());
+        out.println(inputField);
       }
     }
   }

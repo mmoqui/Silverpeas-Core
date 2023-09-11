@@ -87,10 +87,10 @@ import org.silverpeas.core.util.logging.SilverLogger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.SQLException;

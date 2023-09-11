@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.contribution.content.form.displayers;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.ecs.xhtml.div;
 import org.silverpeas.core.contribution.content.form.Field;
 import org.silverpeas.core.contribution.content.form.FieldDisplayer;
@@ -161,7 +161,7 @@ public class GroupFieldDisplayer extends AbstractFieldDisplayer<GroupField> {
   }
 
   @Override
-  public List<String> update(List<FileItem> items, GroupField field, FieldTemplate template,
+  public List<String> update(List<FileItem<?>> items, GroupField field, FieldTemplate template,
       PagesContext pageContext) throws FormException {
     String itemName = template.getFieldName();
     String value = FileUploadUtil.getParameter(items, itemName);

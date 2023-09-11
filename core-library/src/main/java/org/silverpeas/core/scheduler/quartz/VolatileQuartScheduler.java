@@ -30,8 +30,8 @@ import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.scheduler.Job;
 import org.silverpeas.core.scheduler.SchedulerEventListener;
 
-import javax.enterprise.inject.Default;
-import javax.inject.Singleton;
+import jakarta.enterprise.inject.Default;
+import jakarta.inject.Singleton;
 
 /**
  * A volatile scheduler implementation using Quartz as scheduling backend. It wraps a Quartz

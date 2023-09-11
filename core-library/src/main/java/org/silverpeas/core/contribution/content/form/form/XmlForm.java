@@ -37,7 +37,7 @@ import org.silverpeas.core.contribution.content.form.record.GenericFieldTemplate
 import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -75,11 +75,11 @@ public class XmlForm extends AbstractForm {
    * </ul>
    */
   @Override
-  public String toString(PagesContext pagesContext, DataRecord record) {
+  public String toString(PagesContext pagesContext, DataRecord dataRecord) {
 
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw, true);
-    display(pw, pagesContext, record);
+    display(pw, pagesContext, dataRecord);
     return sw.toString();
   }
 
@@ -92,12 +92,12 @@ public class XmlForm extends AbstractForm {
    * <li>a field has not the required type.</li>
    * </ul>
    */
-  private void display(PrintWriter out, PagesContext pageContext, DataRecord record) {
+  private void display(PrintWriter out, PagesContext pageContext, DataRecord dataRecord) {
 
     String language = pageContext.getLanguage();
 
-    // content language is the one of the record
-    pageContext.setContentLanguage(record.getLanguage());
+    // content language is the one of the dataRecord
+    pageContext.setContentLanguage(dataRecord.getLanguage());
     pageContext.setIgnoreDefaultValues(false);
 
     String mode = "";
@@ -109,7 +109,7 @@ public class XmlForm extends AbstractForm {
 
     out.println(getSkippableSnippet(pageContext));
 
-    out.println("<input type=\"hidden\" name=\"id\" value=\"" + record.getId() + "\"/>");
+    out.println("<input type=\"hidden\" name=\"id\" value=\"" + dataRecord.getId() + "\"/>");
 
     if (pageContext.getPrintTitle() && StringUtil.isDefined(getTitle())) {
       out.println("<h2 class=\"form-title\">");
@@ -131,12 +131,12 @@ public class XmlForm extends AbstractForm {
 
       PagesContext pc = new PagesContext(pageContext);
       pc.setNbFields(listFields.size());
-      if (record != null) {
+      if (dataRecord != null) {
         pc.incCurrentFieldIndex(1);
       }
 
       // calcul lastFieldIndex
-      pc.setLastFieldIndex(getLastFieldIndex(pageContext, record, listFields));
+      pc.setLastFieldIndex(getLastFieldIndex(pageContext, dataRecord, listFields));
 
       boolean isMandatory;
       for (FieldTemplate fieldTemplate : listFields) {
@@ -154,9 +154,9 @@ public class XmlForm extends AbstractForm {
         }
 
         Field field = null;
-        if (record != null) {
+        if (dataRecord != null) {
           try {
-            field = record.getField(fieldName);
+            field = dataRecord.getField(fieldName);
           } catch (FormException fe) {
             SilverLogger.getLogger(this).error(unknown("fieldName", fieldName), fe);
           }
@@ -177,7 +177,7 @@ public class XmlForm extends AbstractForm {
           }
         }
 
-        if (displayField && record != null && field != null) {
+        if (displayField && dataRecord != null && field != null) {
           FieldDisplayer fieldDisplayer = getFieldDisplayer(fieldTemplate);
           if (fieldDisplayer != null) {
             String aClass = "class=\"txtlibform\"";
@@ -200,7 +200,7 @@ public class XmlForm extends AbstractForm {
             }
             out.println("<div class=\""+divClass+"\">");
             if (!fieldTemplate.isRepeatable()) {
-              field = getSureField(fieldTemplate, record, 0);
+              field = getSureField(fieldTemplate, dataRecord, 0);
               try {
                 fieldDisplayer.display(out, field, fieldTemplate, pc);
               } catch (FormException fe) {
@@ -212,10 +212,10 @@ public class XmlForm extends AbstractForm {
                   && !fieldTemplate.isReadOnly();
               String currentVisibility = AbstractForm.REPEATED_FIELD_CSS_SHOW;
               int maxOccurrences = fieldTemplate.getMaximumNumberOfOccurrences();
-              Field lastNotEmptyField = getLastNotEmptyField(record, fieldName, maxOccurrences);
+              Field lastNotEmptyField = getLastNotEmptyField(dataRecord, fieldName, maxOccurrences);
               out.println("<ul class=\"repeatable-field-list\">");
               for (int occ = 0; occ < maxOccurrences; occ++) {
-                field = getSureField(fieldTemplate, record, occ);
+                field = getSureField(fieldTemplate, dataRecord, occ);
                 if (occ > 0) {
                   ((GenericFieldTemplate) fieldTemplate).setMandatory(false);
                   if (!isWriting) {

@@ -50,7 +50,7 @@ import org.silverpeas.core.util.Pair;
 import org.silverpeas.core.wbe.StubbedWbeHostManager;
 import org.silverpeas.core.jcr.JCRSession;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import java.io.ByteArrayInputStream;

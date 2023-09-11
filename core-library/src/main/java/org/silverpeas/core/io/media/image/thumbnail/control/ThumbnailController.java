@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.io.media.image.thumbnail.control;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.silverpeas.core.ResourceReference;
 import org.silverpeas.core.admin.component.ComponentInstanceDeletion;
@@ -49,7 +49,7 @@ import org.silverpeas.core.util.file.FileUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 
 import javax.imageio.ImageIO;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -96,14 +96,14 @@ public class ThumbnailController implements ComponentInstanceDeletion {
     }
   }
 
-  public static boolean processThumbnail(ResourceReference pk, List<FileItem> parameters)
+  public static boolean processThumbnail(ResourceReference pk, List<FileItem<?>> parameters)
       throws IOException {
     ThumbnailDetail detail = new ThumbnailDetail(pk.getInstanceId(),
         Integer.parseInt(pk.getId()),
         ThumbnailDetail.THUMBNAIL_OBJECTTYPE_PUBLICATION_VIGNETTE);
     String mimeType = null;
     String physicalName = null;
-    FileItem uploadedFile = FileUploadUtil.getFile(parameters, "WAIMGVAR0");
+    FileItem<?> uploadedFile = FileUploadUtil.getFile(parameters, "WAIMGVAR0");
     if (uploadedFile != null) {
       String logicalName = uploadedFile.getName().replace('\\', '/');
       if (StringUtil.isDefined(logicalName)) {
@@ -157,9 +157,9 @@ public class ThumbnailController implements ComponentInstanceDeletion {
     return thumbnailChanged;
   }
 
-  private static Integer getParameterAsInteger(final List<FileItem> parameters,
+  private static Integer getParameterAsInteger(final List<FileItem<?>> parameters,
       final String parameterName) {
-    return ofNullable(getParameter(parameters, parameterName)).map(Integer::parseInt).orElse(null);
+    return ofNullable(getParameter(parameters, parameterName)).map(Integer::valueOf).orElse(null);
   }
 
   private static boolean changeThumbnail(final ThumbnailDetail detail) {

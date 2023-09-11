@@ -42,8 +42,8 @@ import org.silverpeas.core.calendar.RecurrencePeriod;
 import org.silverpeas.core.date.TemporalConverter;
 import org.silverpeas.core.date.TimeUnit;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.time.DayOfWeek;
 import java.time.temporal.Temporal;
 import java.util.Comparator;

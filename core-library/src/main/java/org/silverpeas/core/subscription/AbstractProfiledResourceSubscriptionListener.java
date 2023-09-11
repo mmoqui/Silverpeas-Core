@@ -27,7 +27,7 @@ package org.silverpeas.core.subscription;
 import org.silverpeas.core.notification.system.CDIResourceEventListener;
 import org.silverpeas.core.notification.system.ResourceEvent;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.Serializable;
 
 /**
