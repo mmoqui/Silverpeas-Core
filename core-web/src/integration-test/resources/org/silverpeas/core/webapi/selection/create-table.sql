@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS SB_Cal_Attributes
 (
     id    VARCHAR(40)  NOT NULL,
     name  VARCHAR(255) NOT NULL,
-    value VARCHAR(255) NOT NULL,
+    "value" VARCHAR(255) NOT NULL,
     CONSTRAINT PK_Attributes PRIMARY KEY (id, name)
 );
 

@@ -73,7 +73,7 @@ CREATE TABLE SB_Cal_Occurrences (
   eventId        VARCHAR(40)   NOT NULL,
   componentId    VARCHAR(40)   NOT NULL,
   CONSTRAINT PK_Occurrence           PRIMARY KEY (id),
-  CONSTRAINT FK_Occurrence_Event     FOREIGN KEY (eventId)     REFERENCES SB_Cal_Event,
+  CONSTRAINT FK_Occurrence_Event     FOREIGN KEY (eventId)     REFERENCES SB_Cal_Event(id),
   CONSTRAINT FK_Occurrence_Component FOREIGN KEY (componentId) REFERENCES SB_Cal_Components(id)
 );
 
