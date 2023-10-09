@@ -236,7 +236,7 @@ public class DbSetupRule implements TestRule {
           String tableName = rs.getString(1);
           if (!tableName.startsWith("QRTZ_")) {
             try (PreparedStatement dropStatement = connection.prepareStatement(
-                "DROP  TABLE " + tableName)) {
+                "DROP TABLE " + tableName + " CASCADE")) {
               dropStatement.execute();
             }
           }

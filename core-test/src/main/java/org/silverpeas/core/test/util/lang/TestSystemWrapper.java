@@ -24,6 +24,8 @@
 package org.silverpeas.core.test.util.lang;
 
 import org.apache.commons.io.FileUtils;
+import org.silverpeas.core.annotation.Bean;
+import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.util.lang.SystemWrapper;
 
 import jakarta.annotation.PostConstruct;
@@ -42,6 +44,8 @@ import static jakarta.interceptor.Interceptor.Priority.APPLICATION;
  * Default implementation that is nothing more than a delegate of {@link System} class.
  * @author Yohann Chastagnier
  */
+@Technical
+@Bean
 @Singleton
 @Alternative
 @Priority(APPLICATION + 10)
