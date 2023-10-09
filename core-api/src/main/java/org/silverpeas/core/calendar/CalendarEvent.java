@@ -23,6 +23,8 @@
  */
 package org.silverpeas.core.calendar;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.silverpeas.core.admin.component.model.SilverpeasComponentInstance;
 import org.silverpeas.core.admin.user.model.SilverpeasRole;
 import org.silverpeas.core.admin.user.model.User;
@@ -31,13 +33,7 @@ import org.silverpeas.core.calendar.notification.CalendarEventOccurrenceLifeCycl
 import org.silverpeas.core.calendar.notification.LifeCycleEventSubType;
 import org.silverpeas.core.calendar.repository.CalendarEventOccurrenceRepository;
 import org.silverpeas.core.calendar.repository.CalendarEventRepository;
-import org.silverpeas.core.contribution.model.Contribution;
-import org.silverpeas.core.contribution.model.ContributionIdentifier;
-import org.silverpeas.core.contribution.model.ContributionModel;
-import org.silverpeas.core.contribution.model.LocalizedContribution;
-import org.silverpeas.core.contribution.model.WithAttachment;
-import org.silverpeas.core.contribution.model.WithPermanentLink;
-import org.silverpeas.core.contribution.model.WysiwygContent;
+import org.silverpeas.core.contribution.model.*;
 import org.silverpeas.core.date.Period;
 import org.silverpeas.core.date.TemporalConverter;
 import org.silverpeas.core.notification.system.ResourceEvent;
@@ -53,8 +49,6 @@ import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 import org.silverpeas.core.web.mvc.route.ComponentInstanceRoutingMapProviderByInstance;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -104,147 +98,199 @@ import static org.silverpeas.core.persistence.datasource.OperationContext.State.
 @NamedQuery(name = "calendarEventCount", query =
   "SELECT COUNT(e) FROM CalendarEvent e WHERE e.component.calendar = :calendar")
 @NamedQuery(name = "calendarEvents", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-      "FROM CalendarEvent e " +
-      "JOIN e.component cmp " +
-      "JOIN cmp.calendar c " +
-      "ORDER BY ob_1, ob_2, ob_3")
+  "SELECT distinct e, " +
+      "c.componentInstanceId as instanceId, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "ORDER BY instanceId, calendarId, startDate")
 @NamedQuery(name = "calendarEventByCalendarAndExternalId", query =
   "SELECT e FROM CalendarEvent e " +
-      "WHERE e.component.calendar = :calendar AND e.externalId = :externalId")
+  "WHERE e.component.calendar = :calendar AND e.externalId = :externalId")
 @NamedQuery(name = "calendarEventsByCalendar", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-      "FROM CalendarEvent e " +
-      "JOIN e.component cmp " +
-      "JOIN cmp.calendar c " +
-      "WHERE c IN :calendars " +
-      "ORDER BY ob_1, ob_2, ob_3")
+  "SELECT distinct e, " +
+      "c.componentInstanceId as instanceId, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "WHERE c IN :calendars " +
+  "ORDER BY instanceId, calendarId, startDate")
 @NamedQuery(name = "calendarEventsByParticipants", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-      "FROM CalendarEvent e " +
-      "JOIN e.component cmp " +
-      "JOIN cmp.calendar c " +
-      "JOIN cmp.attendees.attendees a " +
-      "WHERE a.attendeeId IN :participantIds " +
+  "SELECT distinct e, " +
+      "c.componentInstanceId as instanceId, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "JOIN cmp.attendees a " +
+  "WHERE a.attendeeId IN :participantIds " +
       "OR e.id IN (SELECT occ_e.id " +
-      "            FROM CalendarEventOccurrence occ_o " +
-      "            JOIN occ_o.event occ_e " +
+      "            FROM CalendarEvent occ_e " +
+      "            JOIN CalendarEventOccurrence occ_o ON occ_o.event = occ_e " +
       "            JOIN occ_o.component occ_cmp " +
-      "            JOIN occ_cmp.attendees.attendees occ_a " +
-      "            WHERE occ_a.attendeeId IN :participantIds)" +
-      "ORDER BY ob_1, ob_2, ob_3")
+      "            JOIN occ_cmp.attendees occ_a " +
+      "            WHERE occ_a.attendeeId IN :participantIds) " +
+  "ORDER BY instanceId, calendarId, startDate")
 @NamedQuery(name = "calendarEventsByCalendarByParticipants", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-      "FROM CalendarEvent e " +
-      "JOIN e.component cmp " +
-      "JOIN cmp.calendar c " +
-      "JOIN cmp.attendees.attendees a " +
-      "WHERE (c IN :calendars AND a.attendeeId IN :participantIds) " +
+  "SELECT distinct e, " +
+      "c.componentInstanceId as instanceId, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "JOIN cmp.attendees a " +
+  "WHERE (c IN :calendars AND a.attendeeId IN :participantIds) " +
       "OR e.id IN (SELECT occ_e.id " +
-      "            FROM CalendarEventOccurrence occ_o " +
-      "            JOIN occ_o.event occ_e " +
+      "            FROM CalendarEvent occ_e " +
+      "            JOIN CalendarEventOccurrence occ_o ON occ_o.event = occ_e " +
       "            JOIN occ_o.component occ_cmp " +
       "            JOIN occ_cmp.calendar occ_c " +
-      "            JOIN occ_cmp.attendees.attendees occ_a " +
-      "            WHERE occ_c IN :calendars " +
-      "            AND occ_a.attendeeId IN :participantIds)" +
-      "ORDER BY ob_1, ob_2, ob_3")
+      "            JOIN occ_cmp.attendees occ_a " +
+      "            WHERE occ_c IN :calendars AND occ_a.attendeeId IN :participantIds) " +
+  "ORDER BY instanceId, calendarId, startDate")
 @NamedQuery(name = "calendarEventsBeforeSynchronizationDate", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-      "FROM CalendarEvent e " +
-      "JOIN e.component cmp " +
-      "JOIN cmp.calendar c " +
-      "WHERE e.synchronizationDate is not null " +
-      "AND e.synchronizationDate < :synchronizationDateLimit " +
-      "ORDER BY ob_1, ob_2, ob_3")
+  "SELECT distinct e, " +
+      "c.componentInstanceId as instanceid, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "WHERE e.synchronizationDate IS NOT NULL AND e.synchronizationDate < :synchronizationDateLimit " +
+  "ORDER BY instanceid, calendarId, startDate")
 @NamedQuery(name = "calendarEventsByCalendarBeforeSynchronizationDate", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-      "FROM CalendarEvent e " +
-      "JOIN e.component cmp " +
-      "JOIN cmp.calendar c " +
-      "WHERE c IN :calendars " +
-      "AND e.synchronizationDate is not null " +
+  "SELECT distinct e, " +
+      "c.componentInstanceId as instanceId, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "WHERE c IN :calendars " +
+      "AND e.synchronizationDate IS NOT NULL " +
       "AND e.synchronizationDate < :synchronizationDateLimit " +
-      "ORDER BY ob_1, ob_2, ob_3")
+  "ORDER BY instanceId, calendarId, startDate")
 @NamedQuery(name = "calendarEventsByCalendarByPeriod", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-      "FROM CalendarEvent e " +
-      "JOIN e.component cmp " +
-      "JOIN cmp.calendar c " +
-      "LEFT OUTER JOIN FETCH e.recurrence r " +
-      "WHERE (c IN :calendars " +
-      "       AND ((cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
-      "           OR (cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL AND (e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL)))) " +
+  "SELECT distinct e," +
+      "c.componentInstanceId as instanceId, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "LEFT OUTER JOIN e.recurrence r " +
+  "WHERE (c IN :calendars " +
+      "  AND (" +
+      "    (cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
+      "    OR (" +
+      "      cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL " +
+      "      AND (e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL)" +
+      "    )" +
+      "  )" +
+      ") " +
       "OR e.id IN (SELECT occ_e.id " +
-      "            FROM CalendarEventOccurrence occ_o " +
-      "            JOIN occ_o.event occ_e " +
+      "            FROM CalendarEvent occ_e " +
+      "            JOIN CalendarEventOccurrence occ_o ON occ_o.event = occ_e " +
       "            JOIN occ_o.component occ_cmp " +
       "            JOIN occ_cmp.calendar occ_c " +
       "            LEFT OUTER JOIN occ_e.recurrence occ_r " +
       "            WHERE occ_c IN :calendars " +
-      "            AND (occ_cmp.period.startDateTime < :endDateTime AND occ_cmp.period.endDateTime > :startDateTime)" +
-      "           )" +
-      "ORDER BY ob_1, ob_2, ob_3")
+      "              AND (occ_cmp.period.startDateTime < :endDateTime " +
+      "                AND occ_cmp.period.endDateTime > :startDateTime)" +
+      "           ) " +
+  "ORDER BY instanceId, calendarId, startDate")
 @NamedQuery(name = "calendarEventsByPeriod", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-    "FROM CalendarEvent e " +
-    "JOIN e.component cmp " +
-    "JOIN cmp.calendar c " +
-    "LEFT OUTER JOIN FETCH e.recurrence r " +
-    "WHERE ((cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
-    "       OR (cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL AND (e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL))) " +
-    "OR e.id IN (SELECT occ_e.id " +
-    "            FROM CalendarEventOccurrence occ_o " +
-    "            JOIN occ_o.event occ_e " +
-    "            JOIN occ_o.component occ_cmp " +
-    "            LEFT OUTER JOIN occ_e.recurrence occ_r " +
-    "            WHERE (occ_cmp.period.startDateTime < :endDateTime AND occ_cmp.period.endDateTime > :startDateTime)" +
-    "           )" +
-    "ORDER BY ob_1, ob_2, ob_3")
-@NamedQuery(name = "calendarEventsByParticipantsByPeriod", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-      "FROM CalendarEvent e " +
-      "JOIN e.component cmp " +
-      "JOIN cmp.calendar c " +
-      "JOIN cmp.attendees.attendees a " +
-      "LEFT OUTER JOIN FETCH e.recurrence r " +
-      "WHERE (a.attendeeId IN :participantIds " +
-      "       AND ((cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
-      "            OR" +
-      "            (cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL AND (e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL)))) " +
+  "SELECT distinct e, " +
+      "c.componentInstanceId as instanceId, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "LEFT OUTER JOIN e.recurrence r " +
+  "WHERE ((cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
+      "  OR (cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL " +
+      "    AND (e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL)" +
+      ")) " +
       "OR e.id IN (SELECT occ_e.id " +
-      "            FROM CalendarEventOccurrence occ_o " +
-      "            JOIN occ_o.event occ_e " +
+      "            FROM CalendarEvent occ_e " +
+      "            JOIN CalendarEventOccurrence occ_o ON occ_o.event = occ_e " +
       "            JOIN occ_o.component occ_cmp " +
-      "            JOIN occ_cmp.attendees.attendees occ_a " +
+      "            LEFT OUTER JOIN occ_e.recurrence occ_r " +
+      "            WHERE occ_cmp.period.startDateTime < :endDateTime " +
+      "               AND occ_cmp.period.endDateTime > :startDateTime)" +
+  "ORDER BY instanceId, calendarId, startDate")
+@NamedQuery(name = "calendarEventsByParticipantsByPeriod", query =
+  "SELECT distinct e, " +
+      "c.componentInstanceId as instanceId, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "JOIN cmp.attendees a " +
+  "LEFT OUTER JOIN e.recurrence r " +
+  "WHERE (a.attendeeId IN :participantIds " +
+      "  AND (" +
+      "    (cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
+      "      OR (" +
+      "        cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL " +
+      "          AND (" +
+      "            e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL" +
+      "          )" +
+      "      )" +
+      "  )) " +
+      "OR e.id IN (SELECT occ_e.id " +
+      "            FROM CalendarEvent occ_e " +
+      "            JOIN CalendarEventOccurrence occ_o ON occ_o.event = occ_e " +
+      "            JOIN occ_o.component occ_cmp " +
+      "            JOIN occ_cmp.attendees occ_a " +
       "            LEFT OUTER JOIN occ_e.recurrence occ_r " +
       "            WHERE occ_a.attendeeId IN :participantIds " +
-      "            AND (occ_cmp.period.startDateTime < :endDateTime AND occ_cmp.period.endDateTime > :startDateTime)" +
+      "               AND (occ_cmp.period.startDateTime < :endDateTime " +
+      "                 AND occ_cmp.period.endDateTime > :startDateTime)" +
       "           ) " +
-      "ORDER BY ob_1, ob_2, ob_3")
+  "ORDER BY instanceId, calendarId, startDate")
 @NamedQuery(name = "calendarEventsByCalendarByParticipantsByPeriod", query =
-  "SELECT distinct e, c.componentInstanceId as ob_1, c.id as ob_2, cmp.period.startDateTime as ob_3 " +
-      "FROM CalendarEvent e " +
-      "JOIN e.component cmp " +
-      "JOIN cmp.calendar c " +
-      "JOIN cmp.attendees.attendees a " +
-      "LEFT OUTER JOIN FETCH e.recurrence r " +
-      "WHERE (c IN :calendars " +
-      "       AND a.attendeeId IN :participantIds " +
-      "       AND ((cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
-      "            OR (cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL AND (e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL)))) " +
+  "SELECT distinct e, " +
+      "c.componentInstanceId as instanceId, " +
+      "c.id as calendarId, " +
+      "cmp.period.startDateTime as startDate " +
+  "FROM CalendarEvent e " +
+  "JOIN e.component cmp " +
+  "JOIN cmp.calendar c " +
+  "JOIN cmp.attendees a " +
+  "LEFT OUTER JOIN e.recurrence r " +
+  "WHERE (c IN :calendars AND a.attendeeId IN :participantIds " +
+      "  AND (" +
+      "    (cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
+      "    OR (" +
+      "      cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL " +
+      "      AND (" +
+      "        e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL" +
+      "      )" +
+      "    )" +
+      "  )" +
+      ") " +
       "OR e.id IN (SELECT occ_e.id " +
-      "            FROM CalendarEventOccurrence occ_o " +
-      "            JOIN occ_o.event occ_e " +
+      "            FROM CalendarEvent occ_e " +
+      "            JOIN CalendarEventOccurrence occ_o ON occ_o.event = occ_e " +
       "            JOIN occ_o.component occ_cmp " +
       "            JOIN occ_cmp.calendar occ_c " +
-      "            JOIN occ_cmp.attendees.attendees occ_a " +
+      "            JOIN occ_cmp.attendees occ_a " +
       "            LEFT OUTER JOIN occ_e.recurrence occ_r " +
       "            WHERE occ_c IN :calendars " +
-      "            AND occ_a.attendeeId IN :participantIds " +
-      "            AND (occ_cmp.period.startDateTime < :endDateTime AND occ_cmp.period.endDateTime > :startDateTime)" +
+      "               AND occ_a.attendeeId IN :participantIds " +
+      "               AND (occ_cmp.period.startDateTime < :endDateTime " +
+      "                 AND occ_cmp.period.endDateTime > :startDateTime)" +
       "           ) " +
-      "ORDER BY ob_1, ob_2, ob_3")
+  "ORDER BY instanceId, calendarId, startDate")
 public class CalendarEvent extends BasicJpaEntity<CalendarEvent, UuidIdentifier>
     implements PlannableOnCalendar, Recurrent, Categorized, Prioritized, Contribution, Securable,
     WithAttachment, WithReminder, WithPermanentLink {
@@ -258,7 +304,8 @@ public class CalendarEvent extends BasicJpaEntity<CalendarEvent, UuidIdentifier>
   @Column(name = "externalId")
   private String externalId;
 
-  @OneToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @OneToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL,
+      orphanRemoval = true)
   @JoinColumn(name = "componentId", referencedColumnName = "id", unique = true)
   @NotNull
   private CalendarComponent component;
@@ -271,7 +318,7 @@ public class CalendarEvent extends BasicJpaEntity<CalendarEvent, UuidIdentifier>
   @Embedded
   private CategorySet categories = new CategorySet();
 
-  @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
+  @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name = "recurrenceId", referencedColumnName = "id", unique = true)
   private Recurrence recurrence = Recurrence.NO_RECURRENCE;
 
@@ -1013,8 +1060,7 @@ public class CalendarEvent extends BasicJpaEntity<CalendarEvent, UuidIdentifier>
       if (!previousState.getCalendar().equals(this.getCalendar())) {
         result = moveToAnotherCalendar(previousState);
       } else {
-        this.updateIntoPersistence();
-        result = new EventOperationResult().withUpdated(this);
+        result = new EventOperationResult().withUpdated(updateIntoPersistence());
       }
       result.updated().ifPresent(e -> notify(ResourceEvent.Type.UPDATE, previousState, e));
       if (!OperationContext.statesOf(IMPORT)) {
@@ -1296,8 +1342,10 @@ public class CalendarEvent extends BasicJpaEntity<CalendarEvent, UuidIdentifier>
     if (!this.getPeriod().equals(previousPeriod)) {
       this.getAttendees().forEach(Attendee::resetParticipation);
     }
-    CalendarEvent updatedEvent = this.updateIntoPersistence();
-    return new EventOperationResult().withUpdated(updatedEvent);
+    return Transaction.performInNew(() -> {
+      CalendarEvent updatedEvent = this.updateIntoPersistence();
+      return new EventOperationResult().withUpdated(updatedEvent);
+    });
   }
 
   /**
@@ -1351,8 +1399,8 @@ public class CalendarEvent extends BasicJpaEntity<CalendarEvent, UuidIdentifier>
   private void checkOccurrence(final CalendarEventOccurrence occurrence) {
     if (occurrence == null || !this.equals(occurrence.getCalendarEvent())) {
       throw new IllegalArgumentException(
-          "The occurrence is either null or comes from a different event than '" + this.getId() +
-              "'");
+          "The occurrence is either null or comes from a different event than '" +
+              this.getId() + "'");
     }
   }
 
@@ -1406,9 +1454,10 @@ public class CalendarEvent extends BasicJpaEntity<CalendarEvent, UuidIdentifier>
     // Set previous calendar before saving it
     this.setCalendar(previousState.getCalendar());
     // Saving updated data
-    updateIntoPersistence();
+    CalendarEvent updated = updateIntoPersistence();
     // Then moving it
-    final CalendarEvent movedCalendar = CalendarEventRepository.get().moveToCalendar(this, target);
+    final CalendarEvent movedCalendar = CalendarEventRepository.get()
+        .moveToCalendar(updated, target);
     return new EventOperationResult().withUpdated(movedCalendar);
   }
 

@@ -47,13 +47,15 @@ public interface CalendarEventOccurrenceGenerator {
   /**
    * Generates the actual occurrences of the calendar events that occur in the specified window of
    * time.
-   *
+   * <p>
    * The occurrences are computed from specified window of time that implies a set of events planned
    * in this period.
-   *
+   * </p>
+   * <p>
    * This method doesn't require to be implemented.
+   * </p>
    * @param timeWindow the time window in which the events occur.
-   * @return a set of event occurrences that occur in the specified window of time sorted by the
+   * @return a list of event occurrences that occur in the specified window of time sorted by the
    * datetime at which they start.
    */
   default List<CalendarEventOccurrence> generateOccurrencesIn(CalendarTimeWindow timeWindow) {
@@ -62,14 +64,16 @@ public interface CalendarEventOccurrenceGenerator {
 
   /**
    * Generates the actual occurrences of the specified events and that occur in the period of time.
-   *
+   * <p>
    * The occurrences are computed from the recurrence rule of the specified events, from the date
    * and times at which the events start, and for the specified period of time.
-   *
+   * </p>
+   * <p>
    * This method require to be implemented.
+   * </p>
    * @param events the events.
    * @param inPeriod the period of time the instances of the events occur.
-   * @return a set of event occurrences that occur in the specified period sorted by the date and
+   * @return a list of event occurrences that occur in the specified period sorted by the date and
    * time at which they start.
    */
   List<CalendarEventOccurrence> generateOccurrencesOf(List<CalendarEvent> events, Period inPeriod);
@@ -77,9 +81,10 @@ public interface CalendarEventOccurrenceGenerator {
   /**
    * Counts the number of occurrences of the specified event in the given period. If the period is
    * null, then the period over which the event recurs is taken into account.
-   *
+   * <p>
    * This method is a faster way to compute the occurrence count of an event by considering only
    * its recurrence rule and by not generating any occurrences.
+   * </p>
    * @param event an event.
    * @param inPeriod the period of time the instances of the events occur. It can be null, in this
    * case the recurrence period is taken in the computation.
@@ -91,10 +96,10 @@ public interface CalendarEventOccurrenceGenerator {
 
   /**
    * Generates the next occurrence of the specified event since the given date time.
-   *
+   * <p>
    * The next occurrence is computed from the recurrence rule of the specified event, from the date
    * and times at which the events start, from the specified date, and from recurrence exceptions.
-   *
+   * </p>
    * This method requires to be implemented.
    * @param event an event.
    * @param since the date time since which the next occurrence must be computed. No occurrence

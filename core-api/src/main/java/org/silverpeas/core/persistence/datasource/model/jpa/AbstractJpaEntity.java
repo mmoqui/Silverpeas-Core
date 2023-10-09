@@ -52,10 +52,11 @@ import static org.silverpeas.core.util.annotation.ClassAnnotationUtil
  * entities and that puts in place the JPA mechanical required for their persistence according
  * to the basic JPA related rules in the Silverpeas Persistence API such as the unique identifier
  * management.
- *
+ * <p>
  * Please be careful with the child entity classes about the use of @PrePersist and @PreUpdate
  * annotations. In most of cases you don't need to use them, but to override {@link
  * AbstractJpaEntity#performBeforePersist} or {@link AbstractJpaEntity#performBeforeUpdate} methods.
+ * </p>
  * @param <T> the class name of the represented entity.
  * @param <U> the unique identifier class used by the entity to identify it uniquely in the
  * persistence context.
@@ -77,7 +78,7 @@ public abstract class AbstractJpaEntity<T extends IdentifiableEntity, U extends 
   public boolean isPersisted() {
     if (this.id != null) {
       EntityManager entityManager = EntityManagerProvider.get().getEntityManager();
-      return entityManager.find(getClass(), id) != null;
+      return entityManager.contains(this) || entityManager.find(getClass(), id) != null;
     }
     return false;
   }
@@ -200,9 +201,11 @@ public abstract class AbstractJpaEntity<T extends IdentifiableEntity, U extends 
 
   @SuppressWarnings("unchecked")
   private Class<U> getEntityIdentifierClass() {
-    Type parent = this.getClass().getGenericSuperclass();
+    Class<?> parentClass = this.getClass();
+    Type parent = parentClass.getGenericSuperclass();
     while (!(parent instanceof ParameterizedType)) {
-      parent = this.getClass().getSuperclass().getGenericSuperclass();
+      parentClass = parentClass.getSuperclass();
+      parent = parentClass.getGenericSuperclass();
     }
     return (Class<U>) ((ParameterizedType) parent).getActualTypeArguments()[1];
   }

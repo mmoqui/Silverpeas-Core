@@ -23,6 +23,8 @@
  */
 package org.silverpeas.core.calendar;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.tuple.Pair;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.calendar.CalendarEvent.EventOperationResult;
@@ -41,15 +43,6 @@ import org.silverpeas.core.util.Mutable;
 import org.silverpeas.core.util.ResourcePath;
 import org.silverpeas.core.web.mvc.route.ComponentInstanceRoutingMapProviderByInstance;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -117,9 +110,10 @@ public class CalendarEventOccurrence
   @JoinColumn(name = "eventId", referencedColumnName = "id")
   private CalendarEvent event;
 
-  @OneToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval =
-      true)
+  @OneToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL,
+      orphanRemoval = true)
   @JoinColumn(name = "componentId", referencedColumnName = "id", unique = true)
+  @NotNull
   private CalendarComponent component;
   @Transient
   private CalendarEventOccurrence previousState;
@@ -154,7 +148,8 @@ public class CalendarEventOccurrence
    * @param occurrenceStartDate a start date.
    * @return the computed occurrence identifier.
    */
-  public static Optional<CalendarEventOccurrence> getBy(CalendarEvent event, String occurrenceStartDate) {
+  public static Optional<CalendarEventOccurrence> getBy(CalendarEvent event,
+      String occurrenceStartDate) {
     return getBy(event, getDate(occurrenceStartDate));
   }
 

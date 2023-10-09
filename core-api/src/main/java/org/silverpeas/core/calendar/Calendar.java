@@ -23,6 +23,10 @@
  */
 package org.silverpeas.core.calendar;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 import org.silverpeas.core.admin.component.model.SilverpeasComponentInstance;
 import org.silverpeas.core.admin.component.model.SilverpeasPersonalComponentInstance;
 import org.silverpeas.core.admin.user.model.SilverpeasRole;
@@ -48,18 +52,9 @@ import org.silverpeas.core.security.token.persistent.PersistentResourceToken;
 import org.silverpeas.core.ui.DisplayI18NHelper;
 import org.silverpeas.core.util.Mutable;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Table;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.Year;
-import java.time.YearMonth;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -72,23 +67,22 @@ import static org.silverpeas.core.admin.user.model.SilverpeasRole.ADMIN;
 /**
  * A calendar is a particular system for scheduling and organizing events and activities that occur
  * at different times or on different dates throughout the years.
- *
+ * <p>
  * Before adding any events or activities into a calendar, it requires to be persisted into the
  * Silverpeas data source (use the {@code save} method for doing). Once saved, a collection of
- * planned events is then set up for this calendar and through which the events of the calendar
- * can be managed.
+ * planned events is then set up for this calendar and through which the events of the calendar can
+ * be managed.
+ *
  * @author mmoquillon
  */
 @Entity
-@NamedQueries({
 @NamedQuery(
     name = "calendarsByComponentInstanceIds",
-    query = "from Calendar c where c.componentInstanceId in :componentInstanceIds " +
-            "order by c.componentInstanceId, c.title, c.id"),
+    query = "select c from Calendar c where c.componentInstanceId in :componentInstanceIds " +
+        "order by c.componentInstanceId, c.title, c.id")
 @NamedQuery(
     name = "synchronizedCalendars",
-    query = "from Calendar c where c.externalUrl is not null"
-)})
+    query = "select c from Calendar c where c.externalUrl is not null")
 @Table(name = "sb_cal_calendar")
 public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> implements Securable {
 
@@ -122,9 +116,10 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
    * Creates in the specified component instance a new calendar with the given title. The timezone
    * identifier of the calendar is set to the default zone id of the platform on which Silverpeas
    * runs.
-   * @param instanceId the identifier identifying an instance of a component in Silverpeas.
-   * Usually, this identifier is the identifier of the component instance to which it belongs
-   * (for example almanach32) or the identifier of the user personal calendar.
+   *
+   * @param instanceId the identifier identifying an instance of a component in Silverpeas. Usually,
+   * this identifier is the identifier of the component instance to which it belongs (for example
+   * almanach32) or the identifier of the user personal calendar.
    * @param title the title of the calendar.
    */
   public Calendar(String instanceId, String title) {
@@ -134,9 +129,10 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   /**
    * Creates in the specified component instance a new calendar with the given title and for the
    * specified zone ID.
-   * @param instanceId the identifier of an instance of a component in Silverpeas.
-   * Usually, this identifier is the identifier of the component instance to which it belongs
-   * (for example almanach32) or the identifier of the user personal calendar.
+   *
+   * @param instanceId the identifier of an instance of a component in Silverpeas. Usually, this
+   * identifier is the identifier of the component instance to which it belongs (for example
+   * almanach32) or the identifier of the user personal calendar.
    * @param title the title of the calendar.
    * @param zoneId the identifier of a timezone.
    */
@@ -150,11 +146,12 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
    * Creates for the specified component instance a new main calendar with the given title. The
    * timezone identifier of the calendar is set to the default zone id of the platform on which
    * Silverpeas runs.
-   * <p>A main calendar is a calendar that can not be deleted while the linked component instance is
-   * existing. The title is also set automatically from the instance.</p>
-   * @param instance an instance of a component in Silverpeas.
-   * Usually, this identifier is the identifier of the component instance to which it belongs
-   * (for example almanach32) or the identifier of the user personal calendar.
+   * <p>A main calendar is a calendar that can not be deleted while the linked component instance
+   * is existing. The title is also set automatically from the instance.</p>
+   *
+   * @param instance an instance of a component in Silverpeas. Usually, this identifier is the
+   * identifier of the component instance to which it belongs (for example almanach32) or the
+   * identifier of the user personal calendar.
    * @return the initialized main calendar.
    */
   public static Calendar newMainCalendar(final SilverpeasComponentInstance instance) {
@@ -163,6 +160,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Gets a calendar by its identifier.
+   *
    * @param id the identifier of the aimed calendar.
    * @return the instance of the aimed calendar or null if it does not exist.
    */
@@ -174,8 +172,8 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   /**
    * Gets the calendars represented by the specified component instance.  For instance, the
    * component can be a collaborative application or a personal one.
-   * @param instanceId the unique identifier identifying an instance of a Silverpeas
-   * component.
+   *
+   * @param instanceId the unique identifier identifying an instance of a Silverpeas component.
    * @return a list containing the calendar instances which matched if any, empty list otherwise.
    */
   public static ComponentInstanceCalendars getByComponentInstanceId(String instanceId) {
@@ -183,10 +181,10 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   }
 
   /**
-   * Gets the calendars represented by the specified component instances.  For instance, a
-   * component can be a collaborative application or a personal one.
-   * @param instanceIds the unique identifiers identifying instances of a Silverpeas
-   * component.
+   * Gets the calendars represented by the specified component instances.  For instance, a component
+   * can be a collaborative application or a personal one.
+   *
+   * @param instanceIds the unique identifiers identifying instances of a Silverpeas component.
    * @return a list containing the calendar instances which matched if any, empty list otherwise.
    */
   public static List<Calendar> getByComponentInstanceIds(final Collection<String> instanceIds) {
@@ -197,6 +195,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   /**
    * Gets a calendar window of time defined between the two specified dates and from which the
    * events occurring in the given period can be requested.
+   *
    * @param start the start date of the period.
    * @param end the end date of the period.
    * @return a window of time that includes all the calendar events occurring in its specified
@@ -209,6 +208,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Gets a calendar events instance which permits to get (as stream) events.<br>
+   *
    * @return a calendar events instance.
    */
   public static CalendarEvents getEvents() {
@@ -216,8 +216,8 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   }
 
   /**
-   * Gets all the synchronized calendars in Silverpeas. A calendar is synchronized when it is
-   * the counterpart of an external remote calendar and it is regularly updated from this external
+   * Gets all the synchronized calendars in Silverpeas. A calendar is synchronized when it is the
+   * counterpart of an external remote calendar and it is regularly updated from this external
    * calendar.
    *
    * @return a list of synchronized calendars.
@@ -240,6 +240,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Gets the identifier of the component instance which the calendar is attached.
+   *
    * @return the identifier of the component instance which the calendar is attached.
    */
   public String getComponentInstanceId() {
@@ -249,6 +250,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   /**
    * Gets the title of the calendar. If the calendar is the main one of a component instance, then
    * the title is taken from the component instance name.
+   *
    * @return the title of the calendar.
    */
   public String getTitle() {
@@ -282,6 +284,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Gets the identifier of the location zone the calendar belongs to.
+   *
    * @return the zone id as {@link ZoneId} instance.
    */
   public ZoneId getZoneId() {
@@ -295,6 +298,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   /**
    * Gets the URL of the external calendar with which this calendar is synchronized. This URL is
    * used in the synchronization to fetch the content of the external calendar.
+   *
    * @return either the URL of an external calendar or null if this calendar isn't synchronized with
    * such an external calendar.
    */
@@ -309,6 +313,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   /**
    * Sets the URL of an external calendar with which this calendar will be synchronized. The URL
    * will be used to get the content of the external calendar.
+   *
    * @param calendarUrl the URL of a calendar external to Silverpeas.
    */
   public void setExternalCalendarUrl(final URL calendarUrl) {
@@ -317,8 +322,9 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Gets the last synchronization date of this calendar in the case this calendar is a synchronized
-   * one. If it is a synchronized calendar and its last synchronization date is empty, this means
-   * no synchronization was yet operated.
+   * one. If it is a synchronized calendar and its last synchronization date is empty, this means no
+   * synchronization was yet operated.
+   *
    * @return optionally the date of its last synchronization date.
    */
   public Optional<Instant> getLastSynchronizationDate() {
@@ -327,6 +333,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Is this calendar synchronized with the events from an external calendar.
+   *
    * @return true if this calendar is synchronized with an external calendar.
    */
   public boolean isSynchronized() {
@@ -335,6 +342,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Sets the date time at which this calendar is lastly synchronized.
+   *
    * @param dateTime an {@link Instant} value.
    */
   protected void setLastSynchronizationDate(final Instant dateTime) {
@@ -347,7 +355,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
    * activities.
    */
   public void save() {
-    if(!isPersisted() && isMain()) {
+    if (!isPersisted() && isMain()) {
       getByComponentInstanceId(getComponentInstanceId()).forEach(c -> {
         if (c.isMain()) {
           throw new IllegalStateException(
@@ -380,8 +388,9 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   }
 
   /**
-   * Gets a window of time on this calendar defined by the specified period. The window of time
-   * will include only the events in this calendar that occur in the specified period.
+   * Gets a window of time on this calendar defined by the specified period. The window of time will
+   * include only the events in this calendar that occur in the specified period.
+   *
    * @param year the year during which the events in this calendar occur.
    * @return the window of time including the events in this calendar occurring in the given period.
    */
@@ -390,8 +399,9 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   }
 
   /**
-   * Gets a window of time on this calendar defined by the specified period. The window of time
-   * will include only the events in this calendar that occur in the specified period.
+   * Gets a window of time on this calendar defined by the specified period. The window of time will
+   * include only the events in this calendar that occur in the specified period.
+   *
    * @param yearMonth the month and year during which the events in this calendar occur.
    * @return the window of time including the events in this calendar occurring in the given period.
    */
@@ -400,8 +410,9 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   }
 
   /**
-   * Gets a window of time on this calendar defined by the specified period. The window of time
-   * will include only the events in this calendar that occur in the specified period.
+   * Gets a window of time on this calendar defined by the specified period. The window of time will
+   * include only the events in this calendar that occur in the specified period.
+   *
    * @param day day during which the events in this calendar occur.
    * @return the window of time including the events in this calendar occurring in the given period.
    */
@@ -410,8 +421,9 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   }
 
   /**
-   * Gets a window of time on this calendar defined by the specified period. The window of time
-   * will include only the events in this calendar that occur in the specified period.
+   * Gets a window of time on this calendar defined by the specified period. The window of time will
+   * include only the events in this calendar that occur in the specified period.
+   *
    * @param start the start date of the period.
    * @param end the end date of the period.
    * @return the window of time including the events in this calendar occurring in the given period.
@@ -432,12 +444,13 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
    * Synchronizes this calendar. An {@link IllegalArgumentException} is thrown if this calendar
    * isn't a synchronized one.
    * <p>
-   * The synchronization is a peculiar and regular import process to update the calendar
-   * with its external counterpart in such a way this calendar is a mirror of the external one at a
-   * given time.
+   * The synchronization is a peculiar and regular import process to update the calendar with its
+   * external counterpart in such a way this calendar is a mirror of the external one at a given
+   * time.
    * </p>
-   * @return the result of the synchronization with the number of events added, updated and
-   * deleted in this calendar.
+   *
+   * @return the result of the synchronization with the number of events added, updated and deleted
+   * in this calendar.
    * @throws ImportException if the synchronization fails.
    */
   public ICalendarImportResult synchronize() throws ImportException {
@@ -445,8 +458,9 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
   }
 
   /**
-   * Gets either the calendar event with the specified identifier or nothing if no
-   * such event exists with the given identifier.
+   * Gets either the calendar event with the specified identifier or nothing if no such event exists
+   * with the given identifier.
+   *
    * @param eventId the unique identifier of the event to get.
    * @return optionally an event with the specified identifier.
    */
@@ -465,6 +479,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
    * such event exists with the given external identifier. Such events come from either an external
    * calendar with which this calendar is synchronized or from an import of an ics file (iCalendar
    * document containing a collection of calendar component definitions).
+   *
    * @param externalEventId the unique external identifier of the event to get.
    * @return optionally an event with the specified identifier.
    */
@@ -489,6 +504,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Is this calendar empty of event?
+   *
    * @return true if there is no events planned in the calendar. Otherwise returns false.
    */
   public boolean isEmpty() {
@@ -499,6 +515,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Is this calendar the main one of the linked component instance.
+   *
    * @return true if it is, false otherwise.
    */
   public boolean isMain() {
@@ -507,6 +524,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Is this calendar the personal one of the given user which is not modifiable?
+   *
    * @param user the user to verify.
    * @return true if it is, false otherwise.
    */
@@ -516,6 +534,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Is this calendar a personal one of the given user?
+   *
    * @param user the user to verify.
    * @return true if it is, false otherwise.
    */
@@ -527,6 +546,7 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
 
   /**
    * Gets the token associated to the calendar.
+   *
    * @return the token as string.
    */
   public String getToken() {
@@ -558,6 +578,16 @@ public class Calendar extends SilverpeasJpaEntity<Calendar, UuidIdentifier> impl
           Optional.ofNullable(SilverpeasRole.getHighestFrom(roles))
               .filter(r -> r.isGreaterThanOrEquals(ADMIN)).isPresent();
     });
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
   private void notify(ResourceEvent.Type type, Calendar... events) {

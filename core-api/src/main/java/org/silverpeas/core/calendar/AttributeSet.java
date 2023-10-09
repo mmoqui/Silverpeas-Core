@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.calendar;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -55,7 +56,7 @@ public class AttributeSet implements Serializable, Iterable<Map.Entry<String, St
   @MapsId
   @CollectionTable(name = "sb_cal_attributes", joinColumns = {@JoinColumn(name = "id")})
   @MapKeyColumn(name = "name")
-  @Column(name = "value")
+  @Column(name = "\"value\"")
   private Map<String, String> attributes = new HashMap<>();
 
   /**
@@ -66,6 +67,7 @@ public class AttributeSet implements Serializable, Iterable<Map.Entry<String, St
   }
 
   @Override
+  @Nonnull
   public Iterator<Map.Entry<String, String>> iterator() {
     return attributes.entrySet().iterator();
   }

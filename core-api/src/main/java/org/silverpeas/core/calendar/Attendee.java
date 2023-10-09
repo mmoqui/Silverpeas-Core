@@ -23,12 +23,12 @@
  */
 package org.silverpeas.core.calendar;
 
+import jakarta.persistence.*;
 import org.silverpeas.core.SilverpeasRuntimeException;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.persistence.datasource.model.identifier.UuidIdentifier;
 import org.silverpeas.core.persistence.datasource.model.jpa.SilverpeasJpaEntity;
 
-import jakarta.persistence.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
@@ -159,10 +159,9 @@ public abstract class Attendee extends SilverpeasJpaEntity<Attendee, UuidIdentif
   public void delegateTo(final User user) {
     participationStatusAnswered = this.participationStatus != ParticipationStatus.DELEGATED;
     this.participationStatus = ParticipationStatus.DELEGATED;
-    this.delegate = InternalAttendee.fromUser(user).to(this.component)
+    this.delegate = this.component.getAttendees().add(user)
         .withPresenceStatus(this.presenceStatus);
     this.delegate.delegate = this;
-    this.component.getAttendees().add(this.delegate);
   }
 
   /**
@@ -174,10 +173,9 @@ public abstract class Attendee extends SilverpeasJpaEntity<Attendee, UuidIdentif
   public void delegateTo(final String email) {
     participationStatusAnswered = this.participationStatus != ParticipationStatus.DELEGATED;
     this.participationStatus = ParticipationStatus.DELEGATED;
-    this.delegate = ExternalAttendee.withEmail(email).to(this.component)
+    this.delegate = this.component.getAttendees().add(email)
         .withPresenceStatus(this.presenceStatus);
     this.delegate.delegate = this;
-    this.component.getAttendees().add(this.delegate);
   }
 
   void setParticipationStatus(final ParticipationStatus participationStatus) {
@@ -300,6 +298,16 @@ public abstract class Attendee extends SilverpeasJpaEntity<Attendee, UuidIdentif
    */
   void setCalendarComponent(final CalendarComponent calendarComponent) {
     this.component = calendarComponent;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
   }
 
   /**

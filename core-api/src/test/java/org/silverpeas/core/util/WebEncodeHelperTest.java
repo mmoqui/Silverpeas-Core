@@ -47,8 +47,8 @@ public class WebEncodeHelperTest {
 
   @Test
   public void javaStringToJsStringWhenNullOrEmpty() {
-    assertThat(WebEncodeHelper.javaStringToJsString(null), isEmptyString());
-    assertThat(WebEncodeHelper.javaStringToJsString(""), isEmptyString());
+    assertThat(WebEncodeHelper.javaStringToJsString(null), is(emptyString()));
+    assertThat(WebEncodeHelper.javaStringToJsString(""), is(emptyString()));
   }
 
   @Test
@@ -68,8 +68,8 @@ public class WebEncodeHelperTest {
 
   @Test
   public void javaStringToHtmlStringWhenNullOrEmpty() {
-    assertThat(WebEncodeHelper.javaStringToHtmlString(null), isEmptyString());
-    assertThat(WebEncodeHelper.javaStringToHtmlString(""), isEmptyString());
+    assertThat(WebEncodeHelper.javaStringToHtmlString(null), is(emptyString()));
+    assertThat(WebEncodeHelper.javaStringToHtmlString(""), is(emptyString()));
   }
 
   @Test
@@ -88,8 +88,8 @@ public class WebEncodeHelperTest {
 
   @Test
   public void escapeXmlWhenNullOrEmpty() {
-    assertThat(WebEncodeHelper.escapeXml(null), isEmptyString());
-    assertThat(WebEncodeHelper.escapeXml(""), isEmptyString());
+    assertThat(WebEncodeHelper.escapeXml(null), is(emptyString()));
+    assertThat(WebEncodeHelper.escapeXml(""), is(emptyString()));
   }
 
   @Test
@@ -108,8 +108,8 @@ public class WebEncodeHelperTest {
 
   @Test
   public void convertBlanksForHtmlWhenNullOrEmpty() {
-    assertThat(WebEncodeHelper.convertBlanksForHtml(null), isEmptyString());
-    assertThat(WebEncodeHelper.convertBlanksForHtml(""), isEmptyString());
+    assertThat(WebEncodeHelper.convertBlanksForHtml(null), is(emptyString()));
+    assertThat(WebEncodeHelper.convertBlanksForHtml(""), is(emptyString()));
   }
 
   @Test
@@ -136,8 +136,8 @@ public class WebEncodeHelperTest {
 
   @Test
   public void javaStringToHtmlParagrapheWhenNullOrEmpty() {
-    assertThat(WebEncodeHelper.javaStringToHtmlParagraphe(null), isEmptyString());
-    assertThat(WebEncodeHelper.javaStringToHtmlParagraphe(""), isEmptyString());
+    assertThat(WebEncodeHelper.javaStringToHtmlParagraphe(null), is(emptyString()));
+    assertThat(WebEncodeHelper.javaStringToHtmlParagraphe(""), is(emptyString()));
   }
 
   @Test
@@ -163,8 +163,8 @@ public class WebEncodeHelperTest {
 
   @Test
   public void htmlStringToJavaStringWhenNullOrEmpty() {
-    assertThat(WebEncodeHelper.htmlStringToJavaString(null), isEmptyString());
-    assertThat(WebEncodeHelper.htmlStringToJavaString(""), isEmptyString());
+    assertThat(WebEncodeHelper.htmlStringToJavaString(null), is(emptyString()));
+    assertThat(WebEncodeHelper.htmlStringToJavaString(""), is(emptyString()));
   }
 
   @Test

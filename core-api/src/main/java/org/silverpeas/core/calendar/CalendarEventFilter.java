@@ -72,6 +72,7 @@ public class CalendarEventFilter {
    * @param users the users in Silverpeas that participate for at least one event.
    * @return itself.
    */
+  @SuppressWarnings("UnusedReturnValue")
   public CalendarEventFilter onParticipants(User... users) {
     return onParticipants(Arrays.asList(users));
   }
@@ -94,6 +95,7 @@ public class CalendarEventFilter {
    * after.
    * @return itself.
    */
+  @SuppressWarnings("UnusedReturnValue")
   public CalendarEventFilter onSynchronizationDateLimit(final Instant dateTime) {
     this.synchronizationDateLimit = dateTime;
     return this;

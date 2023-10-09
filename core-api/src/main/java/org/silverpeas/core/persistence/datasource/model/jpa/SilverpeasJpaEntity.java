@@ -66,10 +66,10 @@ public abstract class SilverpeasJpaEntity<E extends Entity<E, I>, I extends Enti
   @Transient
   private User lastUpdater;
 
-  @Column(name = "createdBy", nullable = false, insertable = true, updatable = false, length = 40)
+  @Column(name = "createdBy", nullable = false, updatable = false, length = 40)
   private String creatorId;
 
-  @Column(name = "createDate", nullable = false, insertable = true, updatable = false)
+  @Column(name = "createDate", nullable = false, updatable = false)
   @Temporal(value = TemporalType.TIMESTAMP)
   private Date creationDate = null;
 

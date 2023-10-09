@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.security.token.persistent;
 
+import jakarta.persistence.*;
 import org.silverpeas.core.persistence.EntityReference;
 import org.silverpeas.core.persistence.datasource.model.identifier.UniqueLongIdentifier;
 import org.silverpeas.core.persistence.datasource.model.jpa.BasicJpaEntity;
@@ -34,18 +35,11 @@ import org.silverpeas.core.security.token.persistent.service.PersistentResourceT
 import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import java.util.Date;
 
 /**
  * A persistent token used to identify uniquely a resource.
- *
+ * <p>
  * This token has the particularity to be persisted in a data source and to refer the resource it
  * identifies uniquely both by the resource identifier and by the resource type.
  *
@@ -54,10 +48,11 @@ import java.util.Date;
 @Entity
 @Table(name = "st_token")
 @TokenGenerator(PersistentResourceTokenGenerator.class)
-@NamedQueries({@NamedQuery(name = "PersistentResourceToken.getByTypeAndResourceId",
-    query = "from PersistentResourceToken where resourceType = :type and resourceId = :resourceId"),
-    @NamedQuery(name = "PersistentResourceToken.getByToken",
-        query = "from PersistentResourceToken where token = :token")})
+@NamedQuery(name = "PersistentResourceToken.getByTypeAndResourceId",
+    query = "select t from PersistentResourceToken t where t.resourceType = :type and " +
+        "t.resourceId = :resourceId")
+@NamedQuery(name = "PersistentResourceToken.getByToken",
+    query = "select t from PersistentResourceToken t where t.value = :token")
 public class PersistentResourceToken
     extends BasicJpaEntity<PersistentResourceToken, UniqueLongIdentifier>
     implements Token {
@@ -67,6 +62,7 @@ public class PersistentResourceToken
   /**
    * Represents none token to replace in more typing way the null keyword.
    */
+  @Transient
   public static final PersistentResourceToken NoneToken = new PersistentResourceToken();
 
   @Column(name = "tokenType", nullable = false)
@@ -95,7 +91,7 @@ public class PersistentResourceToken
    * @param resource a reference to the resource for which this token is constructed.
    * @param value the token value.
    */
-  protected PersistentResourceToken(final EntityReference resource, String value) {
+  protected PersistentResourceToken(final EntityReference<?> resource, String value) {
     this.value = value;
     this.resourceId = resource.getId();
     this.resourceType = resource.getType();
@@ -103,7 +99,7 @@ public class PersistentResourceToken
 
   /**
    * Creates a token for the specified resource.
-   *
+   * <p>
    * If the specified resource has already a token, then renews it. Otherwise a new token is
    * generated and persisted into the data source.
    *
@@ -111,7 +107,7 @@ public class PersistentResourceToken
    * @return a token for the specified resource.
    * @throws TokenException
    */
-  public static PersistentResourceToken createToken(final EntityReference resource) throws
+  public static PersistentResourceToken createToken(final EntityReference<?> resource) throws
       TokenException {
     PersistentResourceTokenService service = PersistentResourceTokenService.get();
     return service.initialize(resource);
@@ -119,7 +115,7 @@ public class PersistentResourceToken
 
   /**
    * Gets a token for the specified resource and creates it if it doesn't exist.
-   *
+   * <p>
    * If the specified resource has already a token, then returns it. Otherwise a new token is
    * generated and persisted into the data source.
    *
@@ -127,7 +123,7 @@ public class PersistentResourceToken
    * @return a token for the specified resource.
    * @throws TokenException
    */
-  public static PersistentResourceToken getOrCreateToken(final EntityReference resource) throws
+  public static PersistentResourceToken getOrCreateToken(final EntityReference<?> resource) throws
       TokenException {
     PersistentResourceTokenService service = PersistentResourceTokenService.get();
     PersistentResourceToken token = service.get(resource);
@@ -154,7 +150,7 @@ public class PersistentResourceToken
    *
    * @param resource the resource for which the token has to be removed.
    */
-  public static void removeToken(final EntityReference resource) {
+  public static void removeToken(final EntityReference<?> resource) {
     PersistentResourceTokenService service = PersistentResourceTokenService.get();
     service.remove(resource);
   }
@@ -244,7 +240,7 @@ public class PersistentResourceToken
    *
    * @param resource an identifier of the resource for which this token is.
    */
-  public void setResource(final EntityReference resource) {
+  public void setResource(final EntityReference<?> resource) {
     if (resource != null) {
       this.resourceType = resource.getType();
       this.resourceId = resource.getId();
@@ -303,5 +299,15 @@ public class PersistentResourceToken
   @Override
   public boolean isDefined() {
     return this.exists() && this != NoneToken;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
   }
 }

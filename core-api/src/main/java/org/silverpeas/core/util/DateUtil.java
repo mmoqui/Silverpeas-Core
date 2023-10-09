@@ -646,8 +646,8 @@ public class DateUtil {
    * @return a string representation of the specified date and in the specified pattern.
    */
   public static String formatDate(final Date date, String pattern) {
-    SimpleDateFormat formater = new SimpleDateFormat(pattern);
-    return formater.format(date);
+    SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+    return formatter.format(date);
   }
 
   /**

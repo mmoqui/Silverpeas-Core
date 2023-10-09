@@ -23,15 +23,11 @@
  */
 package org.silverpeas.core.util;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import jakarta.annotation.Nonnull;
+import jakarta.json.*;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
 import org.silverpeas.core.exception.DecodingException;
 import org.silverpeas.core.exception.EncodingException;
 
@@ -40,14 +36,16 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 /**
  * An encoder of Java bean to a JSON representation and a decoder of JSON stream into the
- * corresponding Java bean.
- * <p>
- * In order to perform the marshalling and the unmarchalling, the fields of the bean must be
- * annotated with the JAXB annotations. All null fields are by default ignored.
+ * corresponding Java bean. This encoder/decoder goal is to wrap the actual underlying
+ * implementation of the JSON parser. So, to ensure a common behaviour among several JSON parsers
+ * only the public getters/setters or the public fields are used to access the properties of the
+ * bean to serialize/deserialize. Null properties are by default ignored.
+ *
  * @author mmoquillon
  */
 public class JSONCodec {
@@ -57,130 +55,128 @@ public class JSONCodec {
 
   /**
    * Encodes the specified bean into a JSON representation.
+   *
    * @param bean the bean to encode.
    * @param <T> the type of the bean.
    * @return the JSON representation of the bean in a String.
    * @throws EncodingException if an error occurs while encoding a bean in JSON.
    */
-  public static <T> String encode(T bean) {
-    ObjectMapper mapper = getObjectMapper();
-    StringWriter writer = new StringWriter();
-    try {
-      mapper.writeValue(writer, bean);
-    } catch (IOException ex) {
-      throw new EncodingException(ex.getMessage(), ex);
+  public static <T> String encode(@Nonnull T bean) {
+    requireNonNull(bean, "object");
+    try (Jsonb builder = JsonbBuilder.create()) {
+      return builder.toJson(bean);
+    } catch (Exception e) {
+      throw new EncodingException(e.getMessage(), e);
     }
-    return writer.toString();
   }
 
   /**
    * Encodes the bean dynamically built by the specified builder. This method is just a convenient
-   * one to dynamically build a JSON representation of a simple bean.
-   * We recommend to represent the bean to serialize as a Java object and then
-   * to use the method {@code org.silverpeas.core.util.JSONCodec#encode(T bean)}.
+   * one to dynamically build a JSON representation of a simple bean. We recommend to represent the
+   * bean to serialize as a Java object and then to use the method
+   * {@code org.silverpeas.core.util.JSONCodec#encode(T bean)}.
+   *
    * @param beanBuilder a function that accepts as argument a JSONObject instance and that returns
    * the JSONObject instance enriched with the attributes set by the function.
    * @return the JSON representation of the bean in a String.
    * @throws EncodingException if an error occurs while encoding a bean in JSON.
    */
-  public static String encodeObject(UnaryOperator<JSONObject> beanBuilder) {
-    ObjectMapper mapper = getObjectMapper();
-    StringWriter writer = new StringWriter();
-    JsonNode node = mapper.createObjectNode();
-    JSONObject bean = beanBuilder.apply(new JSONObject((ObjectNode) node));
-    try {
-      mapper.writeValue(writer, bean.getObjectNode());
+  public static String encodeObject(@Nonnull UnaryOperator<JSONObject> beanBuilder) {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+    JSONObject bean = beanBuilder.apply(new JSONObject(builder));
+
+    try (StringWriter writer = new StringWriter();
+         JsonWriter jsonWriter = Json.createWriter(writer)) {
+      jsonWriter.writeObject(bean.getJsonObject());
+      return writer.toString();
     } catch (IOException ex) {
       throw new EncodingException(ex.getMessage(), ex);
     }
-    return writer.toString();
   }
 
   /**
-   * Encodes an array of beans that are dynamically built thank to the specified builder.
-   * This method is just a convenient one to dynamically build a JSON representation of an array
-   * of simple beans. We recommend to represent the bean to serialize as a Java object and then
-   * to use the method {@code org.silverpeas.core.util.JSONCodec#encode(T bean)}.
+   * Encodes an array of beans that are dynamically built thank to the specified builder. This
+   * method is just a convenient one to dynamically build a JSON representation of an array of
+   * simple beans. We recommend to represent the bean to serialize as a Java object and then to use
+   * the method {@code org.silverpeas.core.util.JSONCodec#encode(T bean)}.
+   *
    * @param arrayBuilder a function that accepts as argument a JSONObject instance and that returns
    * the JSONObject instance enriched with the attributes set by the function.
    * @return the JSON representation of the bean in a String.
    * @throws EncodingException if an error occurs while encoding a bean in JSON.
    */
-  public static String encodeArray(UnaryOperator<JSONArray> arrayBuilder) {
-    ObjectMapper mapper = getObjectMapper();
-    StringWriter writer = new StringWriter();
-    ArrayNode node = mapper.createArrayNode();
-    JSONArray array = arrayBuilder.apply(new JSONArray(node));
-    try {
-      mapper.writeValue(writer, array.getArrayNode());
+  public static String encodeArray(@Nonnull UnaryOperator<JSONArray> arrayBuilder) {
+    JsonArrayBuilder builder = Json.createArrayBuilder();
+    JSONArray array = arrayBuilder.apply(new JSONArray(builder));
+
+    try (StringWriter writer = new StringWriter();
+         JsonWriter jsonWriter = Json.createWriter(writer)) {
+      jsonWriter.writeArray(array.getJsonArray());
+      return writer.toString();
     } catch (IOException ex) {
       throw new EncodingException(ex.getMessage(), ex);
     }
-    return writer.toString();
   }
 
   /**
    * Decodes the specified JSON representation into its corresponding bean.
+   *
    * @param <T> the type of the bean.
    * @param json the JSON representation of a bean to decode.
    * @param beanType the class of the bean
    * @return the bean decoded from JSON.
-   * @throws EncodingException if an error occurs while decoding a JSON String into a bean.
+   * @throws DecodingException if an error occurs while decoding a JSON String into a bean.
    */
-  public static <T> T decode(String json, Class<T> beanType) {
-    ObjectMapper mapper = getObjectMapper();
-    T bean;
-    try {
-      bean = mapper.readValue(json, beanType);
-    } catch (IOException ex) {
-      throw new DecodingException(ex.getMessage(), ex);
+  public static <T> T decode(@Nonnull String json, @Nonnull Class<T> beanType) {
+    requireNonNull(json, "JSON data");
+    requireNonNull(beanType, "type of the object");
+    try (Jsonb builder = JsonbBuilder.create()) {
+      return builder.fromJson(json, beanType);
+    } catch (Exception e) {
+      throw new DecodingException(e.getMessage(), e);
     }
-    return bean;
   }
 
   /**
    * Decodes the specified JSON representation into its corresponding bean.
+   *
    * @param <T> the type of the bean.
    * @param jsonStream a stream to a JSON representation of a bean to decode.
    * @param beanType the class of the bean
    * @return the bean decoded from JSON.
-   * @throws EncodingException if an error occurs while decoding a JSON stream into a bean.
+   * @throws DecodingException if an error occurs while decoding a JSON stream into a bean.
    */
   public static <T> T decode(InputStream jsonStream, Class<T> beanType) {
-    ObjectMapper mapper = getObjectMapper();
-    T bean;
-    try {
-      bean = mapper.readValue(jsonStream, beanType);
-    } catch (IOException ex) {
-      throw new DecodingException(ex.getMessage(), ex);
+    requireNonNull(jsonStream, "input stream");
+    requireNonNull(beanType, "type of the object");
+    try (Jsonb builder = JsonbBuilder.create()) {
+      return builder.fromJson(jsonStream, beanType);
+    } catch (Exception e) {
+      throw new DecodingException(e.getMessage(), e);
     }
-    return bean;
   }
 
-  private static ObjectMapper getObjectMapper() {
-    ObjectMapper mapper = new ObjectMapper();
-    AnnotationIntrospector introspector = new JaxbAnnotationIntrospector(
-        TypeFactory.defaultInstance());
-    mapper.setAnnotationIntrospector(introspector);
-    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    return mapper;
+  private static <T> void requireNonNull(final T value, String valueName) {
+    if (value == null) {
+      throw new IllegalArgumentException("The " + valueName + " must not be null");
+    }
   }
 
+  @SuppressWarnings({"UnusedReturnValue", "unused"})
   public static class JSONObject {
 
-    private ObjectNode objectNode;
+    private final JsonObjectBuilder objectNode;
 
-    protected JSONObject(ObjectNode objectNode) {
+    protected JSONObject(JsonObjectBuilder objectNode) {
       this.objectNode = objectNode;
     }
 
-    protected ObjectNode getObjectNode() {
-      return this.objectNode;
+    protected JsonObject getJsonObject() {
+      return this.objectNode.build();
     }
 
     public JSONObject putNull(final String fieldName) {
-      objectNode.putNull(fieldName);
+      objectNode.add(fieldName, JsonValue.NULL);
       return this;
     }
 
@@ -197,79 +193,81 @@ public class JSONCodec {
         put(fieldName, (Double) v);
       } else if (v instanceof BigDecimal) {
         put(fieldName, (BigDecimal) v);
-      } else {
+      } else if (v != null) {
         put(fieldName, encode(v));
+      } else {
+        putNull(fieldName);
       }
       return this;
     }
 
     public JSONObject put(final String fieldName, final Short v) {
-      objectNode.put(fieldName, v);
+      objectNode.add(fieldName, v);
       return this;
     }
 
     public JSONObject put(final String fieldName, final Integer v) {
-      objectNode.put(fieldName, v);
+      objectNode.add(fieldName, v);
       return this;
     }
 
     public JSONObject put(final String fieldName, final Long v) {
-      objectNode.put(fieldName, v);
+      objectNode.add(fieldName, v);
       return this;
     }
 
     public JSONObject put(final String fieldName, final Float v) {
-      objectNode.put(fieldName, v);
+      objectNode.add(fieldName, v);
       return this;
     }
 
     public JSONObject put(final String fieldName, final Double v) {
-      objectNode.put(fieldName, v);
+      objectNode.add(fieldName, v);
       return this;
     }
 
     public JSONObject put(final String fieldName, final BigDecimal v) {
-      objectNode.put(fieldName, v);
+      objectNode.add(fieldName, v);
       return this;
     }
 
     public JSONObject put(final String fieldName, final String v) {
-      objectNode.put(fieldName, v);
+      objectNode.add(fieldName, v);
       return this;
     }
 
     public JSONObject put(final String fieldName, final Boolean v) {
-      objectNode.put(fieldName, v);
-      return this;
-    }
-
-    public JSONObject put(final String fieldName, final byte[] v) {
-      objectNode.put(fieldName, v);
+      objectNode.add(fieldName, v);
       return this;
     }
 
     public JSONObject putJSONArray(final String fieldName, UnaryOperator<JSONArray> arrayBuilder) {
-      arrayBuilder.apply(new JSONArray(objectNode.putArray(fieldName)));
+      JsonArrayBuilder builder = Json.createArrayBuilder();
+      JSONArray array = arrayBuilder.apply(new JSONArray(builder));
+      objectNode.add(fieldName, array.getJsonArray());
       return this;
     }
 
     public JSONObject putJSONObject(final String fieldName,
-        UnaryOperator<JSONObject> arrayBuilder) {
-      arrayBuilder.apply(new JSONObject(objectNode.putObject(fieldName)));
+        UnaryOperator<JSONObject> objectBuilder) {
+      JsonObjectBuilder builder = Json.createObjectBuilder();
+      JSONObject object = objectBuilder.apply(new JSONObject(builder));
+      objectNode.add(fieldName, object.getJsonObject());
       return this;
     }
   }
 
+  @SuppressWarnings({"UnusedReturnValue", "unused"})
   public static class JSONArray {
 
-    private ArrayNode arrayNode;
+    private final JsonArrayBuilder arrayNode;
 
-    protected JSONArray(ArrayNode arrayNode) {
+    protected JSONArray(JsonArrayBuilder arrayNode) {
       this.arrayNode = arrayNode;
     }
 
-    protected ArrayNode getArrayNode() {
-      return this.arrayNode;
+    protected JsonArray getJsonArray() {
+      return this.arrayNode.build();
     }
 
     public JSONArray add(final Number v) {
@@ -285,7 +283,7 @@ public class JSONCodec {
         add((Double) v);
       } else if (v instanceof BigDecimal) {
         add((BigDecimal) v);
-      } else {
+      } else if (v != null) {
         add(encode(v));
       }
       return this;
@@ -331,20 +329,17 @@ public class JSONCodec {
       return this;
     }
 
-    public JSONArray add(final byte[] v) {
-      arrayNode.add(v);
-      return this;
-    }
-
     public JSONArray addJSONObject(UnaryOperator<JSONObject> beanBuilder) {
-      ObjectNode node = arrayNode.addObject();
-      beanBuilder.apply(new JSONObject(node));
+      JsonObjectBuilder builder = Json.createObjectBuilder();
+      JSONObject object = beanBuilder.apply(new JSONObject(builder));
+      arrayNode.add(object.getJsonObject());
       return this;
     }
 
     public JSONArray addJSONArray(UnaryOperator<JSONArray> arrayBuilder) {
-      ArrayNode node = arrayNode.addArray();
-      arrayBuilder.apply(new JSONArray(node));
+      JsonArrayBuilder builder = Json.createArrayBuilder();
+      JSONArray array = arrayBuilder.apply(new JSONArray(builder));
+      arrayNode.add(array.getJsonArray());
       return this;
     }
 

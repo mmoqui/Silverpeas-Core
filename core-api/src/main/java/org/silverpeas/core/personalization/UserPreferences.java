@@ -23,24 +23,23 @@
  */
 package org.silverpeas.core.personalization;
 
-import org.silverpeas.core.admin.user.model.User;
-import org.silverpeas.core.personalization.service.PersonalizationService;
-import org.silverpeas.core.persistence.datasource.model.identifier.ExternalStringIdentifier;
-import org.silverpeas.core.persistence.datasource.model.jpa.BasicJpaEntity;
-import org.silverpeas.core.util.StringUtil;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import org.silverpeas.core.admin.user.model.User;
+import org.silverpeas.core.persistence.datasource.model.identifier.ExternalStringIdentifier;
+import org.silverpeas.core.persistence.datasource.model.jpa.BasicJpaEntity;
+import org.silverpeas.core.personalization.service.PersonalizationService;
+import org.silverpeas.core.util.StringUtil;
+
 import java.io.Serializable;
 import java.time.ZoneId;
 
 @Entity
 @Table(name = "personalization")
-@NamedQueries({@NamedQuery(name = "UserPreferences.findByDefaultSpace",
-    query = "from UserPreferences p WHERE p.collaborativeWorkSpaceId = :space")})
+@NamedQuery(name = "UserPreferences.findByDefaultSpace",
+    query = "select p from UserPreferences p WHERE p.collaborativeWorkSpaceId = :space")
 public class UserPreferences
     extends BasicJpaEntity<UserPreferences, ExternalStringIdentifier>
     implements Serializable {
@@ -127,11 +126,11 @@ public class UserPreferences
   }
 
   public String getPersonalWorkSpaceId() {
-    return collaborativeWorkSpaceId;
+    return getCollaborativeWorkSpaceId();
   }
 
   public void setPersonalWorkSpaceId(String collaborativeWorkSpaceId) {
-    this.collaborativeWorkSpaceId = collaborativeWorkSpaceId;
+    setCollaborativeWorkSpaceId(collaborativeWorkSpaceId);
   }
 
   public boolean isThesaurusEnabled() {

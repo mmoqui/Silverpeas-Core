@@ -23,27 +23,17 @@
  */
 package org.silverpeas.core.util.logging;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Singleton;
 import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.lang.SystemWrapper;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Singleton;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collector;
 
@@ -73,7 +63,7 @@ public class LoggerConfigurationManager {
   private static final String LOGGER_LEVEL = "level";
   private static final int INITIAL_CAPACITY = 128;
 
-  private static Map<String, LoggerConfiguration> configs =
+  private static final Map<String, LoggerConfiguration> configs =
       new ConcurrentHashMap<>(INITIAL_CAPACITY);
 
   protected LoggerConfigurationManager() {
@@ -170,6 +160,7 @@ public class LoggerConfigurationManager {
    * configuration file, then it is'nt taken into account.
    * @return a set of logger configurations sorted by logger namespace.
    */
+  @SuppressWarnings("unused")
   public Set<LoggerConfiguration> getAvailableLoggerConfigurations() {
     Collection<LoggerConfiguration> allConfigurations = getLoggerConfigurations().values();
     return allConfigurations.stream()
@@ -254,7 +245,7 @@ public class LoggerConfigurationManager {
 
     @Override
     public int hashCode() {
-      return new HashCodeBuilder().append(getNamespace()).toHashCode();
+      return Objects.hashCode(getNamespace());
     }
   }
 

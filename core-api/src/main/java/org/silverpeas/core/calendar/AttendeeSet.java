@@ -23,64 +23,50 @@
  */
 package org.silverpeas.core.calendar;
 
+import jakarta.annotation.Nonnull;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.util.CollectionUtil;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
  * A set of attendees in a given calendar component.
+ *
+ * @implNote Because of a bug in Hibernate 6, the {@link AttendeeSet} cannot be anymore an
+ * embeddable bean embedded into a {@link CalendarComponent} entity. Indeed, there is some bugs with
+ * Hibernate 6 when an embeddable bean defines a persistent set for which some CRUD operations on
+ * the root entity have to be cascaded to the entities in the set (here the {@link Attendee}s) and
+ * the removed entities has to be deleted (orphanRemoval attribute valued at true).
  */
-@Embeddable
-public class AttendeeSet implements Iterable<Attendee>, Serializable {
+public class AttendeeSet implements Iterable<Attendee> {
 
-  @Transient
-  private CalendarComponent component;
+  private final CalendarComponent component;
 
-  @OneToMany(mappedBy = "component", cascade = CascadeType.ALL, orphanRemoval = true, fetch =
-      FetchType.EAGER)
-  private Set<Attendee> attendees = new HashSet<>();
+  private final Set<Attendee> attendees;
 
-  /**
-   * Constructs a new set of attendees for the specified calendar component.
-   * @param component a calendar component (an event, a journal, a to-do, ...)
-   */
-  AttendeeSet(final CalendarComponent component) {
+
+  AttendeeSet(final CalendarComponent component, final Set<Attendee> attendees) {
     this.component = component;
-  }
-
-  /**
-   * Constructs an empty set of attendees for the persistence engine.
-   */
-  protected AttendeeSet() {
-    // it is dedicated to JPA.
+    this.attendees = attendees;
   }
 
   @Override
+  @Nonnull
   public Iterator<Attendee> iterator() {
     return attendees.iterator();
   }
 
   /**
-   * Performs the given action for each attendee in this calendar component until all of them
-   * have been processed or the action throws an exception. Exceptions thrown by the action are
-   * relayed to the caller.
+   * Performs the given action for each attendee in this calendar component until all of them have
+   * been processed or the action throws an exception. Exceptions thrown by the action are relayed
+   * to the caller.
+   *
    * @param action the action to be performed for each attendee.
    */
+  @Override
   public void forEach(final Consumer<? super Attendee> action) {
     attendees.forEach(action);
   }
@@ -92,6 +78,7 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
 
   /**
    * Streams the attendees in this calendar component.
+   *
    * @return a {@link Stream} with the attendees in this calendar component.
    */
   public Stream<Attendee> stream() {
@@ -102,6 +89,7 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
    * Gets the attendee with the specified identifier in this calendar component. The identifier can
    * be either the identifier of an external attendee (like an email address) or the unique
    * identifier of a user in Silverpeas.
+   *
    * @param id the identifier of the attendee to get: either the identifier of a user in Silverpeas
    * or an identifier referring an external attendee (like an email address).
    * @return optionally the attendee matching the given identifier. If no such attendee participates
@@ -115,58 +103,67 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
   /**
    * Adds an external attendee in this calendar component. The attendee is identified by the
    * specified email address.
+   *
    * @param email the email address of the external attendee.
    * @return the added attendee.
    */
   public Attendee add(final String email) {
-    Attendee attendee = ExternalAttendee.withEmail(email).to(component);
-    attendees.add(attendee);
-    return attendee;
+    component.updatedBy(User.getCurrentUser());
+    return add(ExternalAttendee.withEmail(email).to(component));
   }
 
   /**
-   * Adds an internal attendee in this calendar component. The attendee represents the
-   * specified Silverpeas user.
+   * Adds an internal attendee in this calendar component. The attendee represents the specified
+   * Silverpeas user.
+   *
    * @param user a user in Silverpeas.
    * @return the added attendee.
    */
   public Attendee add(final User user) {
-    Attendee attendee = InternalAttendee.fromUser(user).to(component);
-    attendees.add(attendee);
-    return attendee;
+    component.updatedBy(User.getCurrentUser());
+    return add(InternalAttendee.fromUser(user).to(component));
   }
 
   /**
    * Removes from the attendees in this calendar component the specified one.
+   *
    * @param attendee the attendee to remove.
    * @return the updated attendees in this calendar component.
    */
+  @SuppressWarnings("UnusedReturnValue")
   AttendeeSet remove(final Attendee attendee) {
+    component.updatedBy(User.getCurrentUser());
     attendees.remove(attendee);
     return this;
   }
 
   /**
    * Removes all of the attendees that match the specified filter.
+   *
    * @param filter the predicate against which each attendee is filtered.
    * @return the updated attendees in this calendar component.
    */
   public AttendeeSet removeIf(final Predicate<Attendee> filter) {
-    attendees.removeIf(filter);
+    if (attendees.removeIf(filter)) {
+      component.updatedBy(User.getCurrentUser());
+    }
     return this;
   }
 
   /**
    * Clears this calendar component from all its attendees.
+   *
    * @return an empty collection of attendees in this calendar component.
    */
   public AttendeeSet clear() {
     attendees.clear();
+    component.updatedBy(User.getCurrentUser());
     return this;
   }
 
   /**
    * Is there any attendees in this calendar component?
+   *
    * @return true if there is no attendees in this calendar component, false otherwise.
    */
   public boolean isEmpty() {
@@ -175,6 +172,7 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
 
   /**
    * Is the specified attendee participates in this calendar component?
+   *
    * @param attendee an attendee.
    * @return true if the specified attendee is in the attendees in this calendar component, false
    * otherwise.
@@ -185,6 +183,7 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
 
   /**
    * Gets the size in attendees in this calendar component.
+   *
    * @return the number of attendees in this calendar component.
    */
   public int size() {
@@ -198,7 +197,7 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
 
   @Override
   public boolean equals(final Object obj) {
-    return obj == this || obj != null && obj instanceof AttendeeSet &&
+    return obj == this || obj instanceof AttendeeSet &&
         attendees.equals(((AttendeeSet) obj).attendees);
   }
 
@@ -211,10 +210,11 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
    * method in Java is a comparator by identity, meaning two objects are compared by their unique
    * identifier (either by their OID for non-persistent object or by their persistence identifier
    * for persistent object). The {@code isSameAs} method is a comparator by value, meaning two
-   * objects are compared by their state; so two equal objects (that is referring to a same
-   * object) can be different by their state: one representing a given state of the referred object
-   * whereas the other represents another state of the referred object.
+   * objects are compared by their state; so two equal objects (that is referring to a same object)
+   * can be different by their state: one representing a given state of the referred object whereas
+   * the other represents another state of the referred object.
    * </p>
+   *
    * @param attendees the attendees to compare with.
    * @return true if the two set of attendees are equal and have the same state.
    */
@@ -224,7 +224,7 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
     }
     for (Attendee attendee : this.attendees) {
       Optional<Attendee> other = attendees.get(attendee.getId());
-      if (!other.isPresent()) {
+      if (other.isEmpty()) {
         return false;
       }
       Attendee otherAttendee = other.get();
@@ -241,14 +241,19 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
     return true;
   }
 
+  public boolean isNotSameAs(final AttendeeSet attendees) {
+    return !isSameAs(attendees);
+  }
+
   /**
    * Is this set of attendees containing a change from an action of participation status answer or
-   * from an action of presence change?
-   * Yes, but only if is does not exist an add or a deletion of attendee.
+   * from an action of presence change? Yes, but only if is does not exist an add or a deletion of
+   * attendee.
    * <p>
    * Indeed, a participation answer or a presence status change must not imply modification of last
    * update date of entities.
    * </p>
+   *
    * @param attendees the attendees to compare with.
    * @return true attendee set contains at least one attendee which indicates an answer action.
    */
@@ -267,18 +272,14 @@ public class AttendeeSet implements Iterable<Attendee>, Serializable {
    * Add the specified attendee in the attendees in this calendar component. If the attendee
    * participates in another calendar component, then its participation changes as now he will
    * participate in the underlying calendar component.
+   *
    * @param attendee the attendee to add.
-   * @return the updated attendees in this calendar component.
+   * @return the added attendee.
    */
-  AttendeeSet add(final Attendee attendee) {
+  Attendee add(final Attendee attendee) {
     attendee.setCalendarComponent(this.component);
     attendees.add(attendee);
-    return this;
-  }
-
-  AttendeeSet withCalendarComponent(final CalendarComponent component) {
-    this.component = component;
-    return this;
+    return attendee;
   }
 }
   

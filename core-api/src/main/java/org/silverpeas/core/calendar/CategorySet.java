@@ -29,6 +29,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,8 +39,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * The categories in which a {@link PlannableOnCalendar} planned in a calendar is classified. The categories
- * are expected to be managed by the {@link PlannableOnCalendar} itself.
+ * The categories in which a {@link PlannableOnCalendar} planned in a calendar is classified. The
+ * categories are expected to be managed by the {@link PlannableOnCalendar} itself.
  */
 @Embeddable
 public class CategorySet implements Serializable {
@@ -50,7 +51,7 @@ public class CategorySet implements Serializable {
   private Set<String> categories = new HashSet<>();
 
   /**
-   * Constructs an empty cateogries container. It is dedicated to the persistence engine.
+   * Constructs an empty categories container. It is dedicated to the persistence engine.
    */
   public CategorySet() {
     // empty for JPA.
@@ -59,6 +60,7 @@ public class CategorySet implements Serializable {
   /**
    * Adds a category to a {@link PlannableOnCalendar}. The category is specified by its unique
    * identifier (its title for example). If the category is already added, then nothing is done.
+   *
    * @param categoryId the identifier of the category to add.
    */
   public void add(final String categoryId) {
@@ -66,9 +68,10 @@ public class CategorySet implements Serializable {
   }
 
   /**
-   * Adds several categories to a {@link PlannableOnCalendar}. The categories are specified by
-   * their unique identifier (their title for example). If some of the categories to add are already
+   * Adds several categories to a {@link PlannableOnCalendar}. The categories are specified by their
+   * unique identifier (their title for example). If some of the categories to add are already
    * present, then they are not added.
+   *
    * @param categoryIds the identifiers of the categories to add.
    */
   public void addAll(final List<String> categoryIds) {
@@ -76,9 +79,10 @@ public class CategorySet implements Serializable {
   }
 
   /**
-   * Adds one or several categories to a {@link PlannableOnCalendar}. The categories are
-   * specified by their unique identifier (their title for example). If some of the categories to
-   * add are already present, then they are not added.
+   * Adds one or several categories to a {@link PlannableOnCalendar}. The categories are specified
+   * by their unique identifier (their title for example). If some of the categories to add are
+   * already present, then they are not added.
+   *
    * @param categoryIds the identifiers of the categories to add.
    */
   public void addAll(final String... categoryIds) {
@@ -89,6 +93,7 @@ public class CategorySet implements Serializable {
    * Removes a category from the categories of a {@link PlannableOnCalendar}. The category is
    * specified by its unique identifier (its title for example). If the category isn't present, then
    * nothing is done.
+   *
    * @param categoryId the identifier of the category to remove.
    */
   public void remove(final String categoryId) {
@@ -96,19 +101,21 @@ public class CategorySet implements Serializable {
   }
 
   /**
-   * Removes several categories from the categories of a {@link PlannableOnCalendar}. The
-   * categories are specified by their unique identifier (their title for example). If some of the
-   * categories to remove aren't present, then nothing is done with them.
+   * Removes several categories from the categories of a {@link PlannableOnCalendar}. The categories
+   * are specified by their unique identifier (their title for example). If some of the categories
+   * to remove aren't present, then nothing is done with them.
+   *
    * @param categoryIds the identifiers of the categories to remove.
    */
   public void removeAll(final List<String> categoryIds) {
-    categories.removeAll(categoryIds);
+    categoryIds.forEach(categories::remove);
   }
 
   /**
    * Removes one or several categories from the categories of a {@link PlannableOnCalendar}. The
    * categories are specified by their unique identifier (their title for example). If some of the
    * categories to remove aren't present, then nothing is done with them.
+   *
    * @param categoryIds the identifiers of the categories to remove.
    */
   public void remove(final String... categoryIds) {
@@ -117,6 +124,7 @@ public class CategorySet implements Serializable {
 
   /**
    * Converts this categories container to a list of category identifiers.
+   *
    * @return a list of category identifiers.
    */
   public List<String> asList() {
@@ -125,18 +133,20 @@ public class CategorySet implements Serializable {
 
   /**
    * Converts this categories container to an array of category identifiers.
+   *
    * @return an array of category identifiers.
    */
   public String[] asArray() {
     List<String> categoryList = asList();
-    return categoryList.toArray(new String[categoryList.size()]);
+    return categoryList.toArray(new String[0]);
   }
 
   /**
    * Is the specified category is in the categories of a {@link PlannableOnCalendar}.
+   *
    * @param category a category identifier.
-   * @return true if the specified category is among the categories of a {@link PlannableOnCalendar}, false
-   * otherwise.
+   * @return true if the specified category is among the categories of a
+   * {@link PlannableOnCalendar}, false otherwise.
    */
   public boolean contains(final String category) {
     return categories.contains(category);
@@ -144,6 +154,7 @@ public class CategorySet implements Serializable {
 
   /**
    * Is there is no any categories set for a {@link PlannableOnCalendar}?
+   *
    * @return true if no categories are set, false otherwise.
    */
   public boolean isEmpty() {
@@ -174,6 +185,7 @@ public class CategorySet implements Serializable {
 
   /**
    * Adds to this categories all those from the specified ones.
+   *
    * @param categories the categories to add.
    */
   public void addAllFrom(final CategorySet categories) {
@@ -182,6 +194,7 @@ public class CategorySet implements Serializable {
 
   /**
    * Copies this object into another {@link CategorySet} instance.
+   *
    * @return a copy of this object.
    */
   public CategorySet copy() {

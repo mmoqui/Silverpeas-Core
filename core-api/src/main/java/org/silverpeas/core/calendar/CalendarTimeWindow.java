@@ -38,7 +38,7 @@ import java.util.function.Consumer;
  */
 public class CalendarTimeWindow {
 
-  private CalendarEventFilter filter = new CalendarEventFilter();
+  private final CalendarEventFilter filter = new CalendarEventFilter();
   private final LocalDate startDate;
   private final LocalDate endDate;
   private List<CalendarEvent> events;

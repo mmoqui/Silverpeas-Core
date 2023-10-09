@@ -33,6 +33,7 @@ import org.silverpeas.core.persistence.datasource.model.identifier.UniqueLongIde
 import org.silverpeas.core.persistence.datasource.model.jpa.BasicJpaEntity;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -42,17 +43,18 @@ import static org.apache.commons.lang3.StringUtils.substring;
 /**
  * Data on a delayed notification to users. A notification is delayed when it is sent not
  * immediately but later according to some specific user settings.
+ *
  * @author Yohann Chastagnier
  */
 @Entity
 @Table(name = "st_delayednotification")
-@NamedQueries({
-    @NamedQuery(name = "DelayedNotificationData.findDistinctUserByChannel",
-        query = "select distinct userId from DelayedNotificationData where channel in (:channels)"),
-    @NamedQuery(name = "DelayedNotificationData.findByUserId",
-        query = "from DelayedNotificationData where userId = :userId and channel in (:channels) order by channel"),
-    @NamedQuery(name="DelayedNotificationData.deleteByIds", query= "delete from DelayedNotificationData where id in (:ids)")
-})
+@NamedQuery(name = "DelayedNotificationData.findDistinctUserByChannel",
+    query = "select distinct userId from DelayedNotificationData where channel in (:channels)")
+@NamedQuery(name = "DelayedNotificationData.findByUserId",
+    query = "select d from DelayedNotificationData d where userId = :userId and " +
+        "channel in (:channels) order by channel")
+@NamedQuery(name = "DelayedNotificationData.deleteByIds", query = "delete from " +
+    "DelayedNotificationData where id in (:ids)")
 public class DelayedNotificationData
     extends BasicJpaEntity<DelayedNotificationData, UniqueLongIdentifier>
     implements Serializable {
@@ -95,6 +97,7 @@ public class DelayedNotificationData
 
   /**
    * Checks the data integrity
+   *
    * @return
    */
   public boolean isValid() {

@@ -24,10 +24,11 @@
 
 package org.silverpeas.core.notification.user.model;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -40,8 +41,7 @@ import static org.silverpeas.core.util.StringUtil.isNotDefined;
  * </p>
  * @author silveryocha
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("unused")
 public class NotificationResourceDataDetails {
 
   private Boolean feminineGenderResource;
@@ -52,19 +52,22 @@ public class NotificationResourceDataDetails {
    * masculine one ?
    * @return true if feminine gender, false otherwise.
    */
-  public boolean isFeminineGenderResource() {
+  @JsonbTransient
+  public boolean isFeminineGender() {
     return feminineGenderResource == null || feminineGenderResource;
   }
 
-  @XmlElement
+  public Boolean getFeminineGenderResource() {
+    return feminineGenderResource;
+  }
+
   public NotificationResourceDataDetails setFeminineGenderResource(
       final boolean feminineGenderResource) {
     this.feminineGenderResource = feminineGenderResource ? null : Boolean.FALSE;
     return this;
   }
 
-  @XmlElement
-  Map<String, Map<String, String>> getLocalizations() {
+  public Map<String, Map<String, String>> getLocalizations() {
     if (localizations != null) {
       localizations.entrySet().removeIf(l -> {
         l.getValue().entrySet().removeIf(e -> isNotDefined(e.getValue()));
@@ -77,8 +80,7 @@ public class NotificationResourceDataDetails {
     return localizations;
   }
 
-  @XmlElement
-  void setLocalizations(final Map<String, Map<String, String>> localizations) {
+  public void setLocalizations(final Map<String, Map<String, String>> localizations) {
     this.localizations = localizations;
   }
 
@@ -88,6 +90,7 @@ public class NotificationResourceDataDetails {
    * @param key a key.
    * @return a label as string.
    */
+  @JsonbTransient
   public String getLocalized(final String language, final String key) {
     String value = null;
     if (localizations != null) {

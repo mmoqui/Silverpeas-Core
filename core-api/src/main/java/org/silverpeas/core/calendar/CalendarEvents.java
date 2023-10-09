@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  */
 public class CalendarEvents {
 
-  private CalendarEventFilter filter = new CalendarEventFilter();
+  private final CalendarEventFilter filter = new CalendarEventFilter();
 
   CalendarEvents() {
   }

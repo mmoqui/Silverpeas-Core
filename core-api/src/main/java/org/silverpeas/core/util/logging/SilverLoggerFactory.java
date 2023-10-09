@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.util.logging;
 
+import org.silverpeas.core.SilverpeasRuntimeException;
 import org.silverpeas.core.util.logging.LoggerConfigurationManager.LoggerConfiguration;
 
 import java.util.Iterator;
@@ -56,7 +57,7 @@ public interface SilverLoggerFactory {
     if (iterator.hasNext()) {
       return iterator.next();
     } else {
-      throw new RuntimeException(
+      throw new SilverpeasRuntimeException(
           "No Silverpeas logger factory detected! At least one Silverpeas logger factory should " +
               "be available!");
     }

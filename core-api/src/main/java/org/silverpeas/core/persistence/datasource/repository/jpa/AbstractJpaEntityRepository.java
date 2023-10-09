@@ -23,43 +23,37 @@
  */
 package org.silverpeas.core.persistence.datasource.repository.jpa;
 
+import jakarta.persistence.*;
+import org.silverpeas.core.persistence.datasource.OperationContext;
 import org.silverpeas.core.persistence.datasource.model.EntityIdentifier;
 import org.silverpeas.core.persistence.datasource.model.EntityIdentifierConverter;
 import org.silverpeas.core.persistence.datasource.model.jpa.AbstractJpaEntity;
 import org.silverpeas.core.persistence.datasource.model.jpa.EntityManagerProvider;
 import org.silverpeas.core.persistence.datasource.repository.EntityRepository;
-import org.silverpeas.core.persistence.datasource.OperationContext;
 import org.silverpeas.core.persistence.datasource.repository.PaginationCriterion;
 import org.silverpeas.core.persistence.datasource.repository.QueryCriteria;
-import org.silverpeas.core.util.CollectionUtil;
-import org.silverpeas.core.util.PaginationList;
-import org.silverpeas.core.util.SilverpeasArrayList;
-import org.silverpeas.core.util.SilverpeasList;
+import org.silverpeas.core.util.*;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.NonUniqueResultException;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import static org.silverpeas.core.persistence.datasource.repository.PaginationCriterion
-    .NO_PAGINATION;
+import static org.silverpeas.core.persistence.datasource.repository.PaginationCriterion.NO_PAGINATION;
 
 /**
- * Abstract implementation of the {@link EntityRepository} interface that uses the JPA API.
- * This implementation defines all the common methods that can be required by the more concrete
- * repositories to implement easily their persistence related business operations.
- * It provides additional signatures to handle friendly the JPA queries into extensions of
- * repository classes.
- * Take a look into this class to analyse how query parameters are performed ({@link
- * NamedParameters}).
+ * Abstract implementation of the {@link EntityRepository} interface that uses the JPA API. This
+ * implementation defines all the common methods that can be required by the more concrete
+ * repositories to implement easily their persistence related business operations. It provides
+ * additional signatures to handle friendly the JPA queries into extensions of repository classes.
+ * Take a look into this class to analyse how query parameters are performed
+ * ({@link NamedParameters}).
+ *
  * @param <T> the class name of the identifiable entity which is handled by the repository.
  * @author mmoquillon
  */
@@ -71,6 +65,8 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   private int maximumItemsInClause = DEFAULT_MAXIMUM_ITEMS_IN_CLAUSE;
   private final EntityIdentifierConverter identifierConverter =
       new EntityIdentifierConverter(getEntityIdentifierClass());
+
+  private EntityManager em;
 
   @Override
   public SilverpeasList<T> save(final List<T> entities) {
@@ -100,7 +96,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   @Override
   public SilverpeasList<T> getAll() {
     List<T> all = getEntityManager().createQuery(
-        "select a from " + getEntityClass().getSimpleName() + " a", getEntityClass())
+            "select a from " + getEntityClass().getSimpleName() + " a", getEntityClass())
         .getResultList();
     return SilverpeasList.wrap(all);
   }
@@ -118,15 +114,19 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   @Override
   public void delete(final List<T> entities) {
-    entities.stream().filter(T::isPersisted).forEach(e -> {
-      T entity = getById(e.getId());
-      getEntityManager().remove(entity);
-    });
+    final EntityManager entityManager = getEntityManager();
+    final UnaryOperator<T> reattach = entityManager::merge;
+    entities.stream()
+        .filter(Objects::nonNull)
+        .filter(e -> StringUtil.isDefined(e.getId()))
+        .map(e -> entityManager.contains(e) ? e : reattach.apply(e))
+        .filter(Objects::nonNull)
+        .forEach(entityManager::remove);
   }
 
   @Override
   public long deleteById(final Collection<String> ids) {
-    return deleteByIdentifier(getIdentifierConverter().convertToEntityIdentifiers(ids));
+    return deleteByIdentifiers(getIdentifierConverter().convertToEntityIdentifiers(ids));
   }
 
   protected long countByCriteria(final QueryCriteria criteria) {
@@ -145,17 +145,20 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   /**
    * Finds the entities by the specified named query (a JPQL instruction) and with the specified
    * parameters.
+   *
    * @param namedQuery the named query. It is an identifier to a JPQL instruction.
    * @param parameters the parameters to apply on the query.
    * @return a list of entities that match the specified query.
    */
-  protected SilverpeasList<T> findByNamedQuery(String namedQuery, final NamedParameters parameters) {
+  protected SilverpeasList<T> findByNamedQuery(String namedQuery,
+      final NamedParameters parameters) {
     return listFromNamedQuery(namedQuery, parameters);
   }
 
   /**
-   * Finds the first entity matching the specified named query (a JPQL instruction)
-   * and with the specified parameters.
+   * Finds the first entity matching the specified named query (a JPQL instruction) and with the
+   * specified parameters.
+   *
    * @param namedQuery the named query. It is an identifier to a JPQL instruction.
    * @param parameters the parameters to apply on the query.
    * @return the first encountered entity that matches the specified query or null if no entities
@@ -167,6 +170,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Constructs a container of query parameters to use in JPQL queries.
+   *
    * @return a container of query parameters.
    */
   protected NamedParameters newNamedParameters() {
@@ -176,6 +180,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   /**
    * Gets an instance that represents the fact that it does not exist parameter for the query to
    * execute.
+   *
    * @return instance of {@link NoNamedParameter}
    */
   protected NoNamedParameter noParameter() {
@@ -183,11 +188,12 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Gets an entity from the specified query written in JPQL and with the specified parameters.
+   * Counts the number of entities matching the specified query written in JPQL and with the
+   * specified parameters.
+   *
    * @param query the JPQL query.
    * @param parameters the parameters to apply to the query.
-   * @return the required entity if exists, null otherwise
-   * @throws IllegalArgumentException if it exists more than one entity from the query result.
+   * @return the number of entities matching the query.
    */
   protected long countFromJpqlString(String query, NamedParameters parameters) {
     String countQuery = "select count(*) " +
@@ -197,6 +203,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Gets an entity from the specified query written in JPQL and with the specified parameters.
+   *
    * @param query the JPQL query.
    * @param parameters the parameters to apply to the query.
    * @return the required entity if exists, null otherwise
@@ -210,6 +217,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
    * Gets an entity of a given type from the specified JPQL query and with the specified parameters.
    * This method is for fetching any information about the entities stored into this repository; it
    * can be an entity itself or a count of entities satisfying some properties, and so on.
+   *
    * @param <U> the type of the returned entities.
    * @param query the JPQL query.
    * @param parameters the parameters to apply to the query.
@@ -217,6 +225,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
    * @return the required entity if exists, null otherwise
    * @throws IllegalArgumentException if it exists more than one entity from the query result.
    */
+  @SuppressWarnings("SqlSourceToSinkFlow")
   protected <U> U getFromJpqlString(String query, NamedParameters parameters,
       Class<U> returnEntityType) {
     return getFromQuery(getEntityManager().createQuery(query, returnEntityType), parameters);
@@ -224,6 +233,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Lists entities from the specified JPQL query and with the specified parameters.
+   *
    * @param query the JPQL query.
    * @param parameters the parameters to apply to the query.
    * @return a list of entities matching the query and the parameters. If no entities match the
@@ -235,6 +245,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Lists entities from the specified JPQL query and with the specified parameters.
+   *
    * @param query the JPQL query.
    * @param parameters the parameters to apply to the query.
    * @param pagination the pagination criterion to apply.
@@ -247,11 +258,12 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Lists entities from the specified JPQL query and with the specified parameters.
-   * This method is for fetching any information about the entities stored into this repository; it
-   * can be the entities themselves or some of their properties or relationships, and so on.
-   * @param <U> the type of the returned entities.<br>
-   * Please be careful to always close the streams in order to avoid memory leaks!!!
+   * Lists entities from the specified JPQL query and with the specified parameters. This method is
+   * for fetching any information about the entities stored into this repository; it can be the
+   * entities themselves or some of their properties or relationships, and so on.
+   *
+   * @param <U> the type of the returned entities.<br> Please be careful to always close the streams
+   * in order to avoid memory leaks!!!
    * <pre>
    *   try(Stream&lt;T&gt; object : streamAllFromQuery(...)) {
    *     // Performing the treatment
@@ -269,9 +281,10 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Lists entities from the specified JPQL query and with the specified parameters.
-   * This method is for fetching any information about the entities stored into this repository; it
-   * can be the entities themselves or some of their properties or relationships, and so on.
+   * Lists entities from the specified JPQL query and with the specified parameters. This method is
+   * for fetching any information about the entities stored into this repository; it can be the
+   * entities themselves or some of their properties or relationships, and so on.
+   *
    * @param <U> the type of the returned entities.
    * @param jpqlQuery the JPQL query.
    * @param parameters the parameters to apply to the query.
@@ -280,6 +293,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
    * @return a list of entities matching the query and the parameters. If no entities match the
    * query then an empty list is returned.
    */
+  @SuppressWarnings("SqlSourceToSinkFlow")
   protected <U> SilverpeasList<U> listFromJpqlString(String jpqlQuery, NamedParameters parameters,
       PaginationCriterion pagination, Class<U> returnEntityType) {
     final TypedQuery<U> query = getEntityManager().createQuery(jpqlQuery, returnEntityType);
@@ -289,8 +303,9 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Streams entities from the specified JPQL query and with the specified parameters.<br>
-   * Useful for treatment over a large number of data.
+   * Streams entities from the specified JPQL query and with the specified parameters.<br> Useful
+   * for treatment over a large number of data.
+   *
    * @param query the JPQL query.
    * @param parameters the parameters to apply to the query.
    * @return a list of entities matching the query and the parameters. If no entities match the
@@ -302,16 +317,17 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Stream entities from the specified JPQL query and with the specified parameters.
-   * This method is for fetching any information about the entities stored into this repository; it
-   * can be the entities themselves or some of their properties or relationships, and so on.<br>
-   * Useful for treatment over a large number of data.<br>
-   * Please be careful to always close the streams in order to avoid memory leaks!!!
+   * Stream entities from the specified JPQL query and with the specified parameters. This method is
+   * for fetching any information about the entities stored into this repository; it can be the
+   * entities themselves or some of their properties or relationships, and so on.<br> Useful for
+   * treatment over a large number of data.<br> Please be careful to always close the streams in
+   * order to avoid memory leaks!!!
    * <pre>
    *   try(Stream&lt;T&gt; object : streamAllFromQuery(...)) {
    *     // Performing the treatment
    *   }
    * </pre>
+   *
    * @param <U> the type of the returned entities.
    * @param query the JPQL query.
    * @param parameters the parameters to apply to the query.
@@ -319,6 +335,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
    * @return a list of entities matching the query and the parameters. If no entities match the
    * query then an empty list is returned.
    */
+  @SuppressWarnings("SqlSourceToSinkFlow")
   protected <U> Stream<U> streamFromJpqlString(String query, NamedParameters parameters,
       Class<U> returnEntityType) {
     return streamAllFromQuery(getEntityManager().createQuery(query, returnEntityType), parameters);
@@ -326,27 +343,31 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Updates entities from a JPQL query and with the specified parameters.
+   *
    * @param query the JPQL query.
    * @param parameters the parameters to apply to the query.
    * @return the number of deleted entities.
    */
-  @SuppressWarnings("UnusedReturnValue")
+  @SuppressWarnings({"UnusedReturnValue", "SqlSourceToSinkFlow"})
   protected long updateFromJpqlQuery(String query, NamedParameters parameters) {
     return updateFromQuery(getEntityManager().createQuery(query), parameters);
   }
 
   /**
    * Deletes entities from a JPQL query and with the specified parameters.
+   *
    * @param query the JPQL query.
    * @param parameters the parameters to apply to the query.
    * @return the number of deleted entities.
    */
+  @SuppressWarnings("SqlSourceToSinkFlow")
   protected long deleteFromJpqlQuery(String query, NamedParameters parameters) {
     return deleteFromQuery(getEntityManager().createQuery(query), parameters);
   }
 
   /**
    * Gets an entity from a named query and with the specified parameters.
+   *
    * @param namedQuery the name of the query.
    * @param parameters the parameters to apply to the query.
    * @return the required entity if exists, null otherwise
@@ -357,9 +378,10 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Gets an entity from a named query and with the specified parameters.
-   * This method is for fetching any information about the entities stored into this repository; it
-   * can be an entity itself or a count of entities satisfying some properties, and so on.
+   * Gets an entity from a named query and with the specified parameters. This method is for
+   * fetching any information about the entities stored into this repository; it can be an entity
+   * itself or a count of entities satisfying some properties, and so on.
+   *
    * @param <U> the type of the returned entities.
    * @param namedQuery the name of the query.
    * @param parameters the parameters to apply to the query.
@@ -375,6 +397,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Lists entities from a named query and with the specified parameters.
+   *
    * @param namedQuery the n ame of the query.
    * @param parameters the parameters to apply to the query.
    * @return the list of entities matching the query and the parameters.
@@ -385,6 +408,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Lists entities from a named query and with the specified parameters.
+   *
    * @param <U> the type of the returned entities.
    * @param namedQuery the name of the query.
    * @param parameters the parameters to apply to the query.
@@ -399,14 +423,15 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Streams entities from a named query and with the specified parameters.<br>
-   * Useful for treatment over a large number of data.<br>
-   * Please be careful to always close the stream in order to avoid memory leaks!!!
+   * Streams entities from a named query and with the specified parameters.<br> Useful for treatment
+   * over a large number of data.<br> Please be careful to always close the stream in order to avoid
+   * memory leaks!!!
    * <pre>
    *   try(Stream&lt;T&gt; object : streamAllFromQuery(...)) {
    *     // Performing the treatment
    *   }
    * </pre>
+   *
    * @param namedQuery the n ame of the query.
    * @param parameters the parameters to apply to the query.
    * @return the list of entities matching the query and the parameters.
@@ -417,14 +442,15 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Streams entities from a named query and with the specified parameters.<br>
-   * Useful for treatment over a large number of data.<br>
-   * Please be careful to always close the stream in order to avoid memory leaks!!!
+   * Streams entities from a named query and with the specified parameters.<br> Useful for treatment
+   * over a large number of data.<br> Please be careful to always close the stream in order to avoid
+   * memory leaks!!!
    * <pre>
    *   try(Stream&lt;T&gt; object : streamAllFromQuery(...)) {
    *     // Performing the treatment
    *   }
    * </pre>
+   *
    * @param <U> the type of the returned entities.
    * @param namedQuery the name of the query.
    * @param parameters the parameters to apply to the query.
@@ -440,6 +466,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Updates the entities from a named query and with the specified parameters.
+   *
    * @param namedQuery the name of the query.
    * @param parameters the parameters to apply to the query.
    * @return the count of entities updated by the named query.
@@ -450,6 +477,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Deletes the entities from a named query and with the specified parameters.
+   *
    * @param namedQuery the name of the query.
    * @param parameters the parameters to apply to the query.
    * @return the count of entities deleted by the named query.
@@ -459,17 +487,18 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Maximum number of items to be passed into a SQL "in" clause.
-   * Indeed, according to the database, the treatment of the "in" clause may be different and pass
-   * too much value "in" this clause may result in an error ...
-   * The behaviour is the following : when a query includes an "in" clause potentially filled with a
-   * lot of values, the protected split method can be used to divide a collection of values into
-   * several collections of values, each one with its size limited to this parameter.
-   * Please take a look at {@link org.silverpeas.core.persistence.datasource.repository
-   * .EntityRepository#getByIdentifier} or {@link org.silverpeas.core.persistence.datasource
-   * .repository
-   * .EntityRepository#deleteByIdentifier} methods for examples of use.
-   * Returns of experiences drives us to set the default value at 500.
+   * Maximum number of items to be passed into a SQL "in" clause. Indeed, according to the database,
+   * the treatment of the "in" clause may be different and pass too much value "in" this clause may
+   * result in an error ... The behaviour is the following : when a query includes an "in" clause
+   * potentially filled with a lot of values, the protected split method can be used to divide a
+   * collection of values into several collections of values, each one with its size limited to this
+   * parameter. Please take a look at
+   * {@link org.silverpeas.core.persistence.datasource.repository .EntityRepository#getByIdentifier}
+   * or
+   * {@link org.silverpeas.core.persistence.datasource .repository
+   * .EntityRepository#deleteByIdentifier} methods for examples of use. Returns of experiences
+   * drives us to set the default value at 500.
+   *
    * @return the maximum number of items in a clause.
    */
   protected int getMaximumItemsInClause() {
@@ -478,6 +507,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Sets the maximum items in clause.
+   *
    * @param maximumItemsInClause the maximum number of items in an SQL in-clause.
    */
   @SuppressWarnings("SameParameterValue")
@@ -486,12 +516,16 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Gets the entity manager with which the persistence of the entities stored in this repository
-   * is performed.
+   * Gets the entity manager with which the persistence of the entities stored in this repository is
+   * performed.
+   *
    * @return the JPA entity manager.
    */
   protected EntityManager getEntityManager() {
-    return EntityManagerProvider.get().getEntityManager();
+    if (em == null) {
+      em = EntityManagerProvider.get().getEntityManager();
+    }
+    return em;
   }
 
   protected EntityIdentifierConverter getIdentifierConverter() {
@@ -515,9 +549,11 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   private <U extends EntityIdentifier> SilverpeasList<T> getByIdentifiers(final Collection<U> ids) {
     SilverpeasList<T> entities = new SilverpeasArrayList<>(ids.size());
-    String selectQuery = "select a from " + getEntityClass().getName() + " a where a.id in :ids";
+    String selectQuery =
+        "SELECT a FROM " + getEntityClass().getSimpleName() + " a WHERE a.id IN :ids";
     for (Collection<U> entityIds : split(new HashSet<>(ids))) {
-      List<T> tmp = newNamedParameters().add("ids", entityIds)
+      List<T> tmp = newNamedParameters()
+          .add("ids", entityIds)
           .applyTo(getEntityManager().createQuery(selectQuery, getEntityClass()))
           .getResultList();
       if (entities.isEmpty()) {
@@ -546,8 +582,8 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
   }
 
   /**
-   * Gets a stream on the query result.<br>
-   * Please be careful to always close the stream in order to avoid memory leaks!!!
+   * Gets a stream on the query result.<br> Please be careful to always close the stream in order to
+   * avoid memory leaks!!!
    * <pre>
    *   try(Stream<T> object : streamAllFromQuery(...)) {
    *     // Performing the treatment
@@ -575,13 +611,15 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
     }
   }
 
-  private <U extends EntityIdentifier> long deleteByIdentifier(final Collection<U> ids) {
+  private <U extends EntityIdentifier> long deleteByIdentifiers(final Collection<U> ids) {
+    String deleteQuery =
+        "DELETE FROM " + getEntityClass().getSimpleName() + " a WHERE a.id IN :ids";
     long nbDeletes = 0;
-    Query deleteQuery = getEntityManager().createQuery(
-        "delete from " + getEntityClass().getName() + " a where a.id in :ids");
     for (Collection<U> entityIds : split(ids)) {
-      nbDeletes += newNamedParameters().add("ids", entityIds).applyTo(deleteQuery).
-          executeUpdate();
+      nbDeletes += newNamedParameters()
+          .add("ids", entityIds)
+          .applyTo(getEntityManager().createQuery(deleteQuery))
+          .executeUpdate();
     }
     return nbDeletes;
   }
@@ -614,6 +652,7 @@ public abstract class AbstractJpaEntityRepository<T extends AbstractJpaEntity<T,
 
   /**
    * Applies the pagination to the query.
+   *
    * @param jpqlQuery the jpql query.
    * @param query the query as object instance.
    * @param parameters the parameters.

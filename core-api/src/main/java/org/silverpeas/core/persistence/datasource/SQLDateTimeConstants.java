@@ -43,25 +43,41 @@ public class SQLDateTimeConstants {
 
   /**
    * The minimum date for any of our supported data sources. Currently, it is based upon the more
-   * limited ones, that are Oracle and MS-SQLServer.
+   * limited ones, that are Oracle and MS-SQLServer. Be warning with H2 database, restriction on
+   * minimum date value depends on its version. This constant is dedicated to be used to set a date
+   * time to a non-null field for which the value is undefined. It shouldn't be used only for
+   * fields that become non-null and for which null values can then exist. Indeed, databases can
+   * be have some unexpected behaviour with such extreme date times.
    */
   public static final Date MIN_DATE = Date.valueOf(MIN.toLocalDate());
 
   /**
    * The maximum date for any of our supported data sources. Currently, it is based upon the more
-   * limited ones, that are Oracle and MS-SQLServer.
+   * limited ones, that are Oracle and MS-SQLServer. Be warning with H2 database, restriction on
+   * maximum date value depends on its version. This constant is dedicated to set an
+   * undefined value to a non-null datetime field; for example to set an interval of time that is
+   * endless. Nevertheless, it shouldn't be used because databases can be have some unexpected
+   * behaviour with such extreme date times.
    */
   public static final Date MAX_DATE = Date.valueOf(MAX.toLocalDate());
 
   /**
    * The minimum timestamp for any of our supported data sources. Currently, it is based upon the
-   * more limited ones, that are Oracle and MS-SQLServer.
+   * more limited ones, that are Oracle and MS-SQLServer. Be warning with H2 database, restriction
+   * on minimum timestamps depends on its version. This constant is dedicated to be used to set a
+   * timestamp to a non-null field for which the value is undefined. It shouldn't be used only for
+   * fields that become non-null and for which null values can then exist. Indeed databases can be
+   * have some unexpected behaviour with such extreme date times.
    */
   public static final Timestamp MIN_TIMESTAMP = Timestamp.valueOf(MIN);
 
   /**
    * The maximum timestamp for any of our supported data sources. Currently, it is based upon the
-   * more limited ones, that are Oracle and MS-SQLServer.
+   * more limited ones, that are Oracle and MS-SQLServer. Be warning with H2 database, restriction
+   * on maximum timestamps depends on its version. This constant is dedicated to set an undefined
+   * value to a non-null timestamp field; for example to set an interval of time that is endless.
+   * Nevertheless, it shouldn't be used because databases can be have some unexpected behaviour
+   * with such extreme timestamps.
    */
   public static final Timestamp MAX_TIMESTAMP = Timestamp.valueOf(MAX);
 }
