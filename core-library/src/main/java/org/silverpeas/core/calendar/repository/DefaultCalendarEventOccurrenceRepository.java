@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.calendar.repository;
 
+import jakarta.transaction.Transactional;
 import org.silverpeas.core.annotation.Repository;
 import org.silverpeas.core.calendar.CalendarEvent;
 import org.silverpeas.core.calendar.CalendarEventOccurrence;
@@ -40,7 +41,6 @@ import static org.silverpeas.core.date.TemporalConverter.asInstant;
 /**
  * @author mmoquillon
  */
-@Singleton
 @Repository
 public class DefaultCalendarEventOccurrenceRepository
     extends BasicJpaEntityRepository<CalendarEventOccurrence>

@@ -65,18 +65,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author ehugonnet
  * @param <T>
+ * @author ehugonnet
  */
 public abstract class AbstractFieldDisplayer<T extends Field> implements FieldDisplayer<T> {
 
   @Override
-  public List<String> update(List<FileItem<?>> items, T field, FieldTemplate template,
-          PagesContext pageContext) throws FormException {
-    String fieldName = Util.getFieldOccurrenceName(template.getFieldName(), field.getOccurrence());
-    String value = FileUploadUtil.getParameter(items, fieldName, null, pageContext.getCharset());
+  public <F extends FileItem<F>> List<String> update(List<F> items, T field, FieldTemplate template,
+      PagesContext pageContext) throws FormException {
+    String value = getFieldValue(items, template, field, pageContext);
     if (pageContext.getUpdatePolicy() == PagesContext.ON_UPDATE_IGNORE_EMPTY_VALUES
-            && !StringUtil.isDefined(value)) {
+        && !StringUtil.isDefined(value)) {
       return new ArrayList<>(0);
     }
     return update(value, field, template, pageContext);
@@ -115,5 +114,11 @@ public abstract class AbstractFieldDisplayer<T extends Field> implements FieldDi
     String defaultParam = parameters.getOrDefault("default", "");
     return ((pageContext.isCreation() || pageContext.isDesignMode()) &&
         !pageContext.isIgnoreDefaultValues()) ? defaultParam : "";
+  }
+
+  protected <F extends FileItem<F>> String getFieldValue(List<F> items, FieldTemplate template,
+      T field, PagesContext pagesContext) {
+    String fieldName = Util.getFieldOccurrenceName(template.getFieldName(), field.getOccurrence());
+    return FileUploadUtil.getParameter(items, fieldName, null, pagesContext.getCharset());
   }
 }

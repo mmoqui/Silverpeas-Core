@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.calendar.CalendarEvent.EventOperationResult;
+import org.silverpeas.core.calendar.repository.CalendarEventRepository;
 import org.silverpeas.core.date.Period;
 import org.silverpeas.core.date.TimeUnit;
 import org.silverpeas.core.persistence.datasource.OperationContext;
@@ -45,13 +46,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.silverpeas.core.calendar.Attendee.ParticipationStatus.ACCEPTED;
 import static org.silverpeas.core.calendar.Attendee.ParticipationStatus.AWAITING;
 
 /**
  * Integration tests on the occurrences of a calendar event.
+ *
  * @author mmoquillon
  */
 @RunWith(Arquillian.class)
@@ -436,7 +438,8 @@ public class CalendarEventOccurrenceIT extends BaseCalendarTest {
     assertThat(result.updated().isPresent(), is(true));
     assertThat(result.created().isPresent(), is(false));
 
-    Optional<CalendarEvent> mayBeEvent = Calendar.getById(CALENDAR_ID).event(recurrentEvent.getId());
+    Optional<CalendarEvent> mayBeEvent =
+        Calendar.getById(CALENDAR_ID).event(recurrentEvent.getId());
     assertThat(mayBeEvent.isPresent(), is(true));
     CalendarEvent actualEvent = mayBeEvent.get();
     assertThat(actualEvent.getTitle(), is(newTitle));
@@ -461,6 +464,8 @@ public class CalendarEventOccurrenceIT extends BaseCalendarTest {
     List<CalendarEventOccurrence> occurrences = allOccurrencesOf(event);
     assertThat(occurrences.size(), is(1));
     CalendarEventOccurrence occurrence = modify(occurrences.get(0));
+    assertThat(occurrence.getCalendarEvent().asCalendarComponent().getVersion(),
+        is(event.asCalendarComponent().getVersion() + 1));
 
     EventOperationResult result = occurrence.delete();
     assertThat(result.isEmpty(), is(true));
@@ -610,7 +615,14 @@ public class CalendarEventOccurrenceIT extends BaseCalendarTest {
         occurrence.getEndDate().plus(1, ChronoUnit.DAYS));
     occurrence.setPeriod(newPeriod);
     EventOperationResult result = occurrence.update();
-    return result.instance().orElse(occurrence);
+
+    return result.instance().orElseGet(() -> {
+      CalendarEvent event = result.updated()
+          .orElseGet(() ->
+              CalendarEventRepository.get().getById(occurrence.getCalendarEvent().getId()));
+      occurrence.setCalendarEvent(event);
+      return occurrence;
+    });
   }
 }
   

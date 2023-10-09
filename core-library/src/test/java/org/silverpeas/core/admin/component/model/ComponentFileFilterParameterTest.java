@@ -36,6 +36,7 @@ import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 /**
@@ -180,7 +181,7 @@ class ComponentFileFilterParameterTest {
     var filter = ComponentFileFilterParameter.from(component);
     var file = getFile("file.pptx");
     // Test
-    Assertions.assertThrows(ComponentFileFilterException.class, () ->
+    assertThrows(ComponentFileFilterException.class, () ->
       filter.verifyFileAuthorized(file));
   }
 

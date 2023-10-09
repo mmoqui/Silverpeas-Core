@@ -40,11 +40,15 @@ import java.rmi.RemoteException;
  * {@link ComponentFileFilterException}
  * @author Yohann Chastagnier
  */
+@SuppressWarnings("unused")
 public class SilverpeasTransverseErrorUtil {
+
+  private SilverpeasTransverseErrorUtil() {
+  }
 
   /**
    * Stops a runtime transverse exception exists
-   * @param exception
+   * @param exception if an error occurs
    */
   @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
   public static <E extends Exception> void stopTransverseErrorIfAny(E exception) throws E {
@@ -93,8 +97,8 @@ public class SilverpeasTransverseErrorUtil {
 
   /**
    * Retrieves a formatted exception message if any handled from a given exception
-   * @param exception
-   * @return
+   * @param exception the exception that was thrown.
+   * @return the message
    */
   @SuppressWarnings({"exceptionResultOfMethodCallIgnored", "ThrowableResultOfMethodCallIgnored"})
   public static <E extends Exception> String performExceptionMessage(E exception, String language) {
@@ -137,8 +141,8 @@ public class SilverpeasTransverseErrorUtil {
 
   /**
    * Retrieves a DataStorageQuotaException if any from a given exception
-   * @param exception
-   * @return
+   * @param exception an exception that was thrown.
+   * @return the {@link DataStorageQuotaException} instance.
    */
   private static <E extends Exception> DataStorageQuotaException retrieveDataStorageQuotaException(
       E exception) {
@@ -147,8 +151,8 @@ public class SilverpeasTransverseErrorUtil {
 
   /**
    * Retrieves a ComponentFileFilterException if any from a given exception
-   * @param exception
-   * @return
+   * @param exception the exception that was thrown.
+   * @return the {@link ComponentFileFilterException} instance.
    */
   private static <E extends Exception> ComponentFileFilterException
   retrieveComponentFileFilterException(
@@ -158,9 +162,9 @@ public class SilverpeasTransverseErrorUtil {
 
   /**
    * Retrieves an exception if any from a given exception
-   * @param exception
-   * @param exceptionClass
-   * @return
+   * @param exception the exception that was thrown.
+   * @param exceptionClass the exception to retrieve.
+   * @return the instance of the exception to retrieve.
    */
   @SuppressWarnings("unchecked")
   private static <E extends Exception, T extends Exception> E retrieveException(T exception,

@@ -80,7 +80,7 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
   }
 
   /**
-   * Deletes the specified attachment, identified by its unique identifier.?
+   * Deletes the specified attachment, identified by its unique identifier.
    *
    * @param attachmentId the unique identifier of the attachment to delete.
    * @param pageContext the context of the page.
@@ -101,16 +101,6 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
     return new String[]{FileField.TYPE};
   }
 
-  /**
-   * Prints the javascripts which will be used to control the new value given to the named field.
-   * The error messages may be adapted to a local language. The FieldTemplate gives the field type
-   * and constraints. The FieldTemplate gives the local labeld too. Never throws an Exception but
-   * log a silvertrace and writes an empty string when :
-   * <ul>
-   * <li>the fieldName is unknown by the template.</li>
-   * <li>the field type is not a managed type.</li>
-   * </ul>
-   */
   @Override
   public void displayScripts(final PrintWriter out, final FieldTemplate template,
       final PagesContext pageContext) {
@@ -142,7 +132,8 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
   }
 
   @Override
-  public List<String> update(List<FileItem<?>> items, FileField field, FieldTemplate template,
+  public <T extends FileItem<T>> List<String> update(List<T> items, FileField field,
+      FieldTemplate template,
       PagesContext pageContext) throws FormException {
 
     String attachmentId = processInput(items, field, pageContext);
@@ -150,7 +141,7 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
     return new ArrayList<>(update(attachmentId, field, template, pageContext));
   }
 
-  protected String processInput(List<FileItem<?>> items, FileField field,
+  protected <T extends FileItem<T>> String processInput(List<T> items, FileField field,
       PagesContext pageContext) {
     try {
       String currentAttachmentId = field.getAttachmentId();
@@ -223,7 +214,8 @@ public abstract class AbstractFileFieldDisplayer extends AbstractFieldDisplayer<
     return StringUtil.isDefined(attachmentId) && operation == Operation.DELETION;
   }
 
-  protected String processUploadedFile(List<FileItem<?>> items, String parameterName,
+  protected <T extends FileItem<T>> String processUploadedFile(List<T> items,
+      String parameterName,
       PagesContext pagesContext) throws IOException {
     String attachmentId = null;
     FileItem<?> item = FileUploadUtil.getFile(items, parameterName);

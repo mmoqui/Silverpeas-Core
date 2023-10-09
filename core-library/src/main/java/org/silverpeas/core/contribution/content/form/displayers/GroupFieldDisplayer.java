@@ -161,7 +161,8 @@ public class GroupFieldDisplayer extends AbstractFieldDisplayer<GroupField> {
   }
 
   @Override
-  public List<String> update(List<FileItem<?>> items, GroupField field, FieldTemplate template,
+  public <T extends FileItem<T>> List<String> update(List<T> items, GroupField field,
+      FieldTemplate template,
       PagesContext pageContext) throws FormException {
     String itemName = template.getFieldName();
     String value = FileUploadUtil.getParameter(items, itemName);

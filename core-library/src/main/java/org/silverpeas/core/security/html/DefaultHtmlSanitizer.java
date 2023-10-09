@@ -24,6 +24,7 @@
 
 package org.silverpeas.core.security.html;
 
+import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.contribution.content.wysiwyg.service.WysiwygContentTransformer;
 
 import jakarta.enterprise.inject.Default;
@@ -33,6 +34,7 @@ import jakarta.inject.Singleton;
  * @author silveryocha
  */
 @Default
+@Service
 @Singleton
 public class DefaultHtmlSanitizer implements HtmlSanitizer {
 

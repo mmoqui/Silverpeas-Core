@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Table(name = "test_persons")
-@NamedQuery(name = "getPersonsByName", query = "from Person p where p.lastName = :name")
+@NamedQuery(name = "getPersonsByName", query = "SELECT p FROM Person p WHERE p.lastName = :name")
 public class Person extends SilverpeasJpaEntity<Person, UuidIdentifier> implements Serializable {
 
   @Column(name = "firstName", nullable = false)

@@ -23,6 +23,8 @@
  */
 package org.silverpeas.core.process.management.interceptor;
 
+import jakarta.ejb.EJBException;
+import jakarta.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -35,11 +37,8 @@ import org.junit.runner.RunWith;
 import org.silverpeas.core.ResourceReference;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.LoggerReaderRule;
-import org.silverpeas.core.util.logging.Level;
 
-import jakarta.ejb.EJBException;
-import jakarta.inject.Inject;
-import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -73,9 +72,8 @@ public class SimulationActionInterceptorIT {
         .addFileRepositoryFeatures()
         .addAdministrationFeatures()
         .addAsResource("org/silverpeas/util/logging/")
-        .testFocusedOn((warBuilder) -> {
-          warBuilder.addPackages(true, "org.silverpeas.core.process");
-        }).build();
+        .testFocusedOn((warBuilder) ->
+            warBuilder.addPackages(true, "org.silverpeas.core.process")).build();
   }
 
   @Before
@@ -105,34 +103,34 @@ public class SimulationActionInterceptorIT {
   public void interceptorIsHandledForEjbServicesOnMoveMethodWithMissingSourceAnnotation() {
     ejbService.move(new ResourceReference("id", "instanceId"), new ResourceReference("id", "instanceId"));
     assertCheckNotCalled();
-    assertThatLogContainsTheMessage(Level.WARNING, "Intercepted method " +
+    assertThatLogContainsTheMessage("Intercepted method " +
             "'move', but SourcePK, SourceObject or TargetPK annotations are missing on " +
         "parameter specifications...");
-    assertThatLogContainsTheMessage(Level.INFO, "InterceptorTest@DefaultEjbService@move called");
+    assertThatLogContainsTheMessage("InterceptorTest@DefaultEjbService@move called");
   }
 
   @Test
   public void interceptorIsHandledForSimpleServicesOnDeleteMethodWithMissingTargetAnnotation() {
     simpleService.delete(new InterceptorTestFile("FromService"), new ResourceReference("id", "instanceId"));
     assertCheckNotCalled();
-    assertThatLogContainsTheMessage(Level.WARNING, "Intercepted method " +
+    assertThatLogContainsTheMessage("Intercepted method " +
             "'delete', but SourcePK, SourceObject or TargetPK annotations are missing on " +
             "parameter specifications...");
-    assertThatLogContainsTheMessage(Level.INFO, "InterceptorTest@DefaultSimpleService@delete called");
+    assertThatLogContainsTheMessage("InterceptorTest@DefaultSimpleService@delete called");
   }
 
   @Test
   public void interceptorIsHandledForEjbServicesOnCreateMethod() {
     ejbService.create(new InterceptorTestFile("FromEJB"), new ResourceReference("id", "instanceId"));
     assertCheckCalled();
-    assertThatLogContainsTheMessage(Level.INFO, "InterceptorTest@DefaultEjbService@create called");
+    assertThatLogContainsTheMessage("InterceptorTest@DefaultEjbService@create called");
   }
 
   @Test
   public void interceptorIsHandledForSimpleServicesOnCreateMethod() {
     simpleService.create(new InterceptorTestFile("FromSimple"), new ResourceReference("id", "instanceId"));
     assertCheckCalled();
-    assertThatLogContainsTheMessage(Level.INFO, "InterceptorTest@DefaultSimpleService@create called");
+    assertThatLogContainsTheMessage("InterceptorTest@DefaultSimpleService@create called");
   }
 
   private void assertCheckNotCalled() {
@@ -143,14 +141,14 @@ public class SimulationActionInterceptorIT {
     assertThat("Interceptor has not been performed...", checkTest.getCallCount(), is(1));
   }
 
-  private void assertThatLogContainsTheMessage(final Level level, final String message) {
+  private void assertThatLogContainsTheMessage(final String message) {
     try {
       // the log file can contains more than this record as the tests can be ran several
       // times.
       assertThat(IOUtils.readLines(loggerReaderRule.getReader()).stream()
           .filter(line -> line.contains(message))
           .count(), is(greaterThanOrEqualTo(1L)));
-    } catch (IOException e) {
+    } catch (UncheckedIOException e) {
       fail(e.getMessage());
     }
   }

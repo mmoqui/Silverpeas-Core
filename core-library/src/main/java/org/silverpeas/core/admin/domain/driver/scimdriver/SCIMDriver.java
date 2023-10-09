@@ -32,6 +32,8 @@ import org.silverpeas.core.admin.user.UserManager;
 import org.silverpeas.core.admin.user.model.GroupDetail;
 import org.silverpeas.core.admin.user.model.UserDetail;
 import org.silverpeas.core.admin.user.model.UserFull;
+import org.silverpeas.core.annotation.Bean;
+import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.util.ArrayUtil;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.SettingBundle;
@@ -48,6 +50,8 @@ import static org.silverpeas.core.admin.domain.DomainDriver.ActionConstants.ACTI
 import static org.silverpeas.core.admin.domain.DomainDriver.ActionConstants.ACTION_UPDATE_USER;
 import static org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery.unique;
 
+@Technical
+@Bean
 public class SCIMDriver extends AbstractDomainDriver {
 
   private final UserManager userManager;

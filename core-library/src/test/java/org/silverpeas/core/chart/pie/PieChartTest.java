@@ -38,8 +38,9 @@ public class PieChartTest extends AbstractPieChartTest {
   public void emptyPieChartWithoutTitle() {
     PieChart chartWithoutTitle = PieChart.withoutTitle();
     assertThat(chartWithoutTitle.getType(), is(ChartType.pie));
-    assertThat(chartWithoutTitle.getTitle(), isEmptyString());
+    assertThat(chartWithoutTitle.getTitle(), is(emptyString()));
     assertThat(chartWithoutTitle.getItems(), empty());
+    //noinspection unchecked
     assertThat(chartWithoutTitle.asJson(), is(expJsChart("")));
   }
 
@@ -50,6 +51,7 @@ public class PieChartTest extends AbstractPieChartTest {
     assertThat(chartWithTitle.getType(), is(ChartType.pie));
     assertThat(chartWithTitle.getTitle(), is("Pie chart title"));
     assertThat(chartWithTitle.getItems(), empty());
+    //noinspection unchecked
     assertThat(chartWithTitle.asJson(), is(expJsChartWithExtra("Pie chart title",
             extra -> extra.put("youpi", "tralala").put("26", "98"))));
   }

@@ -580,22 +580,22 @@ public class RecurrentCalendarEventManagementIT extends BaseCalendarTest {
   }
 
   protected List<SQLRequester.ResultLine> getRecurrenceTableLines() throws Exception {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from SB_Cal_Recurrence"));
   }
 
   protected List<SQLRequester.ResultLine> getOccurrenceTableLines() throws Exception {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from SB_Cal_Occurrences"));
   }
 
   protected List<SQLRequester.ResultLine> getRecurrenceDayOfWeekTableLines() throws Exception {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from SB_Cal_Recurrence_DayOfWeek"));
   }
 
   protected List<SQLRequester.ResultLine> getRecurrenceExceptionTableLines() throws Exception {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from SB_Cal_Recurrence_Exception"));
   }
 }

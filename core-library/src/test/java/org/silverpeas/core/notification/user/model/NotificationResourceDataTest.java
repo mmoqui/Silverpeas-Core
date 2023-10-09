@@ -66,7 +66,7 @@ class NotificationResourceDataTest {
     final NotificationResourceData data = new NotificationResourceData();
     data.setCurrentLanguage("otherLanguage");
     data.setResourceName("resource name");
-    assertThat(getTechnicalResourceName(data), isEmptyString());
+    assertThat(getTechnicalResourceName(data), is(emptyString()));
     assertThat(getTechnicalResourceDescription(data), nullValue());
     assertThat(getTechnicalResourceDetails(data), nullValue());
     assertThat(getTransientResourceDetails(data), notNullValue());

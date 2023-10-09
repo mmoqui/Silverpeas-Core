@@ -48,6 +48,7 @@
 package org.silverpeas.core.calendar.notification;
 
 import org.silverpeas.core.admin.user.model.User;
+import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.calendar.CalendarEventOccurrence;
 import org.silverpeas.core.notification.user.client.constant.NotifAction;
 
@@ -56,8 +57,9 @@ import org.silverpeas.core.notification.user.client.constant.NotifAction;
  * single occurrence or since this occurrence up to the end of the event recurrence.
  * @author mmoquillon
  */
-public class CalendarEventOccurrenceNotifier
-    extends AbstractNotifier<CalendarEventOccurrenceLifeCycleEvent> {
+@Bean
+public class CalendarEventOccurrenceUserNotifier
+    extends AbstractUserNotifier<CalendarEventOccurrenceLifeCycleEvent> {
 
   @Override
   public void onDeletion(final CalendarEventOccurrenceLifeCycleEvent event) throws Exception {
@@ -113,7 +115,7 @@ public class CalendarEventOccurrenceNotifier
           .send();
     }
 
-    if (!after.getAttendees().isSameAs(before.getAttendees())) {
+    if (after.getAttendees().isNotSameAs(before.getAttendees())) {
       // the update is about the attendees themselves
       AttendeeLifeCycleEventNotifier.notifyAttendees(event.getSubtype(), after,
           before.getAttendees(), after.getAttendees());

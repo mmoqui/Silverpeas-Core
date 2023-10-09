@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.scheduler;
 
+import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.util.ServiceProvider;
 
 import jakarta.inject.Singleton;
@@ -33,12 +34,13 @@ import jakarta.inject.Singleton;
  * another class that is managed by IoC.
  * @author mmoquillon
  */
+@Bean
 @Singleton
 public class TestJobExecutionContext {
 
   private boolean jobExecuted;
 
-  public static final TestJobExecutionContext get() {
+  public static TestJobExecutionContext get() {
     return ServiceProvider.getService(TestJobExecutionContext.class);
   }
 

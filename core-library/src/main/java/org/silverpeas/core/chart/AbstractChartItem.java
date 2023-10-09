@@ -50,7 +50,7 @@ public abstract class AbstractChartItem<D> implements ChartItem {
    * rendering. Useful to provide data from a treatment to an other one.
    * @param key the key at which the given information is registered.
    * @param value the value registered.
-   * @param <T>
+   * @param <T> the concrete type of the chart item.
    * @return the instance of the chart itself.
    */
   @SuppressWarnings("unchecked")
@@ -68,6 +68,7 @@ public abstract class AbstractChartItem<D> implements ChartItem {
    * @param key the ket at which the extra data is registered.
    * @return the extra data as it has been registered.
    */
+  @SuppressWarnings("unused")
   public Object getExtra(String key) {
     return extra == null ? null : extra.get(key);
   }
@@ -75,7 +76,7 @@ public abstract class AbstractChartItem<D> implements ChartItem {
   /**
    * Sets the title that defines the item.
    * @param title a title as string.
-   * @param <T>
+   * @param <T> the concrete type of the chart item.
    * @return the instance of the chart itself.
    */
   @SuppressWarnings("unchecked")

@@ -26,11 +26,13 @@ package org.silverpeas.core.contribution.content.form;
 import org.apache.commons.fileupload2.core.FileItem;
 
 import jakarta.servlet.jsp.JspWriter;
+
 import java.util.List;
 
 /**
  * A Form is an object which can display in HTML the content of a DataRecord to a end user and can
  * retrieve via HTTP any updated values.
+ *
  * @see DataRecord
  * @see RecordTemplate
  * @see FieldDisplayer
@@ -66,34 +68,34 @@ public interface Form {
    * Updates the values of the dataRecord using the RecordTemplate to extra control information
    * (readOnly or mandatory status). The fieldName must be used to retrieve the HTTP parameter from
    * the request. this method treats only wysiwyg fields.
+   *
    * @throws FormException if the field type is not a managed type or if the field doesn't accept
    * the new value.
    */
-  List<String> updateWysiwyg(List<FileItem<?>> items,
-      DataRecord record, PagesContext pagesContext)
-      throws FormException;
+  <T extends FileItem<T>> List<String> updateWysiwyg(List<T> items, DataRecord record,
+      PagesContext pagesContext) throws FormException;
 
   /**
    * Updates the values of the dataRecord using the RecordTemplate to extra control information
    * (readOnly or mandatory status). The fieldName must be used to retrieve the HTTP parameter from
    * the request.
+   *
    * @throws FormException if the field type is not a managed type or if the field doesn't accept
    * the new value.
    */
-  List<String> update(List<FileItem<?>> items,
-      DataRecord record, PagesContext pagesContext)
-      throws FormException;
+  <T extends FileItem<T>> List<String> update(List<T> items, DataRecord record,
+      PagesContext pagesContext) throws FormException;
 
   /**
    * Updates the values of the dataRecord using the RecordTemplate to extra control information
    * (readOnly or mandatory status). The fieldName must be used to retrieve the HTTP parameter from
    * the request.
-   * @throws FormException if the field type is not a managed type or  if the field doesn't
-   * accept the new value.
+   *
+   * @throws FormException if the field type is not a managed type or  if the field doesn't accept
+   * the new value.
    */
-  List<String> update(List<FileItem<?>> items,
-      DataRecord record, PagesContext pagesContext, boolean updateWysiwyg)
-      throws FormException;
+  <T extends FileItem<T>> List<String> update(List<T> items, DataRecord record,
+      PagesContext pagesContext, boolean updateWysiwyg) throws FormException;
 
   /**
    * Get the form title
@@ -102,6 +104,7 @@ public interface Form {
 
   /**
    * Gets the template of all fields that make this form
+   *
    * @return a List of FieldTemplate
    */
   List<FieldTemplate> getFieldTemplates();
@@ -110,15 +113,17 @@ public interface Form {
 
   String toString(PagesContext pagesContext);
 
-  boolean isEmpty(List<FileItem<?>> items, DataRecord record, PagesContext pagesContext);
+  <T extends FileItem<T>> boolean isEmpty(List<T> items, DataRecord record,
+      PagesContext pagesContext);
 
   void setFormName(String name);
 
   void setData(DataRecord data);
 
   /**
-   * Defines if this form is a 'view' form (opposite to an 'update' form)
-   * A 'view' form may have some specific behaviors like to not display empty fields
+   * Defines if this form is a 'view' form (opposite to an 'update' form) A 'view' form may have
+   * some specific behaviors like to not display empty fields
+   *
    * @param viewForm true if this form is a 'view' form
    */
   void setViewForm(boolean viewForm);

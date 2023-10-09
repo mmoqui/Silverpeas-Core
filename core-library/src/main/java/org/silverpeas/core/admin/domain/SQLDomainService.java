@@ -276,12 +276,8 @@ public class SQLDomainService extends AbstractDomainService {
    * @throws DomainCreationException
    */
   private void generateDomainPropertiesFile(Domain domainToCreate) throws DomainCreationException {
-
-
     String domainName = domainToCreate.getName();
-
     String domainPropertiesPath = FileRepositoryManager.getDomainPropertiesPath(domainName);
-
     SilverpeasTemplate template = getNewTemplate();
     template.setAttribute("SQLDataSourceJNDIName", adminSettings.getString("DefaultDataSourceJNDIName"));
     template.setAttribute("SQLUserTableName",

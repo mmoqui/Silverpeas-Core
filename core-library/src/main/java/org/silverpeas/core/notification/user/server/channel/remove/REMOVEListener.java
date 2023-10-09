@@ -34,7 +34,8 @@ import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
 
 @MessageDriven(activationConfig = {
-  @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+  @ActivationConfigProperty(propertyName = "destinationType",
+      propertyValue = "jakarta.jms.Queue"),
   @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
   @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "CHANNEL='REMOVE'"),
   @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue =

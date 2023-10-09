@@ -45,10 +45,10 @@ import jakarta.validation.constraints.NotNull;
     @NamedQuery(name = "deleteByInstanceId",
         query = "delete from Rating where instanceId = :instanceId"),
     @NamedQuery(name = "findByAuthorRating",
-        query = "from Rating where contributionId = :contributionId and instanceId = " +
+        query = "select r from Rating r where contributionId = :contributionId and instanceId = " +
             ":instanceId and contributionType = :contributionType and authorId = :authorId"),
     @NamedQuery(name = "findByContributions",
-        query = "from Rating where instanceId = :instanceId and contributionType = " +
+        query = "select r from Rating r where instanceId = :instanceId and contributionType = " +
             ":contributionType and contributionId in :contributionIds"),
     @NamedQuery(name = "updateInstanceId",
         query = "update Rating set instanceId = :newInstanceId where instanceId = :instanceId " +

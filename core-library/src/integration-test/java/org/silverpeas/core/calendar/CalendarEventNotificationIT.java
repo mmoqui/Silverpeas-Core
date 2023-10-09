@@ -31,7 +31,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.admin.user.model.User;
-import org.silverpeas.core.calendar.notification.AbstractNotifier;
+import org.silverpeas.core.annotation.Service;
+import org.silverpeas.core.calendar.notification.AbstractUserNotifier;
 import org.silverpeas.core.calendar.notification.AttendeeLifeCycleEvent;
 import org.silverpeas.core.calendar.notification.AttendeeLifeCycleEventNotifier;
 import org.silverpeas.core.calendar.notification.CalendarEventLifeCycleEvent;
@@ -295,9 +296,10 @@ public class CalendarEventNotificationIT extends BaseCalendarTest {
   /**
    * Listens for change in the attendance in an event (or in a given event's occurrence).
    */
+  @Service
   @Singleton
   public static class AttendanceNotificationListener extends
-      AbstractNotifier<AttendeeLifeCycleEvent> {
+      AbstractUserNotifier<AttendeeLifeCycleEvent> {
 
 
     private final List<NotifAction> notifAction = new ArrayList<>(2);
@@ -338,9 +340,10 @@ public class CalendarEventNotificationIT extends BaseCalendarTest {
    * we send a notification about a change in the attendance in the event. This behaviour is
    * implemented by the attendee notification mechanism. We just simulate here this behaviour.
    */
+  @Service
   @Singleton
   public static class CalendarEventNotificationListener extends
-      AbstractNotifier<CalendarEventLifeCycleEvent> {
+      AbstractUserNotifier<CalendarEventLifeCycleEvent> {
 
     private NotifAction notifAction = null;
 
@@ -372,7 +375,7 @@ public class CalendarEventNotificationIT extends BaseCalendarTest {
         notifAction = NotifAction.UPDATE;
       }
 
-      if (!after.getAttendees().isSameAs(before.getAttendees())) {
+      if (after.getAttendees().isNotSameAs(before.getAttendees())) {
         AttendeeLifeCycleEventNotifier.notifyAttendees(LifeCycleEventSubType.SINGLE, after,
             before.getAttendees(), after.getAttendees());
       }
@@ -390,9 +393,10 @@ public class CalendarEventNotificationIT extends BaseCalendarTest {
    * this case, we send a notification about a change in the attendance in the event. This behaviour
    * is implemented by the attendee notification mechanism. We just simulate here this behaviour.
    */
+  @Service
   @Singleton
   public static class CalendarEventOccurrenceNotificationListener
-      extends AbstractNotifier<CalendarEventOccurrenceLifeCycleEvent> {
+      extends AbstractUserNotifier<CalendarEventOccurrenceLifeCycleEvent> {
 
     private NotifAction notifAction = null;
 
@@ -420,7 +424,7 @@ public class CalendarEventNotificationIT extends BaseCalendarTest {
         notifAction = NotifAction.UPDATE;
       }
 
-      if (!after.getAttendees().isSameAs(before.getAttendees())) {
+      if (after.getAttendees().isNotSameAs(before.getAttendees())) {
         AttendeeLifeCycleEventNotifier.notifyAttendees(LifeCycleEventSubType.SINGLE, after,
             before.getAttendees(), after.getAttendees());
       }

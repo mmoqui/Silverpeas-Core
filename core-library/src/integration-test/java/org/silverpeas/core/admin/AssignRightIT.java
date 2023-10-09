@@ -48,6 +48,7 @@ import jakarta.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -581,7 +582,7 @@ public class AssignRightIT  {
       if (!areContentEquals) {
         fail("\n" + message);
       }
-    } catch (IOException e) {
+    } catch (UncheckedIOException e) {
       throw new RuntimeException(e);
     }
   }

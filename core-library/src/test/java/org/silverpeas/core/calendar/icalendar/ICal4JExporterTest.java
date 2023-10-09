@@ -54,10 +54,7 @@ import org.silverpeas.core.test.unit.extention.TestedBean;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.core.util.StringUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
+import java.io.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -675,51 +672,47 @@ class ICal4JExporterTest {
    * verified.<br> If not, the different lines between the file content and the export result are
    * logged to the console.<br> Only event parts are verified from the contents.
    * </p>
+   *
    * @param descriptor descriptor about the iCal export process
    * @param fileNameOfExpectedResult the name of the file that contains the expected export result.
    */
   @SuppressWarnings("Duplicates")
   private void exportAndVerifyResult(final ExportDescriptor descriptor,
       List<CalendarEvent> calendarEvents, String fileNameOfExpectedResult) throws ExportException {
-    try {
+    ByteArrayOutputStream emptyExportResult = new ByteArrayOutputStream();
+    iCalendarExporter.exports(ExportDescriptor.withOutputStream(emptyExportResult)
+        .withParameter(CALENDAR, calendar), Stream::empty);
 
-      ByteArrayOutputStream emptyExportResult = new ByteArrayOutputStream();
-      iCalendarExporter.exports(ExportDescriptor.withOutputStream(emptyExportResult)
-          .withParameter(CALENDAR, calendar), Stream::empty);
+    List<String> empty = IOUtils.readLines(new StringReader(emptyExportResult.toString()));
+    empty.remove(empty.size() - 1);
 
-      List<String> empty = IOUtils.readLines(new StringReader(emptyExportResult.toString()));
-      empty.remove(empty.size() - 1);
+    iCalendarExporter.exports(descriptor, calendarEvents::stream);
 
-      iCalendarExporter.exports(descriptor, calendarEvents::stream);
+    StringReader current = new StringReader(descriptor.getOutputStream().toString());
+    StringReader expected = new StringReader(getFileContent(fileNameOfExpectedResult));
 
-      StringReader current = new StringReader(descriptor.getOutputStream().toString());
-      StringReader expected = new StringReader(getFileContent(fileNameOfExpectedResult));
-
-      final List<String> currentContentLines = IOUtils.readLines(current);
-      currentContentLines.remove(currentContentLines.size() - 1);
-      Iterator<String> it = currentContentLines.iterator();
-      while (it.hasNext() && !empty.isEmpty()) {
-        String currentLine = it.next();
-        String expectedLine = empty.remove(0);
-        assertThat(expectedLine, is(currentLine));
-        it.remove();
-      }
-
-      // Line to ignore from expected result extracted from a file.
-      final List<String> expectedContentLines = IOUtils.readLines(expected);
-      expectedContentLines.removeIf(currentExpectedLine -> currentExpectedLine.startsWith("#"));
-
-      String currentContent = StringUtil.join(currentContentLines, "\n");
-      String expectedContent = StringUtil.join(expectedContentLines, "\n");
-
-      // Removing DTSTAMP
-      currentContent = currentContent.replaceAll("DTSTAMP.+\n",
-          "DTSTAMP:VALUE IS NOT VERIFIED BUT IS MANDATORY\n");
-
-      assertThat(currentContent, is(expectedContent));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    final List<String> currentContentLines = IOUtils.readLines(current);
+    currentContentLines.remove(currentContentLines.size() - 1);
+    Iterator<String> it = currentContentLines.iterator();
+    while (it.hasNext() && !empty.isEmpty()) {
+      String currentLine = it.next();
+      String expectedLine = empty.remove(0);
+      assertThat(expectedLine, is(currentLine));
+      it.remove();
     }
+
+    // Line to ignore from expected result extracted from a file.
+    final List<String> expectedContentLines = IOUtils.readLines(expected);
+    expectedContentLines.removeIf(currentExpectedLine -> currentExpectedLine.startsWith("#"));
+
+    String currentContent = StringUtil.join(currentContentLines, "\n");
+    String expectedContent = StringUtil.join(expectedContentLines, "\n");
+
+    // Removing DTSTAMP
+    currentContent = currentContent.replaceAll("DTSTAMP.+\n",
+        "DTSTAMP:VALUE IS NOT VERIFIED BUT IS MANDATORY\n");
+
+    assertThat(currentContent, is(expectedContent));
   }
 
   private ExportDescriptor newExportDescriptor() {

@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.scheduler;
 
+import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.util.logging.SilverLogger;
 
 import jakarta.inject.Singleton;
@@ -33,6 +34,7 @@ import static org.junit.Assert.assertNotNull;
  * Handler of scheduling events for testing purpose.
  * It is a stub dedicated to tests.
  */
+@Service
 @Singleton
 public class MySchedulingEventListener implements SchedulerEventListener {
 

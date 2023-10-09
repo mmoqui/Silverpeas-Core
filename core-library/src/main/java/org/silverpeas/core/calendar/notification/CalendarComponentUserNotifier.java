@@ -24,6 +24,8 @@
 package org.silverpeas.core.calendar.notification;
 
 import org.silverpeas.core.admin.user.model.User;
+import org.silverpeas.core.annotation.Bean;
+import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.calendar.Attendee;
 import org.silverpeas.core.calendar.CalendarEvent;
 import org.silverpeas.core.calendar.CalendarEventOccurrence;
@@ -43,7 +45,8 @@ import java.util.Collections;
  * lifecycle events.
  * @author mmoquillon
  */
-public class CalendarComponentNotifier extends AbstractNotifier<AttendeeLifeCycleEvent> {
+@Bean
+public class CalendarComponentUserNotifier extends AbstractUserNotifier<AttendeeLifeCycleEvent> {
 
   /**
    * An attendee has been removed. The attendee is informed about it (he shouldn't be the user

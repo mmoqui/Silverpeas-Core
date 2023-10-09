@@ -24,6 +24,7 @@
 package org.silverpeas.core.calendar.notification;
 
 import org.silverpeas.core.admin.user.model.User;
+import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.calendar.Attendee;
 import org.silverpeas.core.calendar.CalendarEvent;
 import org.silverpeas.core.notification.user.client.constant.NotifAction;
@@ -35,8 +36,9 @@ import java.util.List;
  * Notifier to the attendees of a calendar event about a change in the lifecycle of this event.
  * @author mmoquillon
  */
-public class CalendarEventNotifier
-    extends AbstractNotifier<CalendarEventLifeCycleEvent> {
+@Bean
+public class CalendarEventUserNotifier
+    extends AbstractUserNotifier<CalendarEventLifeCycleEvent> {
 
   @Override
   public void onCreation(final CalendarEventLifeCycleEvent event) {
@@ -88,7 +90,7 @@ public class CalendarEventNotifier
           .build()
           .send();
     }
-    if (!after.getAttendees().isSameAs(before.getAttendees())) {
+    if (after.getAttendees().isNotSameAs(before.getAttendees())) {
       // the update is about the attendees themselves
       LifeCycleEventSubType subType =
           after.isRecurrent() ? LifeCycleEventSubType.SINCE : LifeCycleEventSubType.SINGLE;

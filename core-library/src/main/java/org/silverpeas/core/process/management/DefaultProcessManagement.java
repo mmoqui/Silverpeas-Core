@@ -23,6 +23,8 @@
  */
 package org.silverpeas.core.process.management;
 
+import org.silverpeas.core.annotation.Service;
+import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.process.SilverpeasProcess;
 import org.silverpeas.core.process.check.ProcessCheck;
 import org.silverpeas.core.process.session.ProcessSession;
@@ -41,6 +43,8 @@ import java.util.Objects;
  * Default implementation of the <code>ProcessManagement</code> interface.
  * @author Yohann Chastagnier
  */
+@Technical
+@Service
 @Singleton
 public class DefaultProcessManagement implements ProcessManagement {
 

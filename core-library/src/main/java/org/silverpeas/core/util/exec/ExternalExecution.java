@@ -29,9 +29,11 @@ import org.silverpeas.core.SilverpeasRuntimeException;
 import org.silverpeas.core.util.logging.SilverLogger;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class ExternalExecution {
 
@@ -69,7 +71,7 @@ public class ExternalExecution {
       errEater = new Thread(() -> {
         try {
           errors.addAll(IOUtils.readLines(process.getErrorStream(), Charset.defaultCharset()));
-        } catch (final IOException e) {
+        } catch (UncheckedIOException e) {
           throw new ExternalExecutionException(e);
         }
       });
@@ -77,7 +79,7 @@ public class ExternalExecution {
       outEater = new Thread(() -> {
         try {
           result.addAll(IOUtils.readLines(process.getInputStream(), Charset.defaultCharset()));
-        } catch (final IOException e) {
+        } catch (UncheckedIOException e) {
           throw new ExternalExecutionException(e);
         }
       });
@@ -94,6 +96,7 @@ public class ExternalExecution {
       performExternalExecutionException(config, e);
     }
     try {
+      Objects.requireNonNull(outEater);
       outEater.join();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();

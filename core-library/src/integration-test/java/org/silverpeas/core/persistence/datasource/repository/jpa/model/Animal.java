@@ -44,7 +44,7 @@ import java.util.List;
     query = "update Animal a set a.name = :name, a.lastUpdaterId = :lastUpdaterId, a" +
         ".lastUpdateDate = :lastUpdateDate, a.version = :version where a.id = :id")
 @NamedQuery(name = "deleteAnimalsByType",
-    query = "delete from Animal a where a.type = :type")
+    query = "DELETE FROM Animal a WHERE a.type = :type")
 public class Animal extends SilverpeasJpaEntity<Animal, UniqueLongIdentifier> implements
     Serializable {
 

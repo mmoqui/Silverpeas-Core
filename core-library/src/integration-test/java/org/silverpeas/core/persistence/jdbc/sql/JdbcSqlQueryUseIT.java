@@ -2,6 +2,7 @@ package org.silverpeas.core.persistence.jdbc.sql;
 
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.operation.Operation;
+import jakarta.ejb.Local;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -113,7 +114,7 @@ public class JdbcSqlQueryUseIT {
           .withInsertParam("id", id)
           .withInsertParam("firstName", "Lucifer")
           .withInsertParam("lastName", "Satan")
-          .withInsertParam("birthday", SQLDateTimeConstants.MIN_DATE)
+          .withInsertParam("birthday", java.sql.Date.valueOf(LocalDate.parse("6666-06-06")))
           .withInsertParam("createDate", new Timestamp(now.getTime()))
           .withInsertParam("lastUpdateDate", new Timestamp(now.getTime()))
           .withInsertParam("createdBy", "666")
@@ -129,7 +130,7 @@ public class JdbcSqlQueryUseIT {
       assertThat(p.get("id"), is(id));
       assertThat(p.get("firstName"), is("Lucifer"));
       assertThat(p.get("lastName"), is("Satan"));
-      assertThat(p.get("birthday"), is(SQLDateTimeConstants.MIN_DATE));
+      assertThat(p.get("birthday"), is(java.sql.Date.valueOf(LocalDate.parse("6666-06-06"))));
       assertThat(p.get("createDate"), is(new Timestamp(now.getTime())));
       assertThat(p.get("lastUpdateDate"), is(new Timestamp(now.getTime())));
       assertThat(p.get("createdBy"), is("666"));

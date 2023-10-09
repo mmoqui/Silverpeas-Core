@@ -23,6 +23,13 @@
  */
 package org.silverpeas.core.contribution.template.publication;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.silverpeas.core.SilverpeasException;
 import org.silverpeas.core.admin.component.ComponentInstanceDeletion;
@@ -33,52 +40,28 @@ import org.silverpeas.core.admin.service.OrganizationControllerProvider;
 import org.silverpeas.core.admin.space.SpaceInstLight;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.annotation.Service;
-import org.silverpeas.core.contribution.content.form.DataRecord;
-import org.silverpeas.core.contribution.content.form.FieldTemplate;
-import org.silverpeas.core.contribution.content.form.Form;
-import org.silverpeas.core.contribution.content.form.FormException;
-import org.silverpeas.core.contribution.content.form.PagesContext;
-import org.silverpeas.core.contribution.content.form.RecordSet;
-import org.silverpeas.core.contribution.content.form.RecordTemplate;
+import org.silverpeas.core.contribution.content.form.*;
 import org.silverpeas.core.contribution.content.form.record.FormEncryptionContentIterator;
-import org.silverpeas.core.contribution.content.form.record.GenericRecordSet;
 import org.silverpeas.core.contribution.content.form.record.GenericRecordSetManager;
 import org.silverpeas.core.contribution.content.form.record.IdentifiedRecordTemplate;
 import org.silverpeas.core.index.indexing.model.FullIndexEntry;
 import org.silverpeas.core.security.encryption.ContentEncryptionServiceProvider;
 import org.silverpeas.core.security.encryption.EncryptionContentIterator;
 import org.silverpeas.core.security.encryption.cipher.CryptoException;
-import org.silverpeas.core.util.CollectionUtil;
-import org.silverpeas.core.util.ResourceLocator;
-import org.silverpeas.core.util.ServiceProvider;
-import org.silverpeas.core.util.SettingBundle;
-import org.silverpeas.core.util.StringUtil;
-import org.silverpeas.core.util.UtilException;
+import org.silverpeas.core.util.*;
 import org.silverpeas.core.util.file.FileFolderManager;
 import org.silverpeas.core.util.file.FileRepositoryManager;
 import org.silverpeas.core.util.file.FileUploadUtil;
 import org.silverpeas.core.util.lang.SystemWrapper;
 import org.silverpeas.core.util.logging.SilverLogger;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Singleton;
-import jakarta.transaction.Transactional;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * The PublicationTemplateManager manages all the PublicationTemplate for all the Job'Peas. It is a
- * singleton.
+ * The PublicationTemplateManager manages all the PublicationTemplate for all component instances.
+ * It is a singleton.
  */
 @Service
 @Singleton
@@ -111,6 +94,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
 
   /**
    * Gets the single instance of this manager.
+   *
    * @return the single instance of PublicationTemplateManager.
    */
   public static PublicationTemplateManager getInstance() {
@@ -119,6 +103,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
 
   /**
    * Makes the path denoted by the specified file name relative to the template directory.
+   *
    * @param fileName the path of a file or a directory
    * @return the absolute path of the specified file name in the template directory.
    */
@@ -142,11 +127,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
     return Paths.get(defaultTemplateDir, fileName).toString().replace('\\', '/');
   }
 
-  public String getTemplateDirectoryPath() {
-    return this.templateDir;
-  }
-
-  public GenericRecordSet addDynamicPublicationTemplate(String externalId, String templateFileName)
+  public void addDynamicPublicationTemplate(String externalId, String templateFileName)
       throws PublicationTemplateException {
     String fileName = templateFileName;
     try {
@@ -155,7 +136,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
       }
       PublicationTemplate thePubTemplate = loadPublicationTemplate(fileName);
       RecordTemplate recordTemplate = thePubTemplate.getRecordTemplate();
-      return getGenericRecordSetManager()
+      getGenericRecordSetManager()
           .createRecordSet(externalId, recordTemplate, fileName, thePubTemplate.isDataEncrypted());
     } catch (FormException e) {
       throw new PublicationTemplateException(
@@ -168,13 +149,6 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
     return getPublicationTemplate(externalId, null);
   }
 
-  /**
-   * Returns the PublicationTemplate having the given externalId.
-   * @param externalId
-   * @param templateFileName
-   * @return
-   * @throws PublicationTemplateException
-   */
   public PublicationTemplate getPublicationTemplate(String externalId, String templateFileName)
       throws PublicationTemplateException {
     String currentTemplateFileName = templateFileName;
@@ -203,11 +177,6 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
     return thePubTemplate;
   }
 
-  /**
-   * Removes the PublicationTemplate having the given externalId.
-   * @param externalId
-   * @throws PublicationTemplateException
-   */
   public void removePublicationTemplate(String externalId) throws PublicationTemplateException {
     try {
       getGenericRecordSetManager().removeRecordSet(externalId);
@@ -235,9 +204,10 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
 
   /**
    * load a publicationTemplate definition from xml file to java objects
+   *
    * @param xmlFileName the xml file name that contains publication template definition
    * @return a PublicationTemplate object
-   * @throws PublicationTemplateException
+   * @throws PublicationTemplateException if an error occurs
    */
   public PublicationTemplate loadPublicationTemplate(String xmlFileName)
       throws PublicationTemplateException {
@@ -273,11 +243,14 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
   }
 
   /**
-   * Save a publicationTemplate definition from java objects to xml file
+   * Save a publicationTemplate definition from java objects to xml file. If the encryption of the
+   * template data is enabled, then the template is encrypted.
+   *
    * @param template the PublicationTemplate to save
-   * @throws PublicationTemplateException
-   * @throws CryptoException
+   * @throws PublicationTemplateException if the publication template saving fails
+   * @throws CryptoException if any encryption of the template fails
    */
+  @SuppressWarnings("unused")
   public void savePublicationTemplate(PublicationTemplate template)
       throws PublicationTemplateException, CryptoException {
 
@@ -312,10 +285,11 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
 
   /**
    * Retrieve Publication Templates
+   *
    * @param onlyVisible only visible templates boolean
    * @return only visible PublicationTemplates if onlyVisible is true, all the publication templates
    * else if
-   * @throws PublicationTemplateException
+   * @throws PublicationTemplateException if an error occurs
    */
   public List<PublicationTemplate> getPublicationTemplates(boolean onlyVisible)
       throws PublicationTemplateException {
@@ -332,7 +306,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
         String extension = FileRepositoryManager.getFileExtension(fileName);
         if ("xml".equalsIgnoreCase(extension)) {
           PublicationTemplate template = loadPublicationTemplate(
-              fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.length()));
+              fileName.substring(fileName.lastIndexOf(File.separator) + 1));
           if (onlyVisible) {
             if (template.isVisible()) {
               publicationTemplates.add(template);
@@ -351,18 +325,12 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
 
   /**
    * @return only the visible PublicationTemplates
-   * @throws PublicationTemplateException
+   * @throws PublicationTemplateException if an error occurs
    */
   public List<PublicationTemplate> getPublicationTemplates() throws PublicationTemplateException {
     return getPublicationTemplates(true);
   }
 
-  /**
-   * @param globalContext componentName It can be null. It is usefull when componentId is not
-   * defined.
-   * @return
-   * @throws PublicationTemplateException
-   */
   public List<PublicationTemplate> getPublicationTemplates(GlobalContext globalContext)
       throws PublicationTemplateException {
     List<PublicationTemplate> theTemplates = getPublicationTemplates(true);
@@ -399,7 +367,8 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
     return isPublicationTemplateVisible(template, globalContext);
   }
 
-  private boolean isPublicationTemplateVisible(PublicationTemplate template, GlobalContext globalContext) {
+  private boolean isPublicationTemplateVisible(PublicationTemplate template,
+      GlobalContext globalContext) {
     if (template.isDirectoryUsage()) {
       // this template is not available to components
       return false;
@@ -412,33 +381,20 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
     // template is restricted
     // check it according to current space and component
     if (template.isRestrictedVisibilityToInstance()) {
-      if (isTemplateVisibleAccordingToInstance(template, globalContext)) {
-        return true;
-      }
+      return isTemplateVisibleAccordingToInstance(template, globalContext);
     } else {
-      if (isAllowed(template, globalContext)) {
-        return true;
-      }
+      return isAllowed(template, globalContext);
     }
-
-    return false;
   }
 
   private boolean isAllowed(final PublicationTemplate template, final GlobalContext globalContext) {
     OrganizationController oc = OrganizationControllerProvider.getOrganisationController();
-    boolean allowed = true;
-    if (template.isRestrictedVisibilityToApplication() &&
-        !isTemplateVisibleAccordingToApplication(template, globalContext, oc)) {
-      allowed = false;
-    }
+    boolean allowed = !template.isRestrictedVisibilityToApplication() ||
+        isTemplateVisibleAccordingToApplication(template, globalContext, oc);
     if (allowed) {
       if (!template.isRestrictedVisibilityToSpace()) {
         return true;
-      } else {
-        if (isTemplateVisibleAccordingToSpace(template, globalContext, oc)) {
-          return true;
-        }
-      }
+      } else return isTemplateVisibleAccordingToSpace(template, globalContext, oc);
     }
     return false;
   }
@@ -475,8 +431,9 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
 
   /**
    * @return the list of PublicationTemplate which contains a search form
-   * @throws PublicationTemplateException
+   * @throws PublicationTemplateException if an error occurs
    */
+  @SuppressWarnings("unused")
   public List<PublicationTemplate> getSearchablePublicationTemplates()
       throws PublicationTemplateException {
     List<PublicationTemplate> searchableTemplates = new ArrayList<>();
@@ -498,26 +455,27 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
   }
 
   /**
-   * @return the list of PublicationTemplate which are crypted
-   * @throws PublicationTemplateException
+   * @return the list of PublicationTemplate which are encrypted
+   * @throws PublicationTemplateException if an error occurs
    */
-  public List<PublicationTemplate> getCryptedPublicationTemplates()
+  public List<PublicationTemplate> getEncryptedPublicationTemplates()
       throws PublicationTemplateException {
-    List<PublicationTemplate> cryptedTemplates = new ArrayList<>();
+    List<PublicationTemplate> encryptedTemplates = new ArrayList<>();
 
     List<PublicationTemplate> publicationTemplates = getPublicationTemplates();
     for (PublicationTemplate template : publicationTemplates) {
       if (template.isDataEncrypted()) {
-        cryptedTemplates.add(template);
+        encryptedTemplates.add(template);
       }
     }
 
-    return cryptedTemplates;
+    return encryptedTemplates;
   }
 
   /**
    * @param fileName the file name of the template to remove from cache
    */
+  @SuppressWarnings("unused")
   public void removePublicationTemplateFromCaches(String fileName) {
 
     List<String> externalIdsToRemove = new ArrayList<>();
@@ -538,19 +496,23 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
 
   /**
    * Gets an instance of a GenericRecordSet objects manager.
+   *
    * @return a GenericRecordSetManager instance.
    */
   private static GenericRecordSetManager getGenericRecordSetManager() {
     return GenericRecordSetManager.getInstance();
   }
 
+  @SuppressWarnings("unused")
   protected void registerForRenewingContentCipher() {
     EncryptionContentIterator contentIterator = new FormEncryptionContentIterator();
     ContentEncryptionServiceProvider.getContentEncryptionService()
         .registerForRenewingContentCipher(contentIterator);
   }
 
-  public void saveData(String xmlFormName, PagesContext context, List<FileItem> items)
+  @SuppressWarnings("unused")
+  public <T extends FileItem<T>> void saveData(String xmlFormName, PagesContext context,
+      List<T> items)
       throws SilverpeasException {
     if (context == null) {
       throw new SilverpeasException("Context must be defined !");
@@ -576,7 +538,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
           data.setId(context.getObjectId());
         }
 
-        // sauvegarde des données du formulaire
+        // save the data of the form
         form.update(items, data, context);
         set.save(data);
       } catch (Exception e) {
@@ -591,7 +553,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
     String externalId = context.getComponentId() + ":" + shortName;
     PublicationTemplate pub;
     try {
-      // récupération des données du formulaire (via le DataRecord)
+      // fetch the data of the form (through DataRecord)
       pub = getPublicationTemplate(externalId);
       if (pub == null) {
         SilverLogger.getLogger(this)
@@ -690,6 +652,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
     template.setExternalId(externalId);
   }
 
+  @SuppressWarnings("unused")
   public Form getDirectoryForm(PagesContext context, boolean viewMode) {
     PublicationTemplate template = getDirectoryTemplate(context);
     if (template != null) {
@@ -738,6 +701,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
     return Collections.emptyMap();
   }
 
+  @SuppressWarnings("unused")
   public Map<String, String> getDirectoryFormLabels(String userId, String domainId,
       String language) {
     Map<String, String> labels = new HashMap<>();
@@ -765,6 +729,7 @@ public class PublicationTemplateManager implements ComponentInstanceDeletion {
     return pageContext;
   }
 
+  @SuppressWarnings("unused")
   public Map<String, Integer> getNumberOfRecordsByTemplateAndComponents(String templateName)
       throws FormException {
     return getGenericRecordSetManager().getNumberOfRecordsByTemplateAndComponents(templateName);

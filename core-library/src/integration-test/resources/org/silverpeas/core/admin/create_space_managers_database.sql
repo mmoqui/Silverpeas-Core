@@ -58,7 +58,7 @@ CREATE TABLE ST_User
 
 CREATE TABLE ST_Group
 (
-    id            int           NOT NULL,
+    id            int           NOT NULL PRIMARY KEY,
     domainId      int           NOT NULL,
     specificId    varchar(500)  NOT NULL,
     superGroupId  int,
@@ -167,12 +167,12 @@ CREATE TABLE ST_Instance_Data
     componentId   int           NOT NULL,
     name          varchar(100)  NOT NULL,
     label	  varchar(100)  NOT NULL,
-    value	  varchar(400)
+    "value"	  varchar(400)
 );
 
 CREATE TABLE ST_UserRole
 (
-    id            int           NOT NULL,
+    id            int           NOT NULL PRIMARY KEY,
     instanceId    int           NOT NULL,
     name          varchar(100)  NULL,
     roleName      varchar(100)  NOT NULL,
@@ -214,8 +214,7 @@ CREATE TABLE ST_UserRole_Group_Rel
 (
     userRoleId   int NOT NULL,
     groupId      int NOT NULL,
-
-	PRIMARY KEY (userRoleId, groupId),
-    FOREIGN KEY (userRoleId) REFERENCES ST_UserRole(id) , --ON DELETE CASCADE,
-    FOREIGN KEY (groupId) REFERENCES ST_Group(id), --ON DELETE CASCADE
+    FOREIGN KEY (userRoleId) REFERENCES ST_UserRole(id),
+    FOREIGN KEY (groupId) REFERENCES ST_Group(id),
+    PRIMARY KEY(userRoleId, groupId)
 );

@@ -38,6 +38,7 @@ import org.silverpeas.core.util.lang.SystemWrapper;
 
 import jakarta.inject.Inject;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -128,7 +129,7 @@ public class LogAnnotationIT {
       assertThat(format("Searching {0} or {1} into \n{2}", record1, record2, lines),
           lines.stream().filter(line -> line.contains(record1) || line.contains(record2)).count(),
           is(greaterThanOrEqualTo(2L)));
-    } catch (IOException e) {
+    } catch (UncheckedIOException e) {
       fail(e.getMessage());
     }
   }
@@ -145,7 +146,7 @@ public class LogAnnotationIT {
       assertThat(format("Searching {0} into \n{1}", record, lines),
           lines.stream().filter(line -> line.contains(record)).count(),
           is(greaterThanOrEqualTo(1L)));
-    } catch (IOException e) {
+    } catch (UncheckedIOException e) {
       fail(e.getMessage());
     }
   }

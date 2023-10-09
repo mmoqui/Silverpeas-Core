@@ -33,6 +33,8 @@ import org.silverpeas.core.admin.service.AdminException;
 import org.silverpeas.core.admin.user.model.GroupDetail;
 import org.silverpeas.core.admin.user.model.UserDetail;
 import org.silverpeas.core.admin.user.model.UserFull;
+import org.silverpeas.core.annotation.Bean;
+import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.security.authentication.exception.AuthenticationBadCredentialException;
 import org.silverpeas.core.util.SettingBundle;
 import org.silverpeas.core.util.StringUtil;
@@ -50,10 +52,12 @@ import static org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery.unique;
 
 /**
  * Domain driver for LDAP access. Could be used to access any type of LDAP DB (even exchange)
- * IMPORTANT : For the moment, it is not possible to add, remove or update a group neither add or
- * remove an user. However, it is possible to update an user...
+ * IMPORTANT: For the moment, it is not possible to add, remove or update a group neither add or
+ * remove an user. However, it is possible to update an user.
  * @author tleroi
  */
+@Technical
+@Bean
 public class LDAPDriver extends AbstractDomainDriver {
 
   LDAPSynchroCache synchroCache = new LDAPSynchroCache();

@@ -24,6 +24,7 @@
 
 package org.silverpeas.core.contribution.tracking;
 
+import jakarta.servlet.*;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.cache.service.CacheServiceProvider;
 import org.silverpeas.core.cache.service.SessionCacheService;
@@ -37,13 +38,6 @@ import org.silverpeas.core.persistence.jdbc.DBUtil;
 import org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery;
 import org.silverpeas.core.util.ServiceProvider;
 
-import jakarta.servlet.AsyncContext;
-import jakarta.servlet.DispatcherType;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -357,11 +351,6 @@ public class TestContext {
     }
 
     @Override
-    public boolean isRequestedSessionIdFromUrl() {
-      return false;
-    }
-
-    @Override
     public boolean authenticate(final HttpServletResponse response) {
       return false;
     }
@@ -517,11 +506,6 @@ public class TestContext {
     }
 
     @Override
-    public String getRealPath(final String path) {
-      return null;
-    }
-
-    @Override
     public int getRemotePort() {
       return 0;
     }
@@ -574,6 +558,21 @@ public class TestContext {
 
     @Override
     public DispatcherType getDispatcherType() {
+      return null;
+    }
+
+    @Override
+    public String getRequestId() {
+      return null;
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+      return null;
+    }
+
+    @Override
+    public ServletConnection getServletConnection() {
       return null;
     }
 

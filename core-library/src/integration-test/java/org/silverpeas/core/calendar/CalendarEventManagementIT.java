@@ -23,25 +23,22 @@
  */
 package org.silverpeas.core.calendar;
 
+import jakarta.persistence.OneToMany;
+import jakarta.transaction.RollbackException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.admin.user.model.User;
+import org.silverpeas.core.calendar.repository.CalendarEventOccurrenceRepository;
 import org.silverpeas.core.date.Period;
 import org.silverpeas.core.persistence.Transaction;
 import org.silverpeas.core.persistence.datasource.OperationContext;
 import org.silverpeas.core.test.CalendarWarBuilder;
 import org.silverpeas.core.test.integration.SQLRequester.ResultLine;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.Year;
-import java.time.YearMonth;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.List;
@@ -55,9 +52,10 @@ import static org.hamcrest.Matchers.*;
 
 /**
  * Integration tests on the getting, on the saving, on the deletion and on the update of the events
- * in a given calendar.
- * We first check the getting of an existing event works fine so that we can use afterwards the
- * getting method to get the previously saved event in order to check its persisted properties.
+ * in a given calendar. We first check the getting of an existing event works fine so that we can
+ * use afterwards the getting method to get the previously saved event in order to check its
+ * persisted properties.
+ *
  * @author Yohann Chastagnier
  */
 @RunWith(Arquillian.class)
@@ -102,12 +100,12 @@ public class CalendarEventManagementIT extends BaseCalendarTest {
   }
 
   /**
-   * We test we get well all the events ordered by the component instance, then by the calendar,
-   * and finally by their start date.
+   * We test we get well all the events ordered by the component instance, then by the calendar, and
+   * finally by their start date.
    */
   @Test
   public void getAllEvents() {
-    try(Stream<CalendarEvent> events = Calendar.getEvents().stream()) {
+    try (Stream<CalendarEvent> events = Calendar.getEvents().stream()) {
       List<CalendarEvent> allEvents = events.collect(Collectors.toList());
       assertThat(allEvents, hasSize(6));
 
@@ -117,17 +115,17 @@ public class CalendarEventManagementIT extends BaseCalendarTest {
       for (CalendarEvent event : allEvents) {
         if (event.getCalendar().getComponentInstanceId().equals(previousComponentInstanceId)) {
           if (event.getCalendar().getId().equals(previousCalendarId)) {
-              if (event.isOnAllDay()) {
-                assertThat(LocalDate.from(event.getStartDate()),
-                    greaterThanOrEqualTo(previousStartDate.toLocalDate()));
-                previousStartDate =
-                    LocalDate.from(event.getStartDate()).atStartOfDay().atOffset(ZoneOffset.UTC);
-              } else {
-                assertThat(OffsetDateTime.from(event.getStartDate()),
-                    greaterThanOrEqualTo(previousStartDate));
-                previousStartDate = OffsetDateTime.from(event.getStartDate());
-              }
+            if (event.isOnAllDay()) {
+              assertThat(LocalDate.from(event.getStartDate()),
+                  greaterThanOrEqualTo(previousStartDate.toLocalDate()));
+              previousStartDate =
+                  LocalDate.from(event.getStartDate()).atStartOfDay().atOffset(ZoneOffset.UTC);
             } else {
+              assertThat(OffsetDateTime.from(event.getStartDate()),
+                  greaterThanOrEqualTo(previousStartDate));
+              previousStartDate = OffsetDateTime.from(event.getStartDate());
+            }
+          } else {
             assertThat(event.getCalendar().getId(), greaterThan(previousCalendarId));
             previousCalendarId = event.getCalendar().getId();
             previousStartDate = OffsetDateTime.of(1000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
@@ -336,7 +334,7 @@ public class CalendarEventManagementIT extends BaseCalendarTest {
   @Test
   public void sameAsPreviousButIntoParentTransaction() {
     Calendar calendar = Calendar.getById(CALENDAR_ID);
-    Transaction.performInOne(() ->  {
+    Transaction.performInOne(() -> {
       Optional<CalendarEvent> mayBeEvent = calendar.event("ID_E_5");
       assertThat(mayBeEvent.isPresent(), is(true));
       CalendarEvent event = mayBeEvent.get();
@@ -382,6 +380,50 @@ public class CalendarEventManagementIT extends BaseCalendarTest {
 
     assertEventIsDeleted(result);
     assertThat(event.isPersisted(), is(false));
+  }
+
+  /**
+   * Test an issue discovered with Hibernate 6 in the deletion of the whole occurrences of an event
+   * by using the {@link CalendarEventOccurrence#deleteFromPersistence()} method. The issue comes
+   * from the {@link OneToMany#orphanRemoval()} attribute valued at true for the set of
+   * {@link Attendee}s in the embeddable {@link AttendeeSet}. It seams there is an issue when a
+   * persistent collection having the orphanRemoval attribute set is used in an embeddable entity.
+   */
+  @Test
+  @Ignore("This test is just to detect the bug in Hibernate 6 occurring when the AttendeeSet is " +
+      "used as an embeddable bean with a persistent set of Attendees")
+  public void issueOnEventOccurrencesDeletion() {
+    CalendarEvent event = CalendarEvent.getById("ID_E_6");
+    assertThat(event, notNullValue());
+    assertThat(event.isPlanned(), is(true));
+    assertThat(event.isRecurrent(), is(true));
+    assertThat(event.getAttendees().isEmpty(), is(true));
+
+    var occurrences = event.getPersistedOccurrences();
+    assertThat(occurrences.isEmpty(), is(false));
+
+    CalendarEventOccurrenceRepository repository = CalendarEventOccurrenceRepository.get();
+
+    // deletion which fails in Hibernate 6
+    Assert.assertThrows(RollbackException.class, () ->
+        Transaction.performInOne(() -> {
+          repository.delete(occurrences);
+          return null;
+        }));
+    assertThat(repository.getAllByEvent(event).isEmpty(), is(false));
+
+    // deletion which works
+    Transaction.performInOne(() -> {
+      var ids = occurrences.stream()
+          .map(CalendarEventOccurrence::getId)
+          .collect(Collectors.toSet());
+      repository.deleteById(ids);
+      return null;
+    });
+    assertThat(repository.getAllByEvent(event).isEmpty(), is(true));
+
+    // now we can delete the event
+    event.delete();
   }
 
   @Test
@@ -495,6 +537,7 @@ public class CalendarEventManagementIT extends BaseCalendarTest {
     final String testedEventId = "ID_E_6";
     final Temporal startDate = OffsetDateTime.parse("2016-08-01T15:30:00Z");
     final Temporal endDate = OffsetDateTime.parse("2016-08-01T16:45:00Z");
+
     Calendar calendar = Calendar.getById(CALENDAR_ID);
     Optional<CalendarEvent> mayBeEvent = calendar.event(testedEventId);
     assertThat(mayBeEvent.isPresent(), is(true));
@@ -506,6 +549,7 @@ public class CalendarEventManagementIT extends BaseCalendarTest {
     assertThat(event.getSequence(), is(0L));
     assertThat(event.getStartDate(), is(startDate));
     assertThat(event.getEndDate(), is(endDate));
+
     List<CalendarEventOccurrence> occurrences = event.getPersistedOccurrences();
     assertThat(occurrences, hasSize(1));
     CalendarEventOccurrence occurrence = occurrences.get(0);
@@ -519,8 +563,8 @@ public class CalendarEventManagementIT extends BaseCalendarTest {
     Calendar targetCalendar = Calendar.getById("ID_3");
     event.setCalendar(targetCalendar);
     OperationResult<?, ?> result = event.update();
-
     assertEventIsOnlyUpdated(result);
+
     event = CalendarEvent.getById(testedEventId);
     mayBeEvent = targetCalendar.event(testedEventId);
     assertThat(mayBeEvent.isPresent(), is(true));
@@ -662,5 +706,5 @@ public class CalendarEventManagementIT extends BaseCalendarTest {
     assertThat(updatedEvent.getEndDate(), is(OffsetDateTime.parse("2016-01-05T10:30:00Z")));
     assertThat(updatedEvent, is(event));
   }
-  
+
 }

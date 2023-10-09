@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.util.file;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload2.core.DiskFileItem;
 import org.apache.commons.fileupload2.core.DiskFileItemFactory;
 import org.apache.commons.fileupload2.core.FileItem;
@@ -33,10 +34,8 @@ import org.silverpeas.core.SilverpeasRuntimeException;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.core.util.StringUtil;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +54,7 @@ public class FileUploadUtil {
   private static final JakartaServletFileUpload<DiskFileItem, DiskFileItemFactory> upload =
       new JakartaServletFileUpload<>(new DiskFileItemFactoryProvider().provide());
 
+  @SuppressWarnings("unused")
   public static boolean isRequestMultipart(HttpServletRequest request) {
     return JakartaServletFileUpload.isMultipartContent(request);
   }
@@ -85,13 +85,14 @@ public class FileUploadUtil {
    * @return the parameter value from the list of FileItems. Returns the defaultValue if the
    * parameter is not found.
    */
-  public static String getParameter(List<FileItem<?>> items, String parameterName,
+  public static <T extends FileItem<T>> String getParameter(List<T> items,
+      String parameterName,
       String defaultValue, Charset charset) {
     for (FileItem<?> item : items) {
       if (item.isFormField() && parameterName.equals(item.getFieldName())) {
         try {
           return item.getString(charset);
-        } catch (UnsupportedEncodingException e) {
+        } catch (IOException e) {
           return item.getString();
         }
       }
@@ -99,6 +100,7 @@ public class FileUploadUtil {
     return defaultValue;
   }
 
+  @SuppressWarnings("unused")
   public static List<String> getParameterValues(List<FileItem<?>> items, String parameterName,
       Charset charset) {
     List<String> values = new ArrayList<>();
@@ -106,7 +108,7 @@ public class FileUploadUtil {
       if (item.isFormField() && item.getFieldName().startsWith(parameterName)) {
         try {
           values.add(item.getString(charset));
-        } catch (UnsupportedEncodingException e) {
+        } catch (IOException e) {
           values.add(item.getString());
         }
       }
@@ -123,7 +125,8 @@ public class FileUploadUtil {
    * @return the parameter value from the list of FileItems. Returns the defaultValue if the
    * parameter is not found.
    */
-  public static String getParameter(List<FileItem<?>> items, String parameterName,
+  public static <T extends FileItem<T>> String getParameter(List<T> items,
+      String parameterName,
       String defaultValue) {
     return getParameter(items, parameterName, defaultValue, DEFAULT_ENCODING);
   }
@@ -135,21 +138,14 @@ public class FileUploadUtil {
    * @return the parameter value from the list of FileItems. Returns null if the parameter is not
    * found.
    */
-  public static String getParameter(List<FileItem<?>> items, String parameterName) {
+  public static <T extends FileItem<T>> String getParameter(List<T> items,
+      String parameterName) {
     return getParameter(items, parameterName, null);
   }
 
-  public static String getOldParameter(List<FileItem<?>> items, String parameterName) {
-    return getParameter(items, parameterName, null);
-  }
-
-  public static String getOldParameter(List<FileItem<?>> items, String parameterName,
-      String defaultValue) {
-    return getParameter(items, parameterName, defaultValue);
-  }
-
-  public static FileItem<?> getFile(List<? extends FileItem<?>> items, String parameterName) {
-    for (FileItem<?> item : items) {
+  public static <T extends FileItem<T>> T getFile(List<T> items,
+      String parameterName) {
+    for (T item : items) {
       if (!item.isFormField() && parameterName.equals(item.getFieldName())) {
         return item;
       }
@@ -157,8 +153,8 @@ public class FileUploadUtil {
     return null;
   }
 
-  public static FileItem<?> getFile(List<? extends FileItem<?>> items) {
-    for (FileItem<?> item : items) {
+  public static <T extends FileItem<T>> T getFile(List<T> items) {
+    for (T item : items) {
       if (!item.isFormField()) {
         return item;
       }
@@ -166,8 +162,8 @@ public class FileUploadUtil {
     return null;
   }
 
-  public static FileItem<?> getFile(HttpServletRequest request) {
-    List<? extends FileItem<?>> items = FileUploadUtil.parseRequest(request);
+  public static DiskFileItem getFile(HttpServletRequest request) {
+    List<DiskFileItem> items = FileUploadUtil.parseRequest(request);
     return FileUploadUtil.getFile(items);
   }
 
@@ -178,6 +174,7 @@ public class FileUploadUtil {
     return FileUtil.getFilename(file.getName());
   }
 
+  @SuppressWarnings("unused")
   public static void saveToFile(File file, FileItem<?> item) throws IOException {
     FileUtils.copyInputStreamToFile(item.getInputStream(), file);
   }

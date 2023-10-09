@@ -31,6 +31,8 @@ import org.silverpeas.core.admin.service.AdminException;
 import org.silverpeas.core.admin.user.model.GroupDetail;
 import org.silverpeas.core.admin.user.model.UserDetail;
 import org.silverpeas.core.admin.user.model.UserFull;
+import org.silverpeas.core.annotation.Bean;
+import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.util.SettingBundle;
 
 import java.util.Arrays;
@@ -53,11 +55,11 @@ import static org.silverpeas.core.admin.user.constant.UserState.VALID;
 import static org.silverpeas.core.util.StringUtil.likeIgnoreCase;
 
 /**
- * Domain driver for LDAP access. Could be used to access any type of LDAP DB (even exchange)
- * IMPORTANT : For the moment, it is not possible to add, remove or update a group neither add or
- * remove an user. However, it is possible to update an user...
- * @author tleroi
+ * Domain driver for Google access
+ * @author SilverYoCha
  */
+@Technical
+@Bean
 public class GoogleDriver extends AbstractDomainDriver {
 
   private static final String ATTRIBUTE_PATH_MSG_ERROR = "Verify the attribute path to access entity data, it must target a single value";

@@ -40,7 +40,8 @@ import java.util.Date;
 import java.util.Map;
 
 @MessageDriven(activationConfig = {
-    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+    @ActivationConfigProperty(propertyName = "destinationType",
+        propertyValue = "jakarta.jms.Queue"),
     @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
     @ActivationConfigProperty(propertyName = "messageSelector", propertyValue =
         "CHANNEL='SILVERMAIL'"),

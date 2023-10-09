@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.util;
 
+import jakarta.json.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -37,11 +38,6 @@ import org.silverpeas.core.exception.EncodingException;
 import org.silverpeas.core.reminder.DefaultReminderRepository;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import jakarta.json.JsonWriter;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -50,9 +46,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Integration test on the decoding/encoding of beans from/to JSON.
@@ -77,6 +73,7 @@ public class JSONCodecIT {
   @Test
   public void emptyTest() {
     // just to test the deployment into wildfly works fine.
+    assertThat(true, is(true));
   }
 
   @Test
@@ -138,9 +135,11 @@ public class JSONCodecIT {
   public void decodeJSONObjectIntoABeanShouldWork() {
     StringWriter json = new StringWriter();
     JsonWriter writer = Json.createWriter(json);
-    JsonObject object =
-        Json.createObjectBuilder().add("id", "42").add("name", "Toto Chez-les-Papoos")
-            .add("date", new Date().getTime()).build();
+    JsonObject object = Json.createObjectBuilder()
+        .add("id", "42")
+        .add("name", "Toto Chez-les-Papoos")
+        .add("date", new Date().getTime())
+        .build();
     writer.writeObject(object);
 
     TestSerializableBean bean = JSONCodec.decode(json.toString(), TestSerializableBean.class);
@@ -154,9 +153,11 @@ public class JSONCodecIT {
   public void decodeJSONObjectIntoAnUnannotatedBeanShouldWork() {
     StringWriter json = new StringWriter();
     JsonWriter writer = Json.createWriter(json);
-    JsonObject object =
-        Json.createObjectBuilder().add("id", "42").add("name", "Toto Chez-les-Papoos")
-            .add("date", new Date().getTime()).build();
+    JsonObject object = Json.createObjectBuilder()
+        .add("id", "42")
+        .add("name", "Toto Chez-les-Papoos")
+        .add("date", new Date().getTime())
+        .build();
     writer.writeObject(object);
 
     TestBean bean = JSONCodec.decode(json.toString(), TestBean.class);
@@ -173,7 +174,7 @@ public class JSONCodecIT {
     assertThat(bean, notNullValue());
     assertThat(bean.getId(), is("42"));
     assertThat(bean.getName(), is("Toto Chez-les-Papoos"));
-    assertThat(bean.getDate().getTime(), is(1416580107074l));
+    assertThat(bean.getDate().getTime(), is(1416580107074L));
   }
 
   @Test
@@ -208,11 +209,11 @@ public class JSONCodecIT {
     assertThat(beans.length, is(2));
     assertThat(beans[0].getId(), is("42"));
     assertThat(beans[0].getName(), is("Toto Chez-les-Papoos"));
-    assertThat(beans[0].getDate().getTime(), is(1416580107074l));
+    assertThat(beans[0].getDate().getTime(), is(1416580107074L));
     assertThat(beans[1], notNullValue());
     assertThat(beans[1].getId(), is("24"));
     assertThat(beans[1].getName(), is("Titi Gros-Minet"));
-    assertThat(beans[1].getDate().getTime(), is(1416580107074l));
+    assertThat(beans[1].getDate().getTime(), is(1416580107074L));
   }
 
   @Test
@@ -277,5 +278,4 @@ public class JSONCodecIT {
     assertThat(result, notNullValue());
     assertThat(result, is("[\"one\",\"two\",\"three\"]"));
   }
-
 }

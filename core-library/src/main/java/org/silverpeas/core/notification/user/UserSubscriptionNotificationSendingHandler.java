@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.notification.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.servlet.http.HttpServletRequest;
 import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.contribution.ContributionOperationContextPropertyHandler;
@@ -31,11 +31,6 @@ import org.silverpeas.core.notification.user.client.NotificationManagerSettings;
 import org.silverpeas.core.util.JSONCodec;
 import org.silverpeas.core.util.ServiceProvider;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 import static org.silverpeas.core.cache.service.CacheServiceProvider.getRequestCacheService;
@@ -111,7 +106,7 @@ public class UserSubscriptionNotificationSendingHandler implements
 
   /**
    * Gets a user note to paste into subscription notification message from the current request.
-   * @return true if enabled, false otherwise.
+   * @return the user note
    */
   public String getSubscriptionNotificationUserNoteFromCurrentRequest() {
     final Confirmation confirmation = getConfirmation();
@@ -159,17 +154,20 @@ public class UserSubscriptionNotificationSendingHandler implements
         .computeIfAbsent(SENDING_NOT_ENABLED_KEY, Confirmation.class, Confirmation::new);
   }
 
-  @XmlRootElement
-  @XmlAccessorType(XmlAccessType.PROPERTY)
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  private static class Confirmation implements Serializable {
+  protected static class Confirmation implements Serializable {
     private static final long serialVersionUID = 3590333285305219765L;
 
-    @XmlElement
     private boolean skip = false;
 
-    @XmlElement
     private String note = null;
+
+    public void setSkip(boolean skip) {
+      this.skip = skip;
+    }
+
+    public void setNote(String note) {
+      this.note = note;
+    }
 
     boolean isNotificationSendEnabled() {
       return !skip;

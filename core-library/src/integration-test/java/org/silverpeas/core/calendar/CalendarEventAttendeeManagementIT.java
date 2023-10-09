@@ -114,13 +114,9 @@ public class CalendarEventAttendeeManagementIT extends BaseCalendarTest {
     Date lastUpdateDate = event.getLastUpdateDate();
     assertThat(event.getAttendees().isEmpty(), is(true));
 
-    Attendee silverpeasUser =
-        InternalAttendee.fromUser(getUser()).to(event.asCalendarComponent());
-    Attendee externalUser = ExternalAttendee.withEmail("toto@chez-les-papoos")
-        .to(event.asCalendarComponent())
+    Attendee silverpeasUser = event.getAttendees().add(getUser());
+    Attendee externalUser = event.getAttendees().add("toto@chez-les-papoos")
         .withPresenceStatus(Attendee.PresenceStatus.OPTIONAL);
-    event.getAttendees().add(silverpeasUser);
-    event.getAttendees().add(externalUser);
     event.update();
 
     mayBeEvent = calendar.event(EVENT_WITHOUT_ATTENDEE);
@@ -170,6 +166,7 @@ public class CalendarEventAttendeeManagementIT extends BaseCalendarTest {
     assertThat(mayBeEvent.isPresent(), is(true));
     CalendarEvent eventWithAttendees = mayBeEvent.get();
     Date lastUpdateDate = eventWithAttendees.getLastUpdateDate();
+    assertThat(eventWithAttendees.getAttendees().size(), is(2));
     Attendee attendeeToRemove = ExternalAttendee.withEmail("john.doe@silverpeas.org")
         .to(eventWithAttendees.asCalendarComponent());
 
@@ -358,7 +355,7 @@ public class CalendarEventAttendeeManagementIT extends BaseCalendarTest {
         .collect(Collectors.toList());
   }
 
-  public static AttendeeFinder in(final AttendeeSet attendees) {
+  private static AttendeeFinder in(final AttendeeSet attendees) {
     return new AttendeeFinder(attendees);
   }
 

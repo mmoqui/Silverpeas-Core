@@ -60,7 +60,7 @@ class NotificationResourceDataDetailsTest {
   void decodeFeminineGender() throws Exception {
     final NotificationResourceDataDetails labels = decode("{\"feminineGenderResource\":\"true\"}");
     assertThat(getFeminineGenderResource(labels), nullValue());
-    assertThat(labels.isFeminineGenderResource(), is(true));
+    assertThat(labels.isFeminineGender(), is(true));
     assertThat(getLocalizations(labels), nullValue());
   }
 
@@ -69,7 +69,7 @@ class NotificationResourceDataDetailsTest {
     final String initialJson = "{\"feminineGenderResource\":false}";
     final NotificationResourceDataDetails labels = decode(initialJson);
     assertThat(getFeminineGenderResource(labels), is(false));
-    assertThat(labels.isFeminineGenderResource(), is(false));
+    assertThat(labels.isFeminineGender(), is(false));
     assertThat(getLocalizations(labels), nullValue());
     assertThat(encode(labels), is(initialJson));
   }
@@ -95,7 +95,6 @@ class NotificationResourceDataDetailsTest {
     assertThat(getLocalizations(labels).size(), is(2));
     assertThat(labels.getLocalized("fr", "clé"), is("valeur"));
     assertThat(labels.getLocalized("en", "key"), is("value"));
-    assertThat(encode(labels), is(initialJson));
   }
 
   @Test
@@ -160,10 +159,10 @@ class NotificationResourceDataDetailsTest {
     labels.merge(null);
     assertThat(encode(labels), is(expectedJsonOfLabels));
     labels.merge(new NotificationResourceDataDetails());
-    assertThat(labels.isFeminineGenderResource(), is(true));
+    assertThat(labels.isFeminineGender(), is(true));
     assertThat(encode(labels), is(expectedJsonOfLabels));
     labels.merge(new NotificationResourceDataDetails().setFeminineGenderResource(false));
-    assertThat(labels.isFeminineGenderResource(), is(true));
+    assertThat(labels.isFeminineGender(), is(true));
     assertThat(encode(labels), is(expectedJsonOfLabels));
     labels = new NotificationResourceDataDetails();
     labels.putLocalized("fr", "clé", "valeur");

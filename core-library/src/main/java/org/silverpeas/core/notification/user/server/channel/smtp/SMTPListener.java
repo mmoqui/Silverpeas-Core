@@ -62,7 +62,8 @@ import static org.silverpeas.core.util.MailUtil.isForceReplyToSenderField;
 
 
 @MessageDriven(activationConfig = {
-  @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+  @ActivationConfigProperty(propertyName = "destinationType",
+      propertyValue = "jakarta.jms.Queue"),
   @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
   @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "CHANNEL='SMTP'"),
   @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue

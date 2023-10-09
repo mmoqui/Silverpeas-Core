@@ -23,7 +23,11 @@
  */
 package org.silverpeas.core.util;
 
+import jakarta.json.bind.annotation.JsonbDateFormat;
+
 import java.util.Date;
+
+import static jakarta.json.bind.annotation.JsonbDateFormat.TIME_IN_MILLIS;
 
 /**
  * @author mmoquillon
@@ -32,10 +36,11 @@ public class TestBean {
 
   private String id;
   private String name;
+  @JsonbDateFormat(TIME_IN_MILLIS)
   private Date date;
 
+  @SuppressWarnings("unused")
   protected TestBean() {
-
   }
 
   public TestBean(final String id, final String name, final Date date) {
@@ -54,5 +59,17 @@ public class TestBean {
 
   public Date getDate() {
     return date;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setDate(Date date) {
+    this.date = date;
   }
 }

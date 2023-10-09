@@ -73,7 +73,7 @@ INSERT INTO SB_Cal_Occurrences
 VALUES
   ('ID_E_6@2016-08-02T15:30Z', 'ID_E_6', 'ID_C_6-1');
 
-INSERT INTO sb_cal_attributes (id, name, value) VALUES
+INSERT INTO sb_cal_attributes (id, name, "value") VALUES
   ('ID_C_1', 'location', 'location A'),
   ('ID_C_2', 'location', 'location B'),
   ('ID_C_3', 'location', 'location C');

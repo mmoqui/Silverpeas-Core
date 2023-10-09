@@ -46,6 +46,7 @@ import java.util.StringTokenizer;
  * A CheckBoxDisplayer is an object which can display a checkbox in HTML the content of a checkbox
  * to a end user and can retrieve via HTTP any updated value.
  * <p>
+ *
  * @see Field
  * @see FieldTemplate
  * @see Form
@@ -64,14 +65,14 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
 
   /**
    * Prints the javascript code which will be used to control the new value given to the named
-   * field.
-   * The error messages may be adapted to a local language. The FieldTemplate gives the field type
-   * and constraints. The FieldTemplate gives the local labeled too. Never throws an exception but
-   * log a message and writes an empty string when:
+   * field. The error messages may be adapted to a local language. The FieldTemplate gives the field
+   * type and constraints. The FieldTemplate gives the local labeled too. Never throws an exception
+   * but log a message and writes an empty string when:
    * <ul>
    * <li>the fieldName is unknown by the template.
    * <li>the field type is not a managed type.
    * </ul>
+   *
    * @param out the output
    * @param template the field template
    * @param pagesContext the pages context.
@@ -104,6 +105,7 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
    * <ul>
    * <li>the field type is not a managed type.</li>
    * </ul>
+   *
    * @param out the output
    * @param field the text field
    * @param template the field template
@@ -213,8 +215,8 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
         // last checkBox
         if (i == nbTokens - 1 &&
             (template.isMandatory() && !template.isDisabled() && !template.isReadOnly() &&
-              !template.isHidden() && pageContext.useMandatory())) {
-            html.append(Util.getMandatorySnippet());
+                !template.isHidden() && pageContext.useMandatory())) {
+          html.append(Util.getMandatorySnippet());
         }
         html.append("</td>");
         html.append("\n");
@@ -232,10 +234,10 @@ public class CheckBoxDisplayer extends AbstractFieldDisplayer<TextField> {
   }
 
   @Override
-  public List<String> update(List<FileItem<?>> items, TextField field, FieldTemplate template,
-      PagesContext pageContext) throws FormException {
+  public <T extends FileItem<T>> List<String> update(List<T> items, TextField field,
+      FieldTemplate template, PagesContext pageContext) throws FormException {
     StringBuilder value = new StringBuilder();
-    Iterator<FileItem<?>> iter = items.iterator();
+    Iterator<T> iter = items.iterator();
     String parameterName = template.getFieldName();
     while (iter.hasNext()) {
       FileItem<?> item = iter.next();

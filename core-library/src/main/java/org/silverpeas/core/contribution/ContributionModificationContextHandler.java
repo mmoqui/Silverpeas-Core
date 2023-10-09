@@ -23,17 +23,12 @@
  */
 package org.silverpeas.core.contribution;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.servlet.http.HttpServletRequest;
 import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.util.JSONCodec;
 import org.silverpeas.core.util.ServiceProvider;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -104,7 +99,8 @@ public class ContributionModificationContextHandler
 
   /**
    * Indicates from current request if the current user made a minor modification.
-   * @return true if minor, false otherwise.
+   * @return optionally true if minor, false otherwise. If nothing is returned then no indication is
+   * provided.
    */
   public Optional<Boolean> isMinorModification() {
     return getContext().map(Context::isMinor);
@@ -146,14 +142,15 @@ public class ContributionModificationContextHandler
         .computeIfAbsent(CACHE_KEY, Context.class, Context::new);
   }
 
-  @XmlRootElement
-  @XmlAccessorType(XmlAccessType.PROPERTY)
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  private static class Context implements Serializable {
+  @SuppressWarnings("unused")
+  protected static class Context implements Serializable {
     private static final long serialVersionUID = -7623666268435749654L;
 
-    @XmlElement
     private Boolean isMinor = null;
+
+    public void setIsMinor(boolean value) {
+      this.isMinor = value;
+    }
 
     Boolean isMinor() {
       return isMinor;

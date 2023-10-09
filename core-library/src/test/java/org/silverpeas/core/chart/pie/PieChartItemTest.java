@@ -34,16 +34,16 @@ import static org.silverpeas.core.util.JSONCodec.encodeObject;
 /**
  * @author Yohann Chastagnier
  */
-public class PieChartItemTest extends AbstractPieChartTest {
+class PieChartItemTest extends AbstractPieChartTest {
 
   @Test
-  public void withoutTitleAndWithoutData() {
+  void withoutTitleAndWithoutData() {
     PieChartItem item = new PieChartItem("", null);
     assertThat(item.asJson(), is(encodeObject(expItemAsJs(""))));
   }
 
   @Test
-  public void withoutTitleAndWithoutDataButWithExtraInformation() {
+  void withoutTitleAndWithoutDataButWithExtraInformation() {
     PieChartItem item =
         new PieChartItem("", null).addExtra("youpi", "tralala").addExtra("26", "98");
     assertThat(item.asJson(),
@@ -51,37 +51,37 @@ public class PieChartItemTest extends AbstractPieChartTest {
   }
 
   @Test
-  public void withTitleButWithoutData() {
+  void withTitleButWithoutData() {
     PieChartItem item = new PieChartItem("", null).withTitle("A title");
     assertThat(item.asJson(), is(encodeObject(expItemAsJs("A title"))));
   }
 
   @Test
-  public void withoutTitleAndIntData() {
+  void withoutTitleAndIntData() {
     PieChartItem item = new PieChartItem("Part 1", 26);
     assertThat(item.asJson(), is(encodeObject(expItemAsJs("", "Part 1", 26))));
   }
 
   @Test
-  public void withoutTitleAndLongData() {
-    PieChartItem item = new PieChartItem("Part 1", 564654564l);
-    assertThat(item.asJson(), is(encodeObject(expItemAsJs("", "Part 1", 564654564l))));
+  void withoutTitleAndLongData() {
+    PieChartItem item = new PieChartItem("Part 1", 564654564L);
+    assertThat(item.asJson(), is(encodeObject(expItemAsJs("", "Part 1", 564654564L))));
   }
 
   @Test
-  public void withoutTitleAndDoubleData() {
+  void withoutTitleAndDoubleData() {
     PieChartItem item = new PieChartItem("Part 2", 38.26d);
     assertThat(item.asJson(), is(encodeObject(expItemAsJs("", "Part 2", 38.26d))));
   }
 
   @Test
-  public void withTitleAndFloatData() {
+  void withTitleAndFloatData() {
     PieChartItem item = new PieChartItem("Part 1", 36.5998f).withTitle("Float");
     assertThat(item.asJson(), is(encodeObject(expItemAsJs("Float", "Part 1", 36.5998f))));
   }
 
   @Test
-  public void withTitleAndTwoDataComposedOfOneFloatAndOneBigDecimal() {
+  void withTitleAndTwoDataComposedOfOneFloatAndOneBigDecimal() {
     PieChartItem item = new PieChartItem("Part 2", new BigDecimal("2.8")).withTitle("BigDecimal");
     assertThat(item.asJson(),
         is(encodeObject(expItemAsJs("BigDecimal", "Part 2", new BigDecimal("2.8")))));

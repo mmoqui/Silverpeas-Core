@@ -33,6 +33,7 @@ import org.silverpeas.core.contribution.content.form.FormException;
 import org.silverpeas.core.contribution.content.form.PagesContext;
 import org.silverpeas.core.contribution.content.form.Util;
 import org.silverpeas.core.contribution.content.form.field.MultipleUserField;
+import org.silverpeas.core.contribution.content.form.field.PublicationsPickerField;
 import org.silverpeas.core.contribution.content.form.field.UserField;
 import org.silverpeas.core.html.plugin.UserGroupSelectProducer;
 import org.silverpeas.core.util.StringUtil;
@@ -152,16 +153,10 @@ public class MultipleUserFieldDisplayer extends AbstractFieldDisplayer<MultipleU
   }
 
   @Override
-  public List<String> update(List<FileItem<?>> items, MultipleUserField field,
-      FieldTemplate template,
-      PagesContext pageContext) throws FormException {
+  protected <F extends FileItem<F>> String getFieldValue(List<F> items, FieldTemplate template,
+      MultipleUserField field, PagesContext pagesContext) {
     String itemName = template.getFieldName();
-    String value = FileUploadUtil.getParameter(items, itemName);
-    if (pageContext.getUpdatePolicy() == PagesContext.ON_UPDATE_IGNORE_EMPTY_VALUES && !StringUtil.
-        isDefined(value)) {
-      return new ArrayList<>();
-    }
-    return update(value, field, template, pageContext);
+    return FileUploadUtil.getParameter(items, itemName);
   }
 
   @Override

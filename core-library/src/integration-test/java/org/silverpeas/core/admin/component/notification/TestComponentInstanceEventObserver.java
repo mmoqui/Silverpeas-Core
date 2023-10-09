@@ -24,6 +24,7 @@
 package org.silverpeas.core.admin.component.notification;
 
 import org.silverpeas.core.admin.component.model.ComponentInst;
+import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.notification.system.ResourceEvent;
 
 import jakarta.enterprise.event.Observes;
@@ -32,6 +33,7 @@ import jakarta.inject.Singleton;
 /**
  * @author mmoquillon
  */
+@Service
 @Singleton
 public class TestComponentInstanceEventObserver {
 

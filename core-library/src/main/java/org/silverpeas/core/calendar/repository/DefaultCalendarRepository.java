@@ -37,7 +37,6 @@ import static java.util.Collections.singleton;
 /**
  * @author Yohann Chastagnier
  */
-@Singleton
 @Repository
 public class DefaultCalendarRepository extends SilverpeasJpaEntityRepository<Calendar>
     implements CalendarRepository {

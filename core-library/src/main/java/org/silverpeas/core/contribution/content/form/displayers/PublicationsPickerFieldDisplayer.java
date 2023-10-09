@@ -195,15 +195,8 @@ public class PublicationsPickerFieldDisplayer
   }
 
   @Override
-  public List<String> update(List<FileItem<?>> items, PublicationsPickerField field,
-      FieldTemplate template, PagesContext pageContext) throws FormException {
+  protected <F extends FileItem<F>> String getFieldValue(List<F> items, FieldTemplate template, PublicationsPickerField field, PagesContext pagesContext) {
     String itemName = template.getFieldName();
-    String value = FileUploadUtil.getParameter(items, itemName);
-    if (pageContext.getUpdatePolicy() == PagesContext.ON_UPDATE_IGNORE_EMPTY_VALUES &&
-        !StringUtil.isDefined(value)) {
-      return new ArrayList<>();
-    }
-    return update(value, field, template, pageContext);
+    return FileUploadUtil.getParameter(items, itemName);
   }
-
 }

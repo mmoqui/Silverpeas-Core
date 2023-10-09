@@ -23,6 +23,8 @@
  */
 package org.silverpeas.core.scheduler;
 
+import org.silverpeas.core.annotation.Service;
+import org.silverpeas.core.annotation.Technical;
 import org.silverpeas.core.scheduler.quartz.PersistentQuartzScheduler;
 import org.silverpeas.core.scheduler.quartz.VolatileQuartScheduler;
 import org.silverpeas.core.util.ServiceProvider;
@@ -39,6 +41,8 @@ import jakarta.inject.Singleton;
  * explicitly release them.
  * @author mmoquillon
  */
+@Technical
+@Service
 @Singleton
 public class SchedulerInitializer {
 

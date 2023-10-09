@@ -49,7 +49,7 @@ import static org.silverpeas.core.util.StringUtil.isDefined;
 @Entity
 @Table(name = "st_quota")
 @NamedQuery(name = "Quota.getByTypeAndResourceId",
-            query = "from Quota where type = :type and resourceId = :resourceId")
+            query = "select q from Quota q where type = :type and resourceId = :resourceId")
 public class Quota extends BasicJpaEntity<Quota, UniqueLongIdentifier>
     implements Serializable {
   private static final long serialVersionUID = 6564633879921455848L;

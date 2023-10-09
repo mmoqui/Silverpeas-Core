@@ -43,50 +43,54 @@ import java.util.List;
 public interface FieldDisplayer<T extends Field> {
 
   /**
-   * Prints the javascripts which will be used to control the new value given to the named field.
-   * The error messages may be adapted to a local language. The Field gives the field type and
-   * constraints. The Field gives the local labeld too. Never throws an Exception but log a
-   * silvertrace and writes an empty string when : <UL> <LI>the fieldName is unknown by the
-   * template. <LI>the field type is not a managed type. </UL>
+   * Prints the javascript code which will be used to control the new value given to the named
+   * field. The error messages may be adapted to a local language. The Field gives the field type
+   * and constraints. The Field gives the local labeled too. Never throws an Exception but log a
+   * message and writes an empty string when:
+   * <UL>
+   * <LI>the fieldName is unknown by the template.</LI>
+   * <LI>the field type is not a managed type.</LI>
+   * </UL>
    *
-   * @throws IOException
+   * @throws IOException if an error occurs while rendering the field
    */
   void displayScripts(PrintWriter out, FieldTemplate template, PagesContext pagesContext)
       throws IOException;
 
   /**
    * Prints the HTML value of the field. The value format may be adapted to a local language. The
-   * fieldName must be used to name the html form input. Never throws an Exception but log a
-   * silvertrace and writes an empty string when : <UL> <LI>the field type is not a managed type.
+   * fieldName must be used to name the html form input. Never throws an Exception but log a message
+   * and writes an empty string when:
+   * <UL>
+   * <LI>the field type is not a managed type.</LI>
    * </UL>
    *
-   * @throws FormException
+   * @throws FormException if an error occurs with the rendering of the form.
    */
   void display(PrintWriter out, T field, FieldTemplate template, PagesContext pagesContext)
       throws FormException;
 
   /**
    * Updates the value of the field. The fieldName must be used to retrieve the HTTP parameter from
-   * the request. @throw FormException if the field type is not a managed type. @throw FormException
-   * if the field doesn't accept the new value.
+   * the request. @throw FormException if the field type is not a managed type.
    *
-   * @throws FormException
+   * @throws FormException if an error occurs while updating the form.
    */
-  List<String> update(List<FileItem<?>> items, T field, FieldTemplate template,
+  <F extends FileItem<F>> List<String> update(List<F> items, T field, FieldTemplate template,
       PagesContext pagesContext) throws FormException;
 
   /**
    * Updates the value of the field. The fieldName must be used to retrieve the HTTP parameter from
-   * the request. @throw FormException if the field type is not a managed type. @throw FormException
-   * if the field doesn't accept the new value.
+   * the request. @throw FormException if the field type is not a managed type.
    *
-   * @throws FormException
+   * @throws FormException if the field doesn't accept the new value.
    */
   List<String> update(String value, T field, FieldTemplate template,
       PagesContext pagesContext) throws FormException;
 
   /**
    * Is the field valuation is mandatory?
+   *
    * @return true if the mandatory sign must be displayed. False otherwise.
    */
   boolean isDisplayedMandatory();

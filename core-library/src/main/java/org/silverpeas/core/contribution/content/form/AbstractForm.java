@@ -308,7 +308,7 @@ public abstract class AbstractForm implements Form {
    * @param pagesContext the page context.
    */
   @Override
-  public List<String> update(List<FileItem<?>> items, DataRecord record,
+  public <T extends FileItem<T>> List<String> update(List<T> items, DataRecord record,
       PagesContext pagesContext) {
     return update(items, record, pagesContext, true);
   }
@@ -324,8 +324,8 @@ public abstract class AbstractForm implements Form {
    * @param updateWysiwyg flag indicating if all of WYSIWYG data can be updated.
    */
   @Override
-  public List<String> update(List<FileItem<?>> items, DataRecord record, PagesContext pagesContext,
-      boolean updateWysiwyg) {
+  public <T extends FileItem<T>> List<String> update(List<T> items, DataRecord record,
+      PagesContext pagesContext, boolean updateWysiwyg) {
     List<String> attachmentIds = new ArrayList<>();
 
     for (FieldTemplate fieldTemplate : fieldTemplates) {
@@ -341,7 +341,7 @@ public abstract class AbstractForm implements Form {
     return attachmentIds;
   }
 
-  private void updateField(final List<FileItem<?>> items, final DataRecord record,
+  private <T extends FileItem<T>> void updateField(final List<T> items, final DataRecord record,
       final PagesContext pagesContext, final boolean updateWysiwyg,
       final List<String> attachmentIds, final FieldTemplate fieldTemplate) {
     String fieldName = fieldTemplate.getFieldName();
@@ -377,7 +377,7 @@ public abstract class AbstractForm implements Form {
    * @param pagesContext the page context.
    */
   @Override
-  public List<String> updateWysiwyg(List<FileItem<?>> items, DataRecord record,
+  public <T extends FileItem<T>> List<String> updateWysiwyg(List<T> items, DataRecord record,
       PagesContext pagesContext) {
     List<String> attachmentIds = new ArrayList<>();
     for (FieldTemplate fieldTemplate : fieldTemplates) {
@@ -386,8 +386,8 @@ public abstract class AbstractForm implements Form {
     return attachmentIds;
   }
 
-  private void updateWysiwygField(final List<FileItem<?>> items, final DataRecord record,
-      final PagesContext pagesContext, final List<String> attachmentIds,
+  private <T extends FileItem<T>> void updateWysiwygField(final List<T> items,
+      final DataRecord record, final PagesContext pagesContext, final List<String> attachmentIds,
       final FieldTemplate fieldTemplate) {
     FieldDisplayer<Field> fieldDisplayer;
     if (fieldTemplate != null) {
@@ -421,21 +421,22 @@ public abstract class AbstractForm implements Form {
    * @return true if one of the form field has no data.
    */
   @Override
-  public boolean isEmpty(List<FileItem<?>> items, DataRecord record, PagesContext pagesContext) {
+  public <T extends FileItem<T>> boolean isEmpty(List<T> items, DataRecord record,
+      PagesContext pagesContext) {
     boolean isEmpty = true;
     for (FieldTemplate fieldTemplate : fieldTemplates) {
       if (fieldTemplate != null) {
         isEmpty = checkFieldIsEmpty(items, pagesContext, fieldTemplate);
-      }
-      if (!isEmpty) {
-        break;
+        if (!isEmpty) {
+          break;
+        }
       }
     }
     return isEmpty;
   }
 
-  private boolean checkFieldIsEmpty(final List<FileItem<?>> items, final PagesContext pagesContext,
-      final FieldTemplate fieldTemplate) {
+  private <T extends FileItem<T>> boolean checkFieldIsEmpty(final List<T> items,
+      final PagesContext pagesContext, final FieldTemplate fieldTemplate) {
     FieldDisplayer<? extends Field> fieldDisplayer;
     String fieldType = fieldTemplate.getTypeName();
     String fieldDisplayerName = fieldTemplate.getDisplayerName();
@@ -471,8 +472,8 @@ public abstract class AbstractForm implements Form {
    * parameter is defined in this form.
    * @throws java.io.IOException if an I/O error occurs while getting the parameter value.
    */
-  private String getParameterValue(List<FileItem<?>> items, String parameterName, Charset charset)
-      throws IOException {
+  private <T extends FileItem<T>> String getParameterValue(List<T> items, String parameterName,
+      Charset charset) throws IOException {
     FileItem<?> item = getParameter(items, parameterName);
     if (item != null && item.isFormField()) {
       return item.getString(charset);
@@ -487,9 +488,10 @@ public abstract class AbstractForm implements Form {
    * @param parameterName the name of the parameter.
    * @return the item corresponding to the specified parameter.
    */
-  private FileItem<?> getParameter(final List<FileItem<?>> items, final String parameterName) {
-    FileItem<?> fileItem = null;
-    for (FileItem<?> item : items) {
+  private <T extends FileItem<T>> T getParameter(final List<T> items,
+      final String parameterName) {
+    T fileItem = null;
+    for (T item : items) {
       if (parameterName.equals(item.getFieldName())) {
         fileItem = item;
         break;

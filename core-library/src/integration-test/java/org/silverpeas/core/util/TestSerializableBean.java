@@ -23,48 +23,63 @@
  */
 package org.silverpeas.core.util;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.json.bind.annotation.JsonbDateFormat;
+import jakarta.json.bind.annotation.JsonbProperty;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import static jakarta.json.bind.annotation.JsonbDateFormat.TIME_IN_MILLIS;
 
 /**
  * @author mmoquillon
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("unused")
 public class TestSerializableBean implements Serializable {
 
   private static final long serialVersionUID = 8497281393162228469L;
 
-  @XmlElement
-  private String id;
-  @XmlElement
-  private String name;
-  @XmlElement
-  private Date date;
+  @JsonbProperty("id")
+  private String _id;
+
+  @JsonbProperty("name")
+  private String _name;
+  @JsonbProperty("date")
+  private Date _date;
 
   protected TestSerializableBean() {
 
   }
 
   public TestSerializableBean(final String id, final String name, final Date date) {
-    this.id = id;
-    this.name = name;
-    this.date = date;
+    this._id = id;
+    this._name = name;
+    this._date = date;
   }
 
   public String getId() {
-    return id;
+    return _id;
   }
 
   public String getName() {
-    return name;
+    return _name;
   }
 
+  @JsonbDateFormat(TIME_IN_MILLIS)
   public Date getDate() {
-    return date;
+    return _date;
+  }
+
+  public void setId(String id) {
+    this._id = id;
+  }
+
+  public void setName(String name) {
+    this._name = name;
+  }
+
+  @JsonbDateFormat(TIME_IN_MILLIS)
+  public void setDate(Date date) {
+    this._date = date;
   }
 }

@@ -27,12 +27,7 @@ import org.silverpeas.core.ActionType;
 import org.silverpeas.core.ResourceReference;
 import org.silverpeas.core.SilverpeasResource;
 import org.silverpeas.core.WAPrimaryKey;
-import org.silverpeas.core.admin.BaseRightProfile;
-import org.silverpeas.core.admin.PaginationPage;
-import org.silverpeas.core.admin.ProfiledObjectId;
-import org.silverpeas.core.admin.ProfiledObjectIds;
-import org.silverpeas.core.admin.ProfiledObjectType;
-import org.silverpeas.core.admin.RightProfile;
+import org.silverpeas.core.admin.*;
 import org.silverpeas.core.admin.component.ComponentInstanceDeletion;
 import org.silverpeas.core.admin.component.model.GlobalContext;
 import org.silverpeas.core.admin.component.model.PasteDetail;
@@ -43,11 +38,7 @@ import org.silverpeas.core.admin.quota.QuotaKey;
 import org.silverpeas.core.admin.quota.exception.QuotaException;
 import org.silverpeas.core.admin.quota.exception.QuotaRuntimeException;
 import org.silverpeas.core.admin.quota.service.QuotaService;
-import org.silverpeas.core.admin.service.AdminException;
-import org.silverpeas.core.admin.service.Administration;
-import org.silverpeas.core.admin.service.OrganizationController;
-import org.silverpeas.core.admin.service.OrganizationControllerProvider;
-import org.silverpeas.core.admin.service.RightRecover;
+import org.silverpeas.core.admin.service.*;
 import org.silverpeas.core.admin.space.UserFavoriteSpaceService;
 import org.silverpeas.core.admin.space.UserFavoriteSpaceServiceImpl;
 import org.silverpeas.core.admin.space.UserFavoriteSpaceServiceProvider;
@@ -56,17 +47,9 @@ import org.silverpeas.core.admin.space.model.UserFavoriteSpaceVO;
 import org.silverpeas.core.admin.user.DefaultUserProvider;
 import org.silverpeas.core.admin.user.constant.UserAccessLevel;
 import org.silverpeas.core.admin.user.constant.UserState;
-import org.silverpeas.core.admin.user.model.SilverpeasRole;
-import org.silverpeas.core.admin.user.model.UserDetail;
-import org.silverpeas.core.admin.user.model.UserFull;
-import org.silverpeas.core.admin.user.model.UserLog;
-import org.silverpeas.core.admin.user.model.UserReference;
+import org.silverpeas.core.admin.user.model.*;
 import org.silverpeas.core.cache.VolatileResourceCleaner;
-import org.silverpeas.core.calendar.ical4j.ICal4JCalendarEventOccurrenceGenerator;
-import org.silverpeas.core.calendar.ical4j.ICal4JDateCodec;
-import org.silverpeas.core.calendar.ical4j.ICal4JExporter;
-import org.silverpeas.core.calendar.ical4j.ICal4JImporter;
-import org.silverpeas.core.calendar.ical4j.ICal4JRecurrenceCodec;
+import org.silverpeas.core.calendar.ical4j.*;
 import org.silverpeas.core.calendar.repository.DefaultCalendarEventOccurrenceRepository;
 import org.silverpeas.core.calendar.repository.DefaultCalendarEventRepository;
 import org.silverpeas.core.calendar.repository.DefaultCalendarRepository;
@@ -77,13 +60,7 @@ import org.silverpeas.core.contribution.attachment.model.SimpleDocumentPK;
 import org.silverpeas.core.contribution.attachment.repository.JcrContext;
 import org.silverpeas.core.contribution.content.form.FormException;
 import org.silverpeas.core.contribution.content.wysiwyg.service.WysiwygManager;
-import org.silverpeas.core.contribution.contentcontainer.content.ContentManagementEngine;
-import org.silverpeas.core.contribution.contentcontainer.content.ContentManagementEngineProvider;
-import org.silverpeas.core.contribution.contentcontainer.content.ContentManagerException;
-import org.silverpeas.core.contribution.contentcontainer.content.ContentPeas;
-import org.silverpeas.core.contribution.contentcontainer.content.SilverContentInterface;
-import org.silverpeas.core.contribution.contentcontainer.content.SilverContentPostUpdate;
-import org.silverpeas.core.contribution.contentcontainer.content.SilverContentVisibility;
+import org.silverpeas.core.contribution.contentcontainer.content.*;
 import org.silverpeas.core.contribution.model.Contribution;
 import org.silverpeas.core.contribution.model.ContributionContent;
 import org.silverpeas.core.contribution.model.ContributionIdentifier;
@@ -91,14 +68,8 @@ import org.silverpeas.core.contribution.model.SilverpeasContent;
 import org.silverpeas.core.contribution.publication.social.SocialInformationPublication;
 import org.silverpeas.core.contribution.template.publication.PublicationTemplateException;
 import org.silverpeas.core.contribution.template.publication.PublicationTemplateUserEventListener;
-import org.silverpeas.core.exception.DecodingException;
-import org.silverpeas.core.exception.EncodingException;
-import org.silverpeas.core.exception.FromModule;
-import org.silverpeas.core.exception.RelativeFileAccessException;
-import org.silverpeas.core.exception.SilverpeasException;
-import org.silverpeas.core.exception.SilverpeasRuntimeException;
 import org.silverpeas.core.exception.UtilException;
-import org.silverpeas.core.exception.WithNested;
+import org.silverpeas.core.exception.*;
 import org.silverpeas.core.html.PermalinkRegistry;
 import org.silverpeas.core.index.indexing.model.FullIndexEntry;
 import org.silverpeas.core.io.media.Definition;
@@ -284,7 +255,7 @@ public class WarBuilder4LibCore extends WarBuilder<WarBuilder4LibCore> {
    */
   private WarBuilder4LibCore addBundleBaseFeatures() {
     if (!contains(MimeTypes.class)) {
-      addMavenDependencies("commons-fileupload:commons-fileupload");
+      addMavenDependencies("org.apache.commons:commons-fileupload2-jakarta");
       addClasses(FileUtil.class, Mail.class, MimeTypes.class, MetaData.class, Definition.class,
           RelativeFileAccessException.class, MetadataExtractor.class, MultiSilverpeasBundle.class);
       addAsResource("org/silverpeas/general.properties");
@@ -809,7 +780,7 @@ public class WarBuilder4LibCore extends WarBuilder<WarBuilder4LibCore> {
    * @return the instance of the war builder with apache file upload
    */
   public WarBuilder4LibCore addApacheFileUploadFeatures() {
-    addMavenDependencies("commons-fileupload:commons-fileupload");
+    addMavenDependencies("org.apache.commons:commons-fileupload2-jakarta");
     return this;
   }
 

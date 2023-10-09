@@ -32,6 +32,7 @@ import org.silverpeas.core.contribution.content.form.FormException;
 import org.silverpeas.core.contribution.content.form.PagesContext;
 import org.silverpeas.core.contribution.content.form.Util;
 import org.silverpeas.core.contribution.content.form.field.ExplorerField;
+import org.silverpeas.core.contribution.content.form.field.PublicationsPickerField;
 import org.silverpeas.core.util.StringUtil;
 import org.silverpeas.core.util.URLUtil;
 import org.silverpeas.core.util.WebEncodeHelper;
@@ -178,15 +179,10 @@ public class ExplorerFieldDisplayer extends AbstractFieldDisplayer<ExplorerField
   }
 
   @Override
-  public List<String> update(List<FileItem<?>> items, ExplorerField field, FieldTemplate template,
-      PagesContext pageContext) throws FormException {
+  protected <F extends FileItem<F>> String getFieldValue(List<F> items, FieldTemplate template,
+      ExplorerField field, PagesContext pagesContext) {
     String itemName = template.getFieldName();
-    String value = FileUploadUtil.getParameter(items, itemName);
-    if (pageContext.getUpdatePolicy() == PagesContext.ON_UPDATE_IGNORE_EMPTY_VALUES &&
-        !StringUtil.isDefined(value)) {
-      return new ArrayList<>();
-    }
-    return update(value, field, template, pageContext);
+    return FileUploadUtil.getParameter(items, itemName);
   }
 
 }

@@ -88,7 +88,7 @@ public abstract class BaseCalendarTest extends DataSetTest {
    * @return List of lines represented by a map between column name and value.
    */
   protected List<ResultLine> getCalendarTableLines() throws Exception {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from sb_cal_calendar")
             .addSqlPart("order by instanceid, title, id"));
   }
@@ -99,7 +99,7 @@ public abstract class BaseCalendarTest extends DataSetTest {
    * @return List of lines represented by a map between column name and value.
    */
   protected ResultLine getCalendarTableLineById(String id) throws Exception {
-    return JdbcSqlQuery.unique(getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return JdbcSqlQuery.unique(dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from sb_cal_calendar").where("id = ?", id)));
   }
 
@@ -108,7 +108,7 @@ public abstract class BaseCalendarTest extends DataSetTest {
    * @return List of lines represented by a map between column name and value.
    */
   protected List<ResultLine> getCalendarEventTableLines() throws Exception {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("ce.*, co.* from sb_cal_event ce")
             .addSqlPart("join sb_cal_components co on co.id = ce.componentId")
             .addSqlPart("join sb_cal_calendar c on c.id = co.calendarId")
@@ -122,7 +122,7 @@ public abstract class BaseCalendarTest extends DataSetTest {
    * @return List of lines represented by a map between column name and value.
    */
   protected List<ResultLine> getCalendarEventTableLinesByCalendarId(String id) throws Exception {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("ce.*, co.* from sb_cal_event ce")
             .addSqlPart("join sb_cal_components co on co.id = ce.componentId")
             .addSqlPart("join sb_cal_calendar c on c.id = co.calendarId")
@@ -136,7 +136,7 @@ public abstract class BaseCalendarTest extends DataSetTest {
    * @return List of lines represented by a map between column name and value.
    */
   protected ResultLine getCalendarEventTableLineById(String id) throws Exception {
-    return JdbcSqlQuery.unique(getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return JdbcSqlQuery.unique(dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("ce.*, co.* from sb_cal_event ce")
             .addSqlPart("join sb_cal_components co on co.id = ce.componentId")
             .addSqlPart("join sb_cal_calendar c on c.id = co.calendarId")
@@ -144,29 +144,29 @@ public abstract class BaseCalendarTest extends DataSetTest {
   }
 
   protected List<ResultLine> getAttributesTableLinesByEventId(String id) throws Exception {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from SB_Cal_Attributes").where("id = ?", id));
   }
 
   protected List<ResultLine> getAttendeesTableLines() throws Exception {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from SB_Cal_Attendees"));
   }
 
   protected ResultLine getCalendarComponentTableLineById(String id) throws Exception {
-    return JdbcSqlQuery.unique(getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return JdbcSqlQuery.unique(dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from sb_cal_components")
         .where("id = ?", id)));
   }
 
   protected ResultLine getCalendarOccurrenceTableLineById(String id) throws SQLException {
-    return JdbcSqlQuery.unique(getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return JdbcSqlQuery.unique(dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from sb_cal_occurrences").where("id = ?", id)));
   }
 
   protected List<ResultLine> getCalendarOccurrencesTableLineByEventId(String eventId)
       throws SQLException {
-    return getDbSetupRule().mapJdbcSqlQueryResultAsListOfMappedValues(
+    return dbSetupRule.mapJdbcSqlQueryResultAsListOfMappedValues(
         JdbcSqlQuery.select("* from sb_cal_occurrences").where("eventId = ?", eventId));
   }
 

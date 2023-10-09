@@ -50,16 +50,16 @@ import static org.silverpeas.core.util.CollectionUtil.isNotEmpty;
 public class InstanceDataTable extends Table<InstanceDataRow> {
 
   private static final String INSTANCE_DATA_TABLE = "ST_Instance_Data";
-  private static final String INSTANCEDATA_COLUMNS = "id,componentId,name,label,value";
+  private static final String INSTANCEDATA_COLUMNS = "id,componentId,name,label,\"value\"";
   private static final String INSERT_INSTANCEDATA = "insert into ST_Instance_Data("
       + INSTANCEDATA_COLUMNS + ") values (?,?,?,?,?)";
   private static final String SELECT_ALL_COMPONENTS_BY_PARAMETER_VALUE =
       "select " + INSTANCEDATA_COLUMNS +
-          " from ST_Instance_Data where name = ? and value = ? order by id";
+          " from ST_Instance_Data where name = ? and \"value\" = ? order by id";
   private static final String SELECT_ALL_COMPONENT_PARAMETERS = "select " + INSTANCEDATA_COLUMNS
       + " from ST_Instance_Data where componentId = ? order by id";
   private static final String UPDATE_INSTANCEDATA = "UPDATE ST_Instance_Data"
-      + " SET value = ?" + " where componentId = ? and name = ?";
+      + " SET \"value\" = ?" + " where componentId = ? and name = ?";
   private static final String REMOVE_INSTANCEDATA = "delete from ST_Instance_Data"
       + " where componentid = ?";
 
@@ -121,7 +121,7 @@ public class InstanceDataTable extends Table<InstanceDataRow> {
   public String getParameterValueByComponentAndParamName(final Integer componentId,
       final String paramName, final boolean ignoreCase) throws SQLException {
     final Mutable<String> result = Mutable.empty();
-    final JdbcSqlQuery query = JdbcSqlQuery.select("value")
+    final JdbcSqlQuery query = JdbcSqlQuery.select("\'value\'")
         .from(INSTANCE_DATA_TABLE)
         .where("componentId = ?", componentId);
     if (ignoreCase) {
@@ -148,7 +148,7 @@ public class InstanceDataTable extends Table<InstanceDataRow> {
     final Map<Integer, Map<String, String>> result = new HashMap<>(componentIds.size());
     JdbcSqlQuery.executeBySplittingOn(componentIds, (idBatch, ignore) -> {
       final JdbcSqlQuery query = JdbcSqlQuery
-          .select("componentId,name,value")
+          .select("componentId,name,\"value\"")
           .from(INSTANCE_DATA_TABLE)
           .where("componentId").in(idBatch);
       if (isNotEmpty(paramNames)) {
