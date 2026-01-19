@@ -24,11 +24,12 @@
 
 package org.silverpeas.core.contribution.indicator;
 
+import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.contribution.model.ContributionIdentifier;
 import org.silverpeas.kernel.util.Pair;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -43,6 +44,7 @@ import static org.silverpeas.core.admin.component.model.SilverpeasComponentInsta
  * </p>
  * @author silveryocha
  */
+@Bean
 @Singleton
 public class ContributionIndicatorRegistry {
 

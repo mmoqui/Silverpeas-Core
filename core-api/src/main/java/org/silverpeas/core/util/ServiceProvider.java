@@ -29,7 +29,7 @@ import org.silverpeas.kernel.ManagedBeanProvider;
 import org.silverpeas.kernel.SilverpeasRuntimeException;
 import org.silverpeas.kernel.util.Mutable;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -70,7 +70,7 @@ public final class ServiceProvider {
    * Be attentive about that this method does not return result when trying to get the instance of
    * an implementation of services which are dealing with typed types (see
    * <code>ApplicationService&lt;T&gt;</code> for example). To deal with this kind of services,
-   * please use the {@link javax.enterprise.inject.Instance} annotation in a managed bean.
+   * please use the {@link jakarta.enterprise.inject.Instance} annotation in a managed bean.
    * </p>
    *
    * @param type the type of the service.
@@ -94,7 +94,7 @@ public final class ServiceProvider {
    * Be attentive about that this method does not return result when trying to get the instance of
    * an implementation of services which are dealing with typed types (see
    * <code>ApplicationService&lt;T&gt;</code> for example). To deal with this kind of services,
-   * please use the {@link javax.enterprise.inject.Instance} annotation in a managed bean.
+   * please use the {@link jakarta.enterprise.inject.Instance} annotation in a managed bean.
    * </p>
    *
    * @param name the name of the service.
@@ -115,7 +115,7 @@ public final class ServiceProvider {
    * Be attentive about that this method does not return result when trying to get the instance of
    * an implementation of services which are dealing with typed types (see
    * <code>ApplicationService&lt;T&gt;</code> for example). To deal with this kind of services,
-   * please use the {@link javax.enterprise.inject.Instance} annotation in a managed bean.
+   * please use the {@link jakarta.enterprise.inject.Instance} annotation in a managed bean.
    * </p>
    *
    * @param type the common type of the services.

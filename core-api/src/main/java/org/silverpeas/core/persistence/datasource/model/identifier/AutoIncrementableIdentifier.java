@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000 - 2024 Silverpeas
+ * Copyright (C) 2000 - 2025 Silverpeas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -11,7 +11,7 @@
  * Open Source Software ("FLOSS") applications as described in Silverpeas's
  * FLOSS exception.  You should have received a copy of the text describing
  * the FLOSS exception, and it is also available here:
- * "https://www.silverpeas.org/legal/floss_exception.html"
+ * "http://www.silverpeas.com/legal/licensing"
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,22 +19,30 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.silverpeas.core.socialnetwork.qualifiers;
 
-import javax.inject.Qualifier;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
+package org.silverpeas.core.persistence.datasource.model.identifier;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import jakarta.persistence.MappedSuperclass;
+import org.silverpeas.core.persistence.datasource.model.EntityIdentifier;
+import org.silverpeas.core.persistence.jdbc.DBUtil;
 
 /**
- * Qualifier to mark any beans working on the Facebook social network.
+ * An entity identifier with an automatic value incrementation capability by using the Silverpeas
+ * mechanism for that. For doing, the concrete value of the identifier has to be a numeric value.
+ *
  * @author mmoquillon
  */
-@Qualifier
-@Documented
-@Retention(RUNTIME)
-public @interface Facebook {
+@MappedSuperclass
+public abstract class AutoIncrementableIdentifier<T extends Number> extends BaseEntityIdentifier<T>
+    implements EntityIdentifier {
+
+  protected int nextNewValue(String... parameters) {
+    final String tableName = parameters[0];
+    final String tableColumnIdName = parameters[1];
+    return DBUtil.getNextId(tableName, tableColumnIdName);
+  }
+
 }
+  

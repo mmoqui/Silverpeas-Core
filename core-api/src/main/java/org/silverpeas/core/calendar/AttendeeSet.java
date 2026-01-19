@@ -27,7 +27,7 @@ import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.util.CollectionUtil;
 import org.silverpeas.kernel.annotation.NonNull;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;

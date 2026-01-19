@@ -35,7 +35,7 @@ import org.silverpeas.core.security.html.HtmlSanitizer;
 import org.silverpeas.kernel.util.Mutable;
 import org.silverpeas.kernel.util.StringUtil;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.*;

@@ -25,7 +25,7 @@ package org.silverpeas.core.scheduler;
 
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.util.AnnotationLiteral;
 
 /**
  * The factory of Scheduler objects. The <code>SchedulerFactory</code> class wraps the actual

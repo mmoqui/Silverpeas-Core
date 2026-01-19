@@ -46,8 +46,8 @@ import org.silverpeas.core.web.mvc.route.ComponentInstanceRoutingMapProviderByIn
 import org.silverpeas.kernel.logging.SilverLogger;
 import org.silverpeas.kernel.util.StringUtil;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -185,7 +185,7 @@ import static org.silverpeas.core.persistence.datasource.OperationContext.State.
       "FROM CalendarEvent e " +
       "JOIN e.component cmp " +
       "JOIN cmp.calendar c " +
-      "LEFT OUTER JOIN FETCH e.recurrence r " +
+      "LEFT OUTER JOIN FETCH e.recurrence " +
       "WHERE (c IN :calendars " +
       "       AND ((cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
       "           OR (cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL AND (e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL)))) " +
@@ -207,7 +207,7 @@ import static org.silverpeas.core.persistence.datasource.OperationContext.State.
     "FROM CalendarEvent e " +
     "JOIN e.component cmp " +
     "JOIN cmp.calendar c " +
-    "LEFT OUTER JOIN FETCH e.recurrence r " +
+    "LEFT OUTER JOIN FETCH e.recurrence " +
     "WHERE ((cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
     "       OR (cmp.period.endDateTime <= :startDateTime AND e.recurrence IS NOT NULL AND (e.recurrence.endDateTime >= :startDateTime OR e.recurrence.endDateTime IS NULL))) " +
     "OR e.id IN (SELECT occ_e.id " +
@@ -227,7 +227,7 @@ import static org.silverpeas.core.persistence.datasource.OperationContext.State.
       "JOIN e.component cmp " +
       "JOIN cmp.calendar c " +
       "JOIN cmp.attendees.attendees a " +
-      "LEFT OUTER JOIN FETCH e.recurrence r " +
+      "LEFT OUTER JOIN FETCH e.recurrence " +
       "WHERE (a.attendeeId IN :participantIds " +
       "       AND ((cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
       "            OR" +
@@ -251,7 +251,7 @@ import static org.silverpeas.core.persistence.datasource.OperationContext.State.
       "JOIN e.component cmp " +
       "JOIN cmp.calendar c " +
       "JOIN cmp.attendees.attendees a " +
-      "LEFT OUTER JOIN FETCH e.recurrence r " +
+      "LEFT OUTER JOIN FETCH e.recurrence " +
       "WHERE (c IN :calendars " +
       "       AND a.attendeeId IN :participantIds " +
       "       AND ((cmp.period.startDateTime < :endDateTime AND cmp.period.endDateTime > :startDateTime) " +
