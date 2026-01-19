@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000 - 2024 Silverpeas
+ * Copyright (C) 2000 - 2025 Silverpeas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -11,7 +11,7 @@
  * Open Source Software ("FLOSS") applications as described in Silverpeas's
  * FLOSS exception.  You should have received a copy of the text describing
  * the FLOSS exception, and it is also available here:
- * "https://www.silverpeas.org/legal/floss_exception.html"
+ * "http://www.silverpeas.com/legal/licensing"
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,22 +19,26 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.silverpeas.core.socialnetwork.qualifiers;
 
-import javax.inject.Qualifier;
+package org.silverpeas.core.test.integration;
+
+import jakarta.inject.Qualifier;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Qualifier to mark any beans working on the LinkedIn social network.
+ * Qualifier to tag a managed bean as being a stub to use in the dependency injection as a
+ * replacement of the original managed bean, expecting both implements the same bean interface.
+ *
  * @author mmoquillon
  */
 @Qualifier
 @Documented
 @Retention(RUNTIME)
-public @interface LinkedIn {
+public @interface Stub {
 }
