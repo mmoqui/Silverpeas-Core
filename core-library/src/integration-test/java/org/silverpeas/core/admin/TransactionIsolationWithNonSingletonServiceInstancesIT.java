@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery;
 import org.silverpeas.core.test.WarBuilder4LibCore;
-import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.test.integration.SQLRequester;
+import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.util.ServiceProvider;
 
 import java.util.List;
@@ -41,14 +41,25 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
 /**
- * Tests the isolation of the transaction when the service is not a singleton (so each time an
- * instance of the service is requested, each time is provided a new instance).
- * Please compare tests with those of
- * {@link TransactionIsolationWithOneServiceInstanceIntegrationTest}.
+ * Tests the isolation of any transactions when the Silverpeas service isn't a singleton. This test
+ * checks, among others things, both the unchecked and the checked exceptions rollback the
+ * transaction.
+ * <p>
+ * Singletons are defined by the pseudo lifecycle scope @{@link jakarta.inject.Singleton} and any
+ * beans of singletons aren't proxified by CDI. For any others lifecycle scopes defined by Jakarta
+ * EE, the beans are proxified. This difference has a consequence on transactions: for singleton's
+ * beans, only the unchecked exceptions can rollback the current transaction whereas for any other
+ * scoped beans, because they are proxified, both the checked and unchecked exceptions can rollback
+ * the current transaction.
+ * </p>
+ * <p>
+ * This is why the services in Silverpeas shouldn't be a singleton.
+ * </p>
+ *
  * @author silveryocha.
  */
 @RunWith(Arquillian.class)
-public class TransactionIsolationWithMultiServiceInstancesIT
+public class TransactionIsolationWithNonSingletonServiceInstancesIT
     extends AbstractTransactionIntegrationTest {
 
   @Rule
@@ -59,7 +70,7 @@ public class TransactionIsolationWithMultiServiceInstancesIT
   @Deployment
   public static Archive<?> createTestArchive() {
     return configureTestArchive(WarBuilder4LibCore
-        .onWarForTestClass(TransactionIsolationWithMultiServiceInstancesIT.class))
+        .onWarForTestClass(TransactionIsolationWithNonSingletonServiceInstancesIT.class))
         .build();
   }
 
@@ -430,6 +441,7 @@ public class TransactionIsolationWithMultiServiceInstancesIT
 
   /**
    * Returns the list of user lines persisted into st_user table.
+   *
    * @return List of lines represented by a map between column name and value.
    */
   private List<SQLRequester.ResultLine> getUserTableLines() throws Exception {

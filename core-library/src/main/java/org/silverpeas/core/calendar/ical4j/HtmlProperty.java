@@ -27,6 +27,7 @@ import net.fortuna.ical4j.model.Encodable;
 import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyFactory;
+import net.fortuna.ical4j.validate.ValidationResult;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -69,8 +70,9 @@ public class HtmlProperty extends Property implements Encodable {
    * {@inheritDoc}
    */
   @Override
-  public final void validate() {
+  public final ValidationResult validate() {
     // no validation here
+    return ValidationResult.EMPTY;
   }
 
   /**
@@ -101,8 +103,7 @@ public class HtmlProperty extends Property implements Encodable {
     }
 
     @Override
-    public Property createProperty(final ParameterList parameters, final String value)
-        throws IOException, URISyntaxException, ParseException {
+    public Property createProperty(final ParameterList parameters, final String value) {
       return new HtmlProperty(parameters, value);
     }
 

@@ -46,11 +46,12 @@ import org.silverpeas.core.test.util.RandomGenerator;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.core.util.DateUtil;
 import org.silverpeas.core.util.MimeTypes;
+import org.silverpeas.core.wbe.WbeHostManager;
 import org.silverpeas.kernel.util.Pair;
 import org.silverpeas.core.wbe.StubbedWbeHostManager;
 import org.silverpeas.core.jcr.JCRSession;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import java.io.ByteArrayInputStream;
@@ -78,10 +79,12 @@ public class DocumentRepositoryIT extends JcrIntegrationIT {
   private static final String instanceId = "kmelia73";
   private static final byte[] ENGLISH_CONTENT = "This is a test".getBytes(StandardCharsets.UTF_8);
   private static final byte[] FRENCH_CONTENT = "Ceci est un test".getBytes(StandardCharsets.UTF_8);
-  private final DocumentRepository documentRepository = new DocumentRepository();
 
   @Inject
-  private StubbedWbeHostManager wbeManager;
+  private DocumentRepository documentRepository;
+
+  @Inject
+  private WbeHostManager wbeManager;
 
   @Deployment
   public static Archive<?> createTestArchive() {
@@ -102,7 +105,7 @@ public class DocumentRepositoryIT extends JcrIntegrationIT {
 
   @After
   public void clear() {
-    wbeManager.handled = true;
+    ((StubbedWbeHostManager) wbeManager).setHandled(true);
   }
 
   /**
@@ -661,7 +664,7 @@ public class DocumentRepositoryIT extends JcrIntegrationIT {
   @Test
   public void saveEditableSimultaneouslyOpenOfficeCompatibleDocumentButWbeNotHandled()
       throws Exception {
-    wbeManager.handled = false;
+    ((StubbedWbeHostManager) wbeManager).setHandled(false);
     try (JCRSession session = JCRSession.openSystemSession()) {
       SimpleDocumentPK emptyId = new SimpleDocumentPK("-1", instanceId);
       ByteArrayInputStream content = new ByteArrayInputStream(ENGLISH_CONTENT);

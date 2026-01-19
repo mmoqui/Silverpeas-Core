@@ -113,9 +113,6 @@ public class PublicationDAO extends AbstractDAO {
   private static final String PUB_REMOVAL_DATE = "pubRemovalDate";
   private static final String PUB_REMOVER_ID = "pubRemoverId";
 
-  private PublicationDAO() {
-  }
-
   /**
    * Deletes all publications linked to the component instance represented by the given identifier.
    *

@@ -33,9 +33,9 @@ import java.util.List;
  * A provider of social data. Any provider of information that can be shared among the users and
  * whose type is supported by the social network, as defined in the
  * {@link org.silverpeas.core.socialnetwork.model.SocialInformationType} enumeration, should
- * implement this interface.
- * It should have only one implementation of social information provider for one type of such a
- * social information.
+ * implement this interface. It should have only one implementation of social information provider
+ * for one type of such social information.
+ *
  * @author mmoquillon
  */
 public interface SocialInformationProvider {

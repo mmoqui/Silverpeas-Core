@@ -23,22 +23,18 @@
  */
 package org.silverpeas.core.util.file;
 
+import org.silverpeas.core.i18n.I18n;
 import org.silverpeas.core.util.URLEncoder;
 import org.silverpeas.core.util.URLUtil;
 import org.silverpeas.kernel.bundle.ResourceLocator;
 import org.silverpeas.kernel.bundle.SettingBundle;
 import org.silverpeas.kernel.util.StringUtil;
-import org.silverpeas.core.i18n.I18NHelper;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author NEY
- * @version
- */
 public class FileServerUtils {
 
   public static final String COMPONENT_ID_PARAMETER = "ComponentId";
@@ -106,13 +102,12 @@ public class FileServerUtils {
   /**
    * Return the full url to access an attachment from web site
    *
-   *
-   * @param componentId
-   * @param logicalName
-   * @param physicalName
-   * @param mimeType
-   * @param subDirectory
-   * @return
+   * @param componentId the unique identifier of the web site
+   * @param logicalName the logical name of the attachment
+   * @param physicalName the physical name of the attachment
+   * @param mimeType the content type of the attachment.
+   * @param subDirectory the directory into which is located the attachment
+   * @return the URL
    */
   public static String getWebUrl(String componentId, String logicalName, String physicalName,
       String mimeType, String subDirectory) {
@@ -156,10 +151,7 @@ public class FileServerUtils {
       String lang) {
     String newLogicalName = URLEncoder.encodePathSegment(logicalName);
     StringBuilder url = new StringBuilder();
-    String language = lang;
-    if (language == null) {
-      language = I18NHelper.DEFAULT_LANGUAGE;
-    }
+    String language = I18n.get().checkLanguage(lang);
     url.append("/attached_file/").append("componentId/").append(URLEncoder.encodePathSegment(
         componentId)).append("/attachmentId/").append(URLEncoder.encodePathSegment(attachmentId)).
         append("/lang/").append(URLEncoder.encodePathSegment(language)).append("/name/").
@@ -223,7 +215,7 @@ public class FileServerUtils {
 
   public static Map<String, String> getMappedUrl(String spaceId, String componentId,
       String logicalName, String physicalName, String mimeType, String subDirectory) {
-    Map<String, String> parameters = new HashMap<String, String>();
+    Map<String, String> parameters = new HashMap<>();
     parameters.put("SpaceId", spaceId);
     parameters.put("ComponentId", componentId);
     parameters.put("SourceFile", physicalName);
@@ -233,8 +225,7 @@ public class FileServerUtils {
   }
 
   public static String getUrl(String componentId, String name, String mimeType, String subDirectory) {
-    String url = getUrl(componentId, name, name, mimeType, subDirectory);
-    return url;
+    return getUrl(componentId, name, name, mimeType, subDirectory);
   }
 
   public static String getUrl(String logicalName, String physicalName, String componentId) {

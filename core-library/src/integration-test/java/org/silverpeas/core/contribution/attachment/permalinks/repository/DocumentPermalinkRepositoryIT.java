@@ -38,7 +38,7 @@ import org.silverpeas.core.contribution.attachment.permalinks.model.DocumentPerm
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 
 import static org.hamcrest.Matchers.is;
@@ -55,7 +55,7 @@ public class DocumentPermalinkRepositoryIT {
 
   @Resource(lookup = "java:/datasources/silverpeas")
   private DataSource dataSource;
-  private DbSetupTracker dbSetupTracker = new DbSetupTracker();
+  private final DbSetupTracker dbSetupTracker = new DbSetupTracker();
 
   public static final Operation TABLES_CREATION = Operations.sql(
       "CREATE TABLE IF NOT EXISTS permalinks_document (" +
@@ -77,9 +77,9 @@ public class DocumentPermalinkRepositoryIT {
   public static Archive<?> createTestArchive() {
     return WarBuilder4LibCore.onWarForTestClass(DocumentPermalinkRepositoryIT.class)
         .addJpaPersistenceFeatures()
-        .testFocusedOn((warBuilder) -> {
-          warBuilder.addPackages(true, "org.silverpeas.core.contribution.attachment.permalinks");
-    }).build();
+        .testFocusedOn((warBuilder) ->
+            warBuilder.addPackages(true, "org.silverpeas.core.contribution.attachment.permalinks"))
+        .build();
   }
 
 

@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.contribution.attachment.repository;
 
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,6 +34,7 @@ import org.silverpeas.core.admin.user.model.SilverpeasRole;
 import org.silverpeas.core.contribution.attachment.model.SimpleAttachment;
 import org.silverpeas.core.contribution.attachment.model.SimpleDocument;
 import org.silverpeas.core.contribution.attachment.model.SimpleDocumentPK;
+import org.silverpeas.core.i18n.I18n;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.jcr.JcrIntegrationIT;
 import org.silverpeas.core.test.util.RandomGenerator;
@@ -55,7 +57,10 @@ import static org.silverpeas.core.jcr.util.SilverpeasProperty.*;
 public class DocumentConverterIT extends JcrIntegrationIT {
 
   private static final String instanceId = "kmelia74";
-  private static final DocumentConverter instance = new DocumentConverter();
+
+  @Inject
+  private I18n i18n;
+  private DocumentConverter instance;
 
   @Deployment
   public static Archive<?> createTestArchive() {
@@ -66,6 +71,7 @@ public class DocumentConverterIT extends JcrIntegrationIT {
 
   @Before
   public void loadJcr() throws Exception {
+    instance = new DocumentConverter(i18n);
     try (JCRSession session = JCRSession.openSystemSession()) {
       if (!session.getRootNode().hasNode(instanceId)) {
         session.getRootNode().addNode(instanceId, NT_FOLDER);

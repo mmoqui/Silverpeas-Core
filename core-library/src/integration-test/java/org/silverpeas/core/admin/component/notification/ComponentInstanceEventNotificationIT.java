@@ -32,7 +32,7 @@ import org.silverpeas.core.admin.component.model.ComponentInst;
 import org.silverpeas.core.notification.system.ResourceEventNotifier;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

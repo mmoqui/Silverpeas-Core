@@ -36,7 +36,7 @@ import org.silverpeas.core.persistence.Transaction;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -150,7 +150,7 @@ public class POPUPMessageBeanRepositoryIT {
     expected.setMsgTime("11:10");
     Transaction.performInOne(() -> repository.save(expected));
 
-    POPUPMessageBean actual = POPUPMessageBeanFinder.getById(Long.valueOf(expected.getId()));
+    POPUPMessageBean actual = POPUPMessageBeanFinder.getById(Long.parseLong(expected.getId()));
     assertThat(actual, notNullValue());
     assertThat(actual, is(expected));
   }

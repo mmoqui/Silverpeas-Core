@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.contribution.publication.service;
 
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -46,14 +47,7 @@ import org.silverpeas.core.test.util.RandomGenerator;
 import org.silverpeas.core.util.DateUtil;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotSame;
@@ -92,7 +86,7 @@ public class PublicationUpdateIT {
 
   @DisplayName("Default update of a publication")
   @Test
-  public void defaultUpdate() throws Exception {
+  public void defaultUpdate() {
     PublicationPK pk = new PublicationPK("100", "kmelia200");
     final PublicationDetail before = publicationService.getDetail(pk);
     assertBeforeUpdateData(before);
@@ -105,7 +99,7 @@ public class PublicationUpdateIT {
       "data before the two update are the one before the transaction, and not those just after " +
       "the first update")
   @Test
-  public void twoUpdatesIntoSameTransaction() throws Exception {
+  public void twoUpdatesIntoSameTransaction() {
     PublicationPK pk = new PublicationPK("100", "kmelia200");
     final PublicationDetail before = publicationService.getDetail(pk);
     assertBeforeUpdateData(before);
@@ -121,7 +115,7 @@ public class PublicationUpdateIT {
 
   @DisplayName("Update publication by forcing last update data")
   @Test
-  public void updateByForcingLastUpdateData() throws Exception {
+  public void updateByForcingLastUpdateData() {
     PublicationPK pk = new PublicationPK("100", "kmelia200");
     final PublicationDetail before = publicationService.getDetail(pk);
     assertBeforeUpdateData(before);
@@ -134,8 +128,7 @@ public class PublicationUpdateIT {
   @DisplayName("Update publication by forcing last update data and indicating also no update of " +
       "last update data")
   @Test
-  public void updateByForcingLastUpdateDataAndIndicatingAlsoNoUpdateOfLastUpdateData()
-      throws Exception {
+  public void updateByForcingLastUpdateDataAndIndicatingAlsoNoUpdateOfLastUpdateData() {
     PublicationPK pk = new PublicationPK("100", "kmelia200");
     final PublicationDetail before = publicationService.getDetail(pk);
     assertBeforeUpdateData(before);
@@ -147,7 +140,7 @@ public class PublicationUpdateIT {
 
   @DisplayName("Update publication by indicating also no update of last update data")
   @Test
-  public void updateByIndicatingAlsoNoUpdateOfLastUpdateData() throws Exception {
+  public void updateByIndicatingAlsoNoUpdateOfLastUpdateData() {
     PublicationPK pk = new PublicationPK("100", "kmelia200");
     final PublicationDetail before = publicationService.getDetail(pk);
     assertBeforeUpdateData(before);
@@ -158,7 +151,7 @@ public class PublicationUpdateIT {
 
   @DisplayName("Update publication by simulating a move operation")
   @Test
-  public void updateBySimulatingMoveOperation() throws Exception {
+  public void updateBySimulatingMoveOperation() {
     PublicationPK pk = new PublicationPK("100", "kmelia200");
     final PublicationDetail before = publicationService.getDetail(pk);
     assertBeforeUpdateData(before);
@@ -314,7 +307,6 @@ public class PublicationUpdateIT {
     assertEquals("Publication 1", data.getTitle());
   }
 
-  @Singleton
   @Service
   public static class DataBeforeUpdate {
 

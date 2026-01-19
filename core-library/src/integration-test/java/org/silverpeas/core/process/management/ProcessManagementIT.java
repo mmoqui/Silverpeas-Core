@@ -43,14 +43,13 @@ import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.kernel.bundle.ResourceLocator;
 
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.io.FileUtils.*;
-import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.silverpeas.core.test.util.TestRuntime.awaitUntil;
@@ -60,10 +59,11 @@ import static org.silverpeas.core.test.util.TestRuntime.awaitUntil;
  */
 @RunWith(Arquillian.class)
 public class ProcessManagementIT {
-  private static String testSecondResultContent = "File check in has not been done.";
+  private static final String testSecondResultContent = "File check in has not been done.";
+
+  private static final String LINE_SEPARATOR = System.lineSeparator();
 
   private FileBasePath BASE_PATH_TEST;
-  private String componentInstanceId;
   private File sessionRootPath;
   private File testResultFile;
   private File testSuccessfulFile;
@@ -85,7 +85,7 @@ public class ProcessManagementIT {
   @Before
   public void beforeTest() throws Exception {
     BASE_PATH_TEST = FileBasePath.UPLOAD_PATH;
-    componentInstanceId = "componentInstanceId";
+    String componentInstanceId = "componentInstanceId";
     sessionRootPath = new File(ResourceLocator.getGeneralSettingBundle().getString("tempPath"));
     testResultFile = getFile(new File(BASE_PATH_TEST.getPath()), componentInstanceId, "testResult");
     testSuccessfulFile =
@@ -97,7 +97,7 @@ public class ProcessManagementIT {
   }
 
   @After
-  public void afterTest() throws Exception {
+  public void afterTest() {
     deleteQuietly(sessionRootPath);
     deleteQuietly(new File(BASE_PATH_TEST.getPath()));
   }
@@ -358,8 +358,8 @@ public class ProcessManagementIT {
     assertThat(readFileToString(testSuccessfulFile, Charsets.UTF_8), is(" onSuccessful(A)"));
     assertThat(test.getErrorType(), nullValue());
     assertThat(test.getException(), nullValue());
-    assertThat(readFileToString(testSecondFile, Charsets.UTF_8), is(testSecondResultContent + LINE_SEPARATOR +
-        "File check in has been done.(A)"));
+    assertThat(readFileToString(testSecondFile, Charsets.UTF_8), is(testSecondResultContent +
+        LINE_SEPARATOR + "File check in has been done.(A)"));
   }
 
   @Test
@@ -368,7 +368,7 @@ public class ProcessManagementIT {
     final AbstractFileProcessTest test2 = new AbstractFileProcessTest("B") {
 
       @Override
-      public void onSuccessful() throws Exception {
+      public void onSuccessful() {
         throw new IllegalArgumentException();
       }
     };
@@ -511,18 +511,10 @@ public class ProcessManagementIT {
         LINE_SEPARATOR + "File check in has been done.(C)"));
   }
 
-  /**
-   * Centralized testing method
-   * @param processes
-   */
   private void executeTest(final AbstractFileProcessTest... processes) throws Exception {
     executeTest(false, processes);
   }
 
-  /**
-   * Centralized testing method
-   * @param processes
-   */
   private void executeTest(final boolean newThread, final AbstractFileProcessTest... processes)
       throws Exception {
     if (newThread) {
@@ -617,7 +609,7 @@ public class ProcessManagementIT {
     }
   }
 
-  private class ProcessExecutionContextTest extends ProcessExecutionContext {
+  private static class ProcessExecutionContextTest extends ProcessExecutionContext {
     public ProcessExecutionContextTest() {
       super(new UserDetail(), "component1");
       getUser().setId("10");

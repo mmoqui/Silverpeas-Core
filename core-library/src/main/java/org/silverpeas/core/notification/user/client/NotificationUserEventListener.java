@@ -23,6 +23,8 @@
  */
 package org.silverpeas.core.notification.user.client;
 
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.silverpeas.core.admin.user.model.UserDetail;
 import org.silverpeas.core.admin.user.notification.UserEvent;
 import org.silverpeas.core.annotation.Bean;
@@ -35,9 +37,6 @@ import org.silverpeas.core.notification.user.client.model.NotificationSchema;
 import org.silverpeas.kernel.SilverpeasRuntimeException;
 import org.silverpeas.kernel.util.StringUtil;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -46,7 +45,6 @@ import java.util.Optional;
  * @author mmoquillon
  */
 @Bean
-@Singleton
 public class NotificationUserEventListener extends CDIResourceEventListener<UserEvent> {
 
   @Inject

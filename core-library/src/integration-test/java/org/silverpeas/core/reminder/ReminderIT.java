@@ -23,6 +23,9 @@
  */
 package org.silverpeas.core.reminder;
 
+import jakarta.annotation.Priority;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,6 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.admin.component.WAComponentRegistry;
 import org.silverpeas.core.admin.user.model.User;
+import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.backgroundprocess.BackgroundProcessLogger;
 import org.silverpeas.core.cache.service.CacheAccessorProvider;
 import org.silverpeas.core.calendar.notification.CalendarEventUserNotificationReminder;
@@ -47,12 +51,9 @@ import org.silverpeas.core.scheduler.SchedulerInitializer;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
-import org.silverpeas.kernel.util.SystemWrapper;
 import org.silverpeas.kernel.logging.Level;
+import org.silverpeas.kernel.util.SystemWrapper;
 
-import javax.annotation.Priority;
-import javax.enterprise.inject.Alternative;
-import javax.inject.Singleton;
 import java.io.File;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -60,9 +61,9 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import static jakarta.interceptor.Interceptor.Priority.APPLICATION;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static javax.interceptor.Interceptor.Priority.APPLICATION;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -79,10 +80,10 @@ public class ReminderIT {
   private static final ReminderProcessName PROCESS_NAME = () -> "TestReminderProcess";
 
   private static final ContributionIdentifier CONTRIBUTION_FOR_NOW =
-      ContributionIdentifier.from("kmelia42", "42", EventContrib.class.getSimpleName());
+      ContributionIdentifier.from("contrib42", "42", EventContrib.class.getSimpleName());
 
   private static final ContributionIdentifier CONTRIBUTION_FOR_LATER =
-      ContributionIdentifier.from("kmelia42", "43", EventContrib.class.getSimpleName());
+      ContributionIdentifier.from("contrib42", "43", EventContrib.class.getSimpleName());
 
   private static final String SYSTEM_USER_ID = "-1";
   private static final String USER_ID = "2";
@@ -98,6 +99,9 @@ public class ReminderIT {
           "/org/silverpeas/core/admin/create_space_components_database.sql",
           "/org/silverpeas/core/reminder/create_table.sql")
           .loadInitialDataSetFrom("/org/silverpeas/core/reminder/reminder-dataset.sql");
+
+  @Inject
+  private SchedulerInitializer schedulerInitializer;
 
   @Deployment
   public static Archive<?> createTestArchive() {
@@ -122,14 +126,14 @@ public class ReminderIT {
   }
 
   @Before
-  public void initSchedulers() throws Exception {
+  public void initSchedulers() {
     File silverpeasHome = mavenTargetDirectoryRule.getResourceTestDirFile();
     SystemWrapper.getInstance().getenv().put("SILVERPEAS_HOME", silverpeasHome.getPath());
     WAComponentRegistry.get().init();
     CacheAccessorProvider.getThreadCacheAccessor().getCache().clear();
 
-    SchedulerInitializer.get().init();
-    KmeliaService manager = KmeliaService.get();
+    schedulerInitializer.init();
+    ContribService manager = ContribService.get();
     User aUser = User.getById(USER_ID);
     manager.clearAll();
     manager.addContribution(new EventContrib(CONTRIBUTION_FOR_NOW).authoredBy(aUser));
@@ -140,7 +144,7 @@ public class ReminderIT {
 
   @After
   public void releaseScheduler() {
-    SchedulerInitializer.get().release();
+    schedulerInitializer.release();
   }
 
   @Test
@@ -282,7 +286,7 @@ public class ReminderIT {
     assertThat(reminder, notNullValue());
     assertThat(reminder, instanceOf(DateTimeReminder.class));
 
-    EventContrib forLater = (EventContrib) KmeliaService.get()
+    EventContrib forLater = (EventContrib) ContribService.get()
         .getContributionById(CONTRIBUTION_FOR_LATER).orElseThrow(IllegalArgumentException::new);
 
     DateTimeReminder actualReminder = (DateTimeReminder) reminder;
@@ -344,7 +348,7 @@ public class ReminderIT {
   @Test
   public void rescheduleAScheduledReminderShouldApplyTheChange() {
     final String reminderText = "Remind me!";
-    final OffsetDateTime triggerDate = OffsetDateTime.now().plusSeconds(30);
+    final OffsetDateTime triggerDate = OffsetDateTime.now().plusSeconds(5);
     DateTimeReminder reminder = getAReminderScheduledInOneDay();
     assertThat(reminder.isScheduled(), is(true));
     reminder.withText(reminderText).triggerAt(triggerDate).schedule();
@@ -372,7 +376,7 @@ public class ReminderIT {
   @Test
   public void rescheduleAScheduledSystemReminderShouldRemoveItAfterTriggered() {
     final String reminderText = "Remind me!";
-    final OffsetDateTime triggerDate = OffsetDateTime.now().plusSeconds(30);
+    final OffsetDateTime triggerDate = OffsetDateTime.now().plusSeconds(15);
     DateTimeReminder reminder = getASystemReminderScheduledInOneDay();
     assertThat(reminder.isScheduled(), is(true));
     reminder.withText(reminderText).triggerAt(triggerDate).schedule();
@@ -385,7 +389,7 @@ public class ReminderIT {
     assertThat(beforeTriggered.getText(), is(reminderText));
     assertThat(beforeTriggered.getDateTime(), is(triggerDate.withOffsetSameInstant(ZoneOffset.UTC)));
 
-    await().pollInterval(5, SECONDS).timeout(5, MINUTES).until(isDeleted(reminder));
+    await().pollInterval(5, SECONDS).timeout(1, MINUTES).until(isDeleted(reminder));
 
     waitForSchedulerStateUpdate();
     assertThat(beforeTriggered.isScheduled(), is(false));
@@ -396,12 +400,12 @@ public class ReminderIT {
     final String reminderText = "Remind me!";
     Reminder reminder =
         new DateTimeReminder(CONTRIBUTION_FOR_NOW, User.getById(USER_ID), PROCESS_NAME).withText(reminderText)
-            .triggerAt(OffsetDateTime.now().plusSeconds(30))
+            .triggerAt(OffsetDateTime.now().plusSeconds(15))
             .schedule();
     assertThat(reminder.isSchedulable(), is(true));
     assertThat(reminder.isTriggered(), is(false));
 
-    await().pollInterval(5, SECONDS).timeout(5, MINUTES).until(isTriggered(reminder));
+    await().pollInterval(5, SECONDS).timeout(1, MINUTES).until(isTriggered(reminder));
 
     reminder = Reminder.getById(reminder.getId());
     await().pollInterval(1, SECONDS).timeout(5, SECONDS).until(isNotScheduled(reminder));
@@ -419,7 +423,7 @@ public class ReminderIT {
     assertThat(reminder.isSchedulable(), is(true));
     assertThat(reminder.isTriggered(), is(false));
 
-    await().pollInterval(5, SECONDS).timeout(5, MINUTES).until(isTriggered(reminder));
+    await().pollInterval(5, SECONDS).timeout(1, MINUTES).until(isTriggered(reminder));
 
     reminder = Reminder.getById(reminder.getId());
     assertThat(reminder.isScheduled(), is(false));
@@ -436,7 +440,7 @@ public class ReminderIT {
     assertThat(reminder.isSchedulable(), is(true));
     assertThat(reminder.isTriggered(), is(false));
 
-    await().pollInterval(5, SECONDS).timeout(5, MINUTES).until(isTriggered(reminder));
+    await().pollInterval(5, SECONDS).timeout(1, MINUTES).until(isTriggered(reminder));
     assertThat(reminder.isSchedulable(), is(true));
     assertThat(reminder.isScheduled(), is(true));
     final DurationReminder afterFirstTrigger = (DurationReminder) Reminder.getById(reminder.getId());
@@ -444,7 +448,7 @@ public class ReminderIT {
     assertThat(afterFirstTrigger.isScheduled(), is(true));
     assertThat(afterFirstTrigger.isTriggered(), is(true));
 
-    await().pollInterval(5, SECONDS).timeout(5, MINUTES).until(isTriggered(reminder));
+    await().pollInterval(5, SECONDS).timeout(1, MINUTES).until(isTriggered(reminder));
     assertThat(reminder.isSchedulable(), is(true));
     assertThat(reminder.isScheduled(), is(true));
 
@@ -509,7 +513,7 @@ public class ReminderIT {
   /**
    * @author Yohann Chastagnier
    */
-  @Singleton
+  @Service
   @Alternative
   @Priority(APPLICATION + 10)
   public static class StubbedPersonalizationService extends DefaultPersonalizationService {

@@ -29,7 +29,7 @@ import org.silverpeas.core.socialnetwork.model.SocialInformation;
 import org.silverpeas.core.socialnetwork.model.SocialInformationType;
 import org.silverpeas.kernel.util.Pair;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -45,10 +45,10 @@ import java.util.stream.Stream;
 @Provider
 public class DefaultSocialInformationProviderSwitcher implements SocialInformationProviderSwitcher {
 
-  private Map<SocialInformationType, Pair<SocialInfoListSupplier, SocialInfoListSupplier>>
-      providers = new EnumMap(SocialInformationType.class);
+  private final Map<SocialInformationType, Pair<SocialInfoListSupplier, SocialInfoListSupplier>>
+      providers = new EnumMap<>(SocialInformationType.class);
 
-  private List<SocialInformationType> exclusion =
+  private final List<SocialInformationType> exclusion =
       Arrays.asList(SocialInformationType.ALL, SocialInformationType.EVENT,
           SocialInformationType.COMMENT, SocialInformationType.COMMENTPUBLICATION,
           SocialInformationType.COMMENTNEWS, SocialInformationType.COMMENTMEDIA);

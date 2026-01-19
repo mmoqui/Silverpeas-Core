@@ -38,7 +38,7 @@ import org.silverpeas.core.persistence.Transaction;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +68,8 @@ public class RatingRepositoryIT {
 
   @Inject
   private RatingRepository repository;
+  @Inject
+  private RatingFinder finder;
 
   @Deployment
   public static Archive<?> createTestArchive() {
@@ -93,7 +95,7 @@ public class RatingRepositoryIT {
       return null;
     });
 
-    List<Rating> ratings = RatingFinder.getSomeByQuery(
+    List<Rating> ratings = finder.getSomeByQuery(
         "select r from Rating r where r.contributionId = '365' and r.instanceId = 'kmelia12' and " +
             "r.contributionType = 'Publication'");
     assertThat(ratings.isEmpty(), is(true));
@@ -107,7 +109,7 @@ public class RatingRepositoryIT {
       return null;
     });
 
-    long count = RatingFinder.count();
+    long count = finder.count();
     assertThat(count, is(4L));
   }
 
@@ -118,7 +120,7 @@ public class RatingRepositoryIT {
       return null;
     });
 
-    List<Rating> ratings = RatingFinder.getSomeByQuery("select r from Rating r where " +
+    List<Rating> ratings = finder.getSomeByQuery("select r from Rating r where " +
         "r.instanceId = 'kmelia12'");
     assertThat(ratings.isEmpty(), is(true));
   }
@@ -130,7 +132,7 @@ public class RatingRepositoryIT {
       return null;
     });
 
-    long count = RatingFinder.count();
+    long count = finder.count();
     assertThat(count, is(4L));
   }
 
@@ -203,7 +205,7 @@ public class RatingRepositoryIT {
     });
 
     List<Rating> ratings =
-        RatingFinder.getSomeByQuery("select r from Rating r where r.instanceId = 'kmelia100'");
+        finder.getSomeByQuery("select r from Rating r where r.instanceId = 'kmelia100'");
     assertThat(ratings.size(), is(2));
     assertThat(ratings.get(0).getId(), is("0"));
     assertThat(ratings.get(0).getAuthorId(), is("42"));
@@ -229,7 +231,7 @@ public class RatingRepositoryIT {
     });
 
     List<Rating> ratings =
-        RatingFinder.getSomeByQuery("select r from Rating r where r.instanceId = 'Todo100'");
+        finder.getSomeByQuery("select r from Rating r where r.instanceId = 'Todo100'");
     assertThat(ratings.size(), is(0));
   }
 

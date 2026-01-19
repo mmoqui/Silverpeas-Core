@@ -38,7 +38,7 @@ import org.silverpeas.core.notification.system.TestResourceEventBucket;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.time.Instant;
 import java.util.Date;
 

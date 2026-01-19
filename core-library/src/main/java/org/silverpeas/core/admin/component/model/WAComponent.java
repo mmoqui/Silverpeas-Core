@@ -25,11 +25,11 @@ package org.silverpeas.core.admin.component.model;
 
 import org.silverpeas.core.admin.component.WAComponentRegistry;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.*;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.silverpeas.core.i18n.I18n;
 
-import static org.silverpeas.core.i18n.I18NHelper.checkLanguage;
+import java.util.*;
 
 /**
  * <p>
@@ -83,6 +83,7 @@ public class WAComponent extends AbstractSilverpeasComponent {
   @XmlElementWrapper(name = "parameters")
   @XmlElement(name = "parameter")
   protected List<Parameter> parameters;
+  private transient final I18n i18n = I18n.get();
 
   /**
    * Gets the WAComponent object with the specified name.
@@ -162,7 +163,7 @@ public class WAComponent extends AbstractSilverpeasComponent {
    * @param label a localized label.
    */
   public void putLabel(final String language, final String label) {
-    getLabel().put(checkLanguage(language), label);
+    getLabel().put(i18n.checkLanguage(language), label);
   }
 
   /**
@@ -183,7 +184,7 @@ public class WAComponent extends AbstractSilverpeasComponent {
    * @param description a localized description.
    */
   public void putDescription(final String language, final String description) {
-    getDescription().put(checkLanguage(language), description);
+    getDescription().put(i18n.checkLanguage(language), description);
   }
 
   /**
@@ -203,7 +204,7 @@ public class WAComponent extends AbstractSilverpeasComponent {
    * @param suite a localized suite.
    */
   public void putSuite(final String language, final String suite) {
-    getSuite().put(checkLanguage(language), suite);
+    getSuite().put(i18n.checkLanguage(language), suite);
   }
 
   /**

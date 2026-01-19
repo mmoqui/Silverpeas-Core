@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.kernel.SilverpeasRuntimeException;
 
-import javax.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.util.AnnotationLiteral;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -48,6 +48,7 @@ public class ServiceProviderIT {
   @Deployment
   public static Archive<?> createTestArchive() {
     return WarBuilder4LibCore.onWarForTestClass(ServiceProviderIT.class)
+        .addAdministrationFeatures()
         .addPackages(true, "org.silverpeas.core.cache")
         .addClasses(TestQualifier.class)
         .addClasses(org.silverpeas.core.util.Test.class)

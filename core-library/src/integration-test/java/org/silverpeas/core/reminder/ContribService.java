@@ -23,15 +23,15 @@
  */
 package org.silverpeas.core.reminder;
 
+import jakarta.inject.Named;
 import org.silverpeas.core.ApplicationService;
+import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.contribution.model.Contribution;
 import org.silverpeas.core.contribution.model.ContributionIdentifier;
-import org.silverpeas.kernel.bundle.LocalizationBundle;
 import org.silverpeas.core.util.ServiceProvider;
+import org.silverpeas.kernel.bundle.LocalizationBundle;
 import org.silverpeas.kernel.bundle.SettingBundle;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -40,14 +40,14 @@ import java.util.Optional;
  * A manager of contributions managed by a custom application dedicated to the tests.
  * @author mmoquillon
  */
-@Singleton
-@Named("kmeliaService")
-public class KmeliaService implements ApplicationService {
+@Service
+@Named("contribService")
+public class ContribService implements ApplicationService {
 
   private final Map<ContributionIdentifier, Contribution> contributions = new HashMap<>();
 
-  public static KmeliaService get() {
-    return ServiceProvider.getService(KmeliaService.class);
+  public static ContribService get() {
+    return ServiceProvider.getService(ContribService.class);
   }
 
   public void clearAll() {

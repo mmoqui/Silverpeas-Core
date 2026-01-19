@@ -38,7 +38,7 @@ import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -289,7 +289,7 @@ public class PersistentSchedulerIT {
   }
 
   @Test
-  public void aNonScheduledJobShouldBeNotFound() throws Exception {
+  public void aNonScheduledJobShouldBeNotFound() {
     assertThat(scheduler.isJobScheduled(JOB_NAME), is(false));
   }
 

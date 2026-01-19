@@ -32,7 +32,7 @@ import org.silverpeas.kernel.util.StringUtil;
 import org.silverpeas.core.util.file.FileRepositoryManager;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -193,7 +193,7 @@ public class UploadSession {
    * upload
    * session.<br>
    * If the folder does not yet exist, then it is created.
-   * @return a list of {@link File} from the root folder provided by {@link #getRootFolder()}.
+   * @return an array of {@link File} from the root folder provided by {@link #getRootFolder()}.
    */
   public File[] getRootFolderFiles() {
     File[] files = getRootFolder().listFiles();

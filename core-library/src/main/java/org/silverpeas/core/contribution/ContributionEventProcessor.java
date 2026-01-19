@@ -30,7 +30,7 @@ import org.silverpeas.core.notification.system.AbstractResourceEvent;
 import org.silverpeas.core.notification.system.CDIResourceEventListener;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 
 /**
  * Processor listening for events on a contribution to perform additional tasks relative to the

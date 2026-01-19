@@ -25,6 +25,7 @@ package org.silverpeas.core.util;
 
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.operation.Operation;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -36,8 +37,8 @@ import org.silverpeas.core.persistence.jdbc.DBUtil;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -64,18 +65,18 @@ import static org.silverpeas.core.test.util.TestRuntime.awaitUntil;
 public class DBUtilIT {
 
   public static final Operation TABLES_CREATION = Operations.sql(
-      "create table if not exists User (id int not null primary key, firstName varchar(20) not null, lastName varchar(20) not null)",
-      "create table if not exists Toto (id int not null primary key)",
+      "create table if not exists Users (id int primary key, firstName varchar(20) not null, lastName varchar(20) not null)",
+      "create table if not exists Toto (id int primary key)",
       "create table if not exists UniqueId (maxId int not null, tableName varchar(100) not null)");
-  public static final Operation CLEAN_UP = Operations.deleteAllFrom("User", "UniqueId");
-  public static final Operation USER_SET_UP = Operations.insertInto("User")
+  public static final Operation CLEAN_UP = Operations.deleteAllFrom("Users", "UniqueId");
+  public static final Operation USER_SET_UP = Operations.insertInto("Users")
       .columns("id", "firstName", "lastName")
       .values(0, "Edouard", "Lafortin")
       .values(1, "Rohan", "Lapointe")
       .build();
   public static final Operation UNIQUE_ID_SET_UP = Operations.insertInto("UniqueId")
       .columns("maxId", "tableName")
-      .values(1, "user") // don't forget the table name is set in lower case by DBUtil
+      .values(1, "users") // don't forget the table name is set in lower case by DBUtil
       .build();
 
   @Resource
@@ -88,6 +89,7 @@ public class DBUtilIT {
   @Deployment
   public static Archive<?> createTestArchive() {
     return WarBuilder4LibCore.onWarForTestClass(DBUtilIT.class)
+        .addAdministrationFeatures()
         .addBenchmarkTestFeatures()
         .testFocusedOn(warBuilder -> warBuilder.addClasses(DBUtil.class))
         .build();
@@ -95,18 +97,18 @@ public class DBUtilIT {
 
   @Test
   public void nextUniqueIdUpdateForAnExistingTableShouldWork() throws SQLException {
-    assertThat(actualMaxIdInUniqueIdFor("User"), is(1));
-    int nextId = DBUtil.getNextId("User", "id");
+    assertThat(actualMaxIdInUniqueIdFor("Users"), is(1));
+    int nextId = DBUtil.getNextId("Users", "id");
     assertThat(nextId, is(2));
-    assertThat(actualMaxIdInUniqueIdFor("User"), is(nextId));
+    assertThat(actualMaxIdInUniqueIdFor("Users"), is(nextId));
   }
 
   @Test
   public void demonstrateThatUniqueIdIsConsumedEvenIfRollbackIsPerformed() throws SQLException {
-    final String select = "SELECT firstName FROM User WHERE id = 1";
-    final String update = "UPDATE User SET firstName = 'updated first name' WHERE id = 1";
+    final String select = "SELECT firstName FROM Users WHERE id = 1";
+    final String update = "UPDATE Users SET firstName = 'updated first name' WHERE id = 1";
 
-    assertThat(actualMaxIdInUniqueIdFor("User"), is(1));
+    assertThat(actualMaxIdInUniqueIdFor("Users"), is(1));
     boolean rollbackIsEffective = false;
     try {
       Transaction.performInOne(() -> {
@@ -130,7 +132,7 @@ public class DBUtilIT {
           assertThat(resultSet.getString(1), is("updated first name"));
         }
 
-        if (DBUtil.getNextId("User", "id") != -1) {
+        if (DBUtil.getNextId("Users", "id") != -1) {
           throw new SQLException("Simulating a rollback !");
         }
         return null;
@@ -139,7 +141,7 @@ public class DBUtilIT {
       rollbackIsEffective = true;
     }
     assertThat("Rollback must be effective !", rollbackIsEffective, is(true));
-    assertThat("Next identifier value must be computed", actualMaxIdInUniqueIdFor("User"), is(2));
+    assertThat("Next identifier value must be computed", actualMaxIdInUniqueIdFor("Users"), is(2));
 
     try (Connection connection = dbSetupRule.getSafeConnectionFromDifferentThread();
          PreparedStatement statement = connection.prepareStatement(select);
@@ -153,13 +155,13 @@ public class DBUtilIT {
   @Test
   public void nextUniqueIdUpdateForAnExistingTableShouldWorkInRequiredTransaction()
       throws Exception {
-    assertThat(actualMaxIdInUniqueIdFor("User"), is(1));
+    assertThat(actualMaxIdInUniqueIdFor("Users"), is(1));
     final Thread nextIdThread = managedThreadFactory.newThread(() -> {
       try {
         Transaction.performInOne(() -> {
-          int nextId = 0;
-          nextId = DBUtil.getNextId("User", "id");
-          assertThat(actualMaxIdInUniqueIdFor("User"), is(nextId));
+          int nextId;
+          nextId = DBUtil.getNextId("Users", "id");
+          assertThat(actualMaxIdInUniqueIdFor("Users"), is(nextId));
           assertThat(nextId, is(2));
           return null;
         });
@@ -169,10 +171,10 @@ public class DBUtilIT {
     });
 
     try {
-      assertThat(actualMaxIdInUniqueIdFor("User"), is(1));
+      assertThat(actualMaxIdInUniqueIdFor("Users"), is(1));
       nextIdThread.start();
       nextIdThread.join();
-      assertThat(actualMaxIdInUniqueIdFor("User"), is(2));
+      assertThat(actualMaxIdInUniqueIdFor("Users"), is(2));
     } finally {
       nextIdThread.interrupt();
     }
@@ -181,7 +183,7 @@ public class DBUtilIT {
   @Test
   public void nextUniqueIdUpdateForAnExistingTableShouldWorkAndConcurrency()
       throws SQLException, InterruptedException {
-    int nextIdBeforeTesting = actualMaxIdInUniqueIdFor("User");
+    int nextIdBeforeTesting = actualMaxIdInUniqueIdFor("Users");
     assertThat(nextIdBeforeTesting, is(1));
     int nbThreads = 2 + (int) (Math.random() * 10);
     Logger.getAnonymousLogger()
@@ -189,7 +191,7 @@ public class DBUtilIT {
     final Thread[] threads = new Thread[nbThreads];
     for (int i = 0; i < nbThreads; i++) {
       threads[i] = managedThreadFactory.newThread(() -> {
-          int nextId = DBUtil.getNextId("User", "id");
+          int nextId = DBUtil.getNextId("Users", "id");
         Logger.getAnonymousLogger()
             .info("Next id is " + nextId + " at " + System.currentTimeMillis());
         awaitUntil(100, MILLISECONDS);
@@ -206,7 +208,7 @@ public class DBUtilIT {
       int expectedNextId = nextIdBeforeTesting + nbThreads;
       Logger.getAnonymousLogger()
           .info("Verifying nextId is " + expectedNextId + " at " + System.currentTimeMillis());
-      assertThat(actualMaxIdInUniqueIdFor("User"), is(expectedNextId));
+      assertThat(actualMaxIdInUniqueIdFor("Users"), is(expectedNextId));
     } finally {
       for (Thread thread : threads) {
         if (thread.isAlive()) {
@@ -265,21 +267,7 @@ public class DBUtilIT {
     try {
       final int nbProcesses = 150;
       final int nbSetOfThreadsPerProcess = 15;
-      final List<Object> count = new ArrayList<>();
-      final List<Callable<org.apache.commons.lang3.tuple.Pair<String, Integer>>> listsOfGetNextId =
-          new ArrayList<>(nbProcesses);
-      for (int i = 0; i < nbProcesses; i++) {
-        listsOfGetNextId.add(() -> {
-          String tableName;
-          synchronized (count) {
-            count.add("");
-            tableName = "User_" + count.size() + "_table";
-          }
-          return org.apache.commons.lang3.tuple.Pair.of(tableName,
-              nextUniqueIdUpdateForAnExistingTableShouldWorkAndConcurrency(tableName,
-                  nbSetOfThreadsPerProcess));
-        });
-      }
+      final List<Callable<Pair<String, Integer>>> listsOfGetNextId = getNextIds(nbProcesses, nbSetOfThreadsPerProcess);
       ExecutorService executorService = Executors.newFixedThreadPool(10);
       List<org.apache.commons.lang3.tuple.Pair<String, Integer>> tableNextIdsInError =
           new ArrayList<>();
@@ -309,6 +297,25 @@ public class DBUtilIT {
       Logger.getAnonymousLogger()
           .info("Test duration of " + (System.currentTimeMillis() - startTime) + " ms");
     }
+  }
+
+  private List<Callable<Pair<String, Integer>>> getNextIds(int nbProcesses, int nbSetOfThreadsPerProcess) {
+    final List<Object> count = new ArrayList<>();
+    final List<Callable<Pair<String, Integer>>> listsOfGetNextId =
+        new ArrayList<>(nbProcesses);
+    for (int i = 0; i < nbProcesses; i++) {
+      listsOfGetNextId.add(() -> {
+        String tableName;
+        synchronized (count) {
+          count.add("");
+          tableName = "Users_" + count.size() + "_table";
+        }
+        return Pair.of(tableName,
+            nextUniqueIdUpdateForAnExistingTableShouldWorkAndConcurrency(tableName,
+                nbSetOfThreadsPerProcess));
+      });
+    }
+    return listsOfGetNextId;
   }
 
   private int nextUniqueIdUpdateForAnExistingTableShouldWorkAndConcurrency(final String tableName,

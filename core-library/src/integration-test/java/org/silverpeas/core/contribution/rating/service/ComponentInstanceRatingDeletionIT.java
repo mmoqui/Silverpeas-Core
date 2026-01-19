@@ -38,7 +38,7 @@ import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -123,7 +123,7 @@ public class ComponentInstanceRatingDeletionIT {
   /**
    * Returns the list of ratings (SB_Notation_Notation table).
    * @return list of strings which the schema is: [id]-[instanceid]-[externalId]-[externalType]
-   * @throws Exception
+   * @throws Exception if an error occurs
    */
   private List<String> getRatings() throws Exception {
     return JdbcSqlQuery

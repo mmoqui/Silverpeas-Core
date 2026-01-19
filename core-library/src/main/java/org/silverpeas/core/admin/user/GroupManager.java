@@ -23,17 +23,12 @@
  */
 package org.silverpeas.core.admin.user;
 
-import org.silverpeas.kernel.SilverpeasRuntimeException;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.silverpeas.core.admin.PaginationPage;
 import org.silverpeas.core.admin.domain.DomainDriverManager;
 import org.silverpeas.core.admin.domain.synchro.SynchroDomainReport;
-import org.silverpeas.core.admin.persistence.GroupUserRoleRow;
-import org.silverpeas.core.admin.persistence.GroupUserRoleTable;
-import org.silverpeas.core.admin.persistence.OrganizationSchema;
-import org.silverpeas.core.admin.persistence.SpaceUserRoleRow;
-import org.silverpeas.core.admin.persistence.SpaceUserRoleTable;
-import org.silverpeas.core.admin.persistence.UserRoleRow;
-import org.silverpeas.core.admin.persistence.UserRoleTable;
+import org.silverpeas.core.admin.persistence.*;
 import org.silverpeas.core.admin.service.AdminException;
 import org.silverpeas.core.admin.service.GroupAlreadyExistsAdminException;
 import org.silverpeas.core.admin.user.constant.GroupState;
@@ -51,11 +46,9 @@ import org.silverpeas.core.notification.system.ResourceEvent;
 import org.silverpeas.core.persistence.jdbc.DBUtil;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.SilverpeasList;
+import org.silverpeas.kernel.SilverpeasRuntimeException;
 import org.silverpeas.kernel.util.StringUtil;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -67,7 +60,6 @@ import static org.silverpeas.core.admin.domain.model.Domain.MIXED_DOMAIN_ID;
 import static org.silverpeas.kernel.util.StringUtil.*;
 
 @Service
-@Singleton
 @Transactional(Transactional.TxType.MANDATORY)
 public class GroupManager {
 

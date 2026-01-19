@@ -45,7 +45,7 @@ import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.kernel.util.StringUtil;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -420,7 +420,7 @@ public class AssignRightIT {
   }
 
   @Test
-  public void testAssignFromNotDefinedNullSource() throws AdminException {
+  public void testAssignFromNotDefinedNullSource() {
     try {
       administrationService
           .assignRightsFromGroupToUser(COPY, null, USER_A, WITH_RIGHT_OBJECTS, AUTHOR);
@@ -433,7 +433,7 @@ public class AssignRightIT {
   }
 
   @Test
-  public void testAssignFromNotDefinedEmptySource() throws AdminException {
+  public void testAssignFromNotDefinedEmptySource() {
     try {
       administrationService
           .assignRightsFromGroupToUser(COPY, "", USER_A, WITH_RIGHT_OBJECTS, AUTHOR);
@@ -446,7 +446,7 @@ public class AssignRightIT {
   }
 
   @Test
-  public void testAssignFromNotDefinedSpacesSource() throws AdminException {
+  public void testAssignFromNotDefinedSpacesSource() {
     try {
       administrationService
           .assignRightsFromGroupToUser(COPY, "   ", USER_A, WITH_RIGHT_OBJECTS, AUTHOR);
@@ -459,7 +459,7 @@ public class AssignRightIT {
   }
 
   @Test
-  public void testAssignFromNotDefinedNullStringSource() throws AdminException {
+  public void testAssignFromNotDefinedNullStringSource() {
     try {
       administrationService
           .assignRightsFromGroupToUser(COPY, "null", USER_A, WITH_RIGHT_OBJECTS, AUTHOR);
@@ -472,7 +472,7 @@ public class AssignRightIT {
   }
 
   @Test
-  public void testAssignFromNotDefinedNullTarget() throws AdminException {
+  public void testAssignFromNotDefinedNullTarget() {
     try {
       administrationService
           .assignRightsFromGroupToUser(COPY, USER_A, null, WITH_RIGHT_OBJECTS, AUTHOR);
@@ -485,7 +485,7 @@ public class AssignRightIT {
   }
 
   @Test
-  public void testAssignFromNotDefinedEmptyTarget() throws AdminException {
+  public void testAssignFromNotDefinedEmptyTarget() {
     try {
       administrationService
           .assignRightsFromGroupToUser(COPY, USER_A, "", WITH_RIGHT_OBJECTS, AUTHOR);
@@ -498,7 +498,7 @@ public class AssignRightIT {
   }
 
   @Test
-  public void testAssignFromNotDefinedSpacesTarget() throws AdminException {
+  public void testAssignFromNotDefinedSpacesTarget() {
     try {
       administrationService
           .assignRightsFromGroupToUser(COPY, USER_A, "   ", WITH_RIGHT_OBJECTS, AUTHOR);
@@ -511,7 +511,7 @@ public class AssignRightIT {
   }
 
   @Test
-  public void testAssignFromNotDefinedNullStringTarget() throws AdminException {
+  public void testAssignFromNotDefinedNullStringTarget() {
     try {
       administrationService
           .assignRightsFromGroupToUser(COPY, USER_A, "null", WITH_RIGHT_OBJECTS, AUTHOR);

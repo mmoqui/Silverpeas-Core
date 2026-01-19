@@ -40,11 +40,11 @@ import org.silverpeas.core.persistence.datasource.model.identifier.UniqueInteger
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Set;
 
@@ -115,7 +115,7 @@ public class SPUserRepositoryIT {
   }
 
   @Test
-  public void createANewSPUser() throws Exception {
+  public void createANewSPUser() {
     SPUser expected = Transaction.performInOne(() -> {
       SPUser newUser = new SPUser();
       newUser.setFirstname("Titi");
@@ -187,7 +187,7 @@ public class SPUserRepositoryIT {
   }
 
   @Test
-  public void getExistingSPUsersByFirstName() throws Exception {
+  public void getExistingSPUsersByFirstName() {
     List<SPUser> users = userManager.findByFirstname("Toto");
     assertThat(users.isEmpty(), is(false));
 
@@ -203,7 +203,7 @@ public class SPUserRepositoryIT {
   }
 
   @Test
-  public void getExistingSPUsersByLastName() throws Exception {
+  public void getExistingSPUsersByLastName() {
     List<SPUser> users = userManager.findByLastname("Chez-les-Papoos");
     assertThat(users.isEmpty(), is(false));
 
@@ -219,7 +219,7 @@ public class SPUserRepositoryIT {
   }
 
   @Test
-  public void getExistingSPUsersByCompany() throws Exception {
+  public void getExistingSPUsersByCompany() {
     List<SPUser> users = userManager.findByCompany("Silverpeas");
     assertThat(users.isEmpty(), is(false));
 
@@ -235,7 +235,7 @@ public class SPUserRepositoryIT {
   }
 
   @Test
-  public void getExistingSPUsersByPhoneNumber() throws Exception {
+  public void getExistingSPUsersByPhoneNumber() {
     List<SPUser> users = userManager.findByPhone("0146221498");
     assertThat(users.isEmpty(), is(false));
 
@@ -258,7 +258,7 @@ public class SPUserRepositoryIT {
   private SPUser getTartempion() {
     PasswordEncryption encryption = PasswordEncryptionProvider.getDefaultPasswordEncryption();
     StringBuilder passwordBuilder = new StringBuilder(encryption.encrypt("tartempion"));
-    for (; passwordBuilder.length() < PASSWORD_MAX_SIZE; ) {
+    while (passwordBuilder.length() < PASSWORD_MAX_SIZE) {
       passwordBuilder.append("a");
     }
     SPUser tartempion = new SPUser();

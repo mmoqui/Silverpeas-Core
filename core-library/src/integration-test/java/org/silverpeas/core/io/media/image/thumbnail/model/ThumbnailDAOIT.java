@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbUnitLoadingRule;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.sql.Connection;
 
 import static org.junit.Assert.*;
@@ -242,11 +242,11 @@ public class ThumbnailDAOIT {
 
       ThumbnailDetail result = thumbnailDAO.selectByKey(con, instanceId, objectId, objectType);
       assertNotNull(result);
-      assertEquals(detail.getCropFileName(), "");
-      assertEquals(detail.getXStart(), 0);
-      assertEquals(detail.getXLength(), 0);
-      assertEquals(detail.getYStart(), 0);
-      assertEquals(detail.getYLength(), 0);
+      assertEquals("", detail.getCropFileName());
+      assertEquals(0, detail.getXStart());
+      assertEquals(0, detail.getXLength());
+      assertEquals(0, detail.getYStart());
+      assertEquals(0, detail.getYLength());
 
       detail.setCropFileName(cropFileName);
       detail.setXStart(x_start);

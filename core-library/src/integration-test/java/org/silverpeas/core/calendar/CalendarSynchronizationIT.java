@@ -40,7 +40,7 @@ import org.silverpeas.core.test.CalendarWarBuilder;
 import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
 import org.silverpeas.core.test.integration.SQLRequester;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;

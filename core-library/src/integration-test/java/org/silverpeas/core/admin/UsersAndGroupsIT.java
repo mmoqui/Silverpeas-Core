@@ -56,12 +56,13 @@ import org.silverpeas.core.util.file.FileRepositoryManager;
 import org.silverpeas.core.util.memory.MemoryData;
 import org.silverpeas.core.util.memory.MemoryUnit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -184,6 +185,8 @@ public class UsersAndGroupsIT {
     assertThat(user.isExpiredState(), is(false));
     assertThat(user.getStateSaveDate(), lessThan(now));
 
+    awaitUntil(1, MILLISECONDS); // to ensure the save date is greater than now with an accuracy
+    // of one second
     String newEmail = "ney@silverpeas.com";
     user.setEmailAddress(newEmail);
     user.setAccessLevel(UserAccessLevel.USER);

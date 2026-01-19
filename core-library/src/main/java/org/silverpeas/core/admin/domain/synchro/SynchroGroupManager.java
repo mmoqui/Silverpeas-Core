@@ -27,7 +27,7 @@ import org.silverpeas.core.admin.service.Administration;
 import org.silverpeas.core.admin.user.model.Group;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * This manager maintains a context of synchronized groups in the final aim to perform manual or

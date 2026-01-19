@@ -24,6 +24,7 @@
 
 package org.silverpeas.core.contribution.tracking;
 
+import jakarta.servlet.*;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.cache.service.CacheAccessorProvider;
 import org.silverpeas.core.cache.service.SessionCacheAccessor;
@@ -37,19 +38,12 @@ import org.silverpeas.core.persistence.jdbc.DBUtil;
 import org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUpgradeHandler;
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpUpgradeHandler;
+import jakarta.servlet.http.Part;
 import java.io.BufferedReader;
 import java.security.Principal;
 import java.sql.Connection;
@@ -86,7 +80,7 @@ public class TestContext {
    */
   public void setUpUserRequester() {
     SessionCacheAccessor sessionCacheAccessor =
-        (SessionCacheAccessor) CacheAccessorProvider.getSessionCacheAccessor();
+        CacheAccessorProvider.getSessionCacheAccessor();
     User currentUser = User.getById("1");
     sessionCacheAccessor.newSessionCache(currentUser);
   }
@@ -102,7 +96,7 @@ public class TestContext {
         ServiceProvider.getService(ContributionModificationContextHandler.class);
     assertThat(handler, notNullValue());
     HttpRequest request = new HttpRequest();
-    request.setHeader("CONTRIBUTION_MODIFICATION_CONTEXT", "{\"isMinor\": " + isMinor + "}");
+    request.setHeader("{\"isMinor\": " + isMinor + "}");
     handler.parseForProperty(request);
   }
 
@@ -217,8 +211,8 @@ public class TestContext {
 
     private final Map<String, Object> headers = new HashMap<>();
 
-    protected void setHeader(String name, String value) {
-      this.headers.put(name, value);
+    protected void setHeader(String value) {
+      this.headers.put("CONTRIBUTION_MODIFICATION_CONTEXT", value);
     }
 
     @Override
@@ -354,11 +348,6 @@ public class TestContext {
 
     @Override
     public boolean isRequestedSessionIdFromURL() {
-      return false;
-    }
-
-    @Override
-    public boolean isRequestedSessionIdFromUrl() {
       return false;
     }
 
@@ -518,11 +507,6 @@ public class TestContext {
     }
 
     @Override
-    public String getRealPath(final String path) {
-      return null;
-    }
-
-    @Override
     public int getRemotePort() {
       return 0;
     }
@@ -575,6 +559,21 @@ public class TestContext {
 
     @Override
     public DispatcherType getDispatcherType() {
+      return null;
+    }
+
+    @Override
+    public String getRequestId() {
+      return null;
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+      return null;
+    }
+
+    @Override
+    public ServletConnection getServletConnection() {
       return null;
     }
 

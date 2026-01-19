@@ -42,7 +42,7 @@ import org.silverpeas.core.contribution.rating.service.RatingService;
 import org.silverpeas.core.contribution.template.publication.PublicationTemplate;
 import org.silverpeas.core.contribution.template.publication.PublicationTemplateException;
 import org.silverpeas.core.contribution.template.publication.PublicationTemplateManager;
-import org.silverpeas.core.i18n.I18NHelper;
+import org.silverpeas.core.i18n.I18n;
 import org.silverpeas.core.index.indexing.model.FullIndexEntry;
 import org.silverpeas.core.index.indexing.model.IndexEngineProxy;
 import org.silverpeas.core.index.indexing.model.IndexEntryKey;
@@ -72,9 +72,9 @@ import org.silverpeas.kernel.logging.SilverLogger;
 import org.silverpeas.kernel.util.Pair;
 import org.silverpeas.kernel.util.StringUtil;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -105,6 +105,8 @@ public class DefaultPublicationService implements PublicationService, ComponentI
   private PublicationEventNotifier notifier;
   @Inject
   private PublicationDAO publicationDAO;
+  @Inject
+  private I18n i18n;
 
   @Override
   @Transactional
@@ -167,7 +169,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
       id = DBUtil.getNextId(detail.getPK().getTableName(), "pubId");
       detail.getPK().setId(String.valueOf(id));
       publicationDAO.insertRow(con, detail);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         createTranslations(con, detail);
       }
       loadTranslations(detail);
@@ -413,7 +415,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
         if (pubDetail.getLanguage() != null) {
           if (oldLang == null) {
             // translation for the first time
-            publi.setLanguage(I18NHelper.DEFAULT_LANGUAGE);
+            publi.setLanguage(i18n.getDefaultLanguage());
           }
           if (oldLang != null && !oldLang.equalsIgnoreCase(pubDetail.getLanguage())) {
             addOrUpdateTranslation(con, pubDetail);
@@ -617,7 +619,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
     try (Connection con = getConnection()) {
       Collection<PublicationDetail> pubDetails =
           publicationDAO.getOrphanPublications(con, componentId);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, pubDetails);
       }
       return pubDetails;
@@ -769,7 +771,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
     try (Connection con = getConnection()) {
       Collection<PublicationDetail> publications =
           publicationDAO.selectByFatherPK(con, fatherPK, sorting, filterOnVisibilityPeriod);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, publications);
       }
       return publications;
@@ -796,7 +798,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
     try (Connection con = getConnection()) {
       Collection<PublicationDetail> publications =
           publicationDAO.selectByFatherPK(con, fatherPK, sorting, filterOnVisibilityPeriod, userId);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, publications);
       }
       return publications;
@@ -815,7 +817,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
     try (Connection con = getConnection()) {
       Collection<PublicationDetail> detailList =
           publicationDAO.selectNotInFatherPK(con, fatherPK, sorting);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, detailList);
       }
       return detailList;
@@ -838,7 +840,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
   public CompletePublication getCompletePublication(PublicationPK pubPK) {
     try (Connection con = getConnection()) {
       PublicationDetail detail = publicationDAO.loadRow(con, pubPK);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, singletonList(detail));
       }
       List<PublicationLink> links = SeeAlsoDAO.getLinks(con, pubPK);
@@ -871,7 +873,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
     try (Connection con = getConnection()) {
       final List<PublicationDetail> publications = publicationDAO.getByIds(con, publicationIds,
           indexedPks);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, publications);
       }
       return publications;
@@ -886,7 +888,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
     try (Connection con = getConnection()) {
       final SilverpeasList<PublicationDetail> publications =
           publicationDAO.selectPublicationsByCriteria(con, criteria);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, publications);
       }
       return publications;
@@ -948,7 +950,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
     try (Connection con = getConnection()) {
       Collection<PublicationDetail> detailList = publicationDAO
           .selectByFatherIds(con, fatherIds, instanceId, sorting, status, filterOnVisibilityPeriod);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, detailList);
       }
       return detailList;
@@ -1325,7 +1327,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
       Collection<PublicationDetail> detailList =
           publicationDAO.selectBetweenDate(con, beginDate, endDate, instanceId);
       List<PublicationDetail> result = new ArrayList<>(detailList);
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, result);
       }
       return result;
@@ -1340,7 +1342,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
             detail.getKeywords());
     List<PublicationI18N> translations = new ArrayList<>();
     translations.add(translation);
-    if (I18NHelper.isI18nContentActivated) {
+    if (i18n.isEnabled()) {
       try (Connection con = getConnection()) {
         translations.addAll(PublicationI18NDAO.getTranslations(con, detail.getPK()));
       } catch (SQLException e) {
@@ -1538,7 +1540,7 @@ public class DefaultPublicationService implements PublicationService, ComponentI
               .collect(SilverpeasList.collector(publications));
         }
       }
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         setTranslations(con, authorizedPublications);
       }
       return authorizedPublications;

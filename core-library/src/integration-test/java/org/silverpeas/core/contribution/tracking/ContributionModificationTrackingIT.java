@@ -50,7 +50,7 @@ import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
 import org.silverpeas.kernel.util.Mutable;
 import org.silverpeas.kernel.util.SystemWrapper;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.util.Date;
 

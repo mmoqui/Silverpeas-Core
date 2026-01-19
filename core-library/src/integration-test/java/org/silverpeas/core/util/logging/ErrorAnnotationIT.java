@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.util.logging;
 
+import jakarta.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -31,15 +32,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.silverpeas.kernel.SilverpeasException;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.LoggerReaderRule;
 import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
+import org.silverpeas.kernel.SilverpeasException;
 import org.silverpeas.kernel.logging.Level;
 import org.silverpeas.kernel.util.SystemWrapper;
 
-import javax.inject.Inject;
-import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.text.MessageFormat;
 import java.util.Date;

@@ -125,10 +125,7 @@ import org.silverpeas.core.test.stub.StubbedOrganizationController;
 import org.silverpeas.core.util.*;
 import org.silverpeas.core.util.comparator.AbstractComparator;
 import org.silverpeas.core.util.comparator.AbstractComplexComparator;
-import org.silverpeas.core.util.file.FileFolderManager;
-import org.silverpeas.core.util.file.FileRepositoryManager;
-import org.silverpeas.core.util.file.FileServerUtils;
-import org.silverpeas.core.util.file.FileUtil;
+import org.silverpeas.core.util.file.*;
 import org.silverpeas.core.util.logging.ErrorAnnotationProcessor;
 import org.silverpeas.core.util.logging.LogAnnotationProcessor;
 import org.silverpeas.core.util.logging.LogsAccessor;
@@ -162,6 +159,7 @@ public class WarBuilder4LibCore extends WarBuilder<WarBuilder4LibCore> {
     addMavenDependencies("org.apache.tika:tika-core");
     addMavenDependencies("org.apache.tika:tika-parsers-standard-package");
     addMavenDependencies("com.drewnoakes:metadata-extractor");
+    addMavenDependencies("xerces:xercesImpl");
     addClasses(ErrorAnnotationProcessor.class, LogAnnotationProcessor.class, LogsAccessor.class);
     addAsResource("maven.properties");
     addWebListener(IIOProviderContextListener.class);
@@ -291,12 +289,15 @@ public class WarBuilder4LibCore extends WarBuilder<WarBuilder4LibCore> {
    */
   private WarBuilder4LibCore addBundleBaseFeatures() {
     if (!contains(MimeTypes.class)) {
-      addMavenDependencies("commons-fileupload:commons-fileupload");
+      addMavenDependencies("org.apache.commons:commons-fileupload2-core");
       addClasses(FileUtil.class, Mail.class, MimeTypes.class, MetaData.class, Definition.class,
-          RelativeFileAccessException.class, MetadataExtractor.class, MultiSilverpeasBundle.class);
+          RelativeFileAccessException.class, MetadataExtractor.class, MultiSilverpeasBundle.class,
+          FileItem.class, FileUploadUtil.class);
+      addPackages(true, "org.silverpeas.core.i18n");
       addAsResource("org/silverpeas/general.properties");
       addAsResource("org/silverpeas/multilang/generalMultilang.properties");
       addAsResource("org/silverpeas/lookAndFeel/generalLook.properties");
+      addAsResource("org/silverpeas/personalization/settings/personalizationPeasSettings.properties");
       addAsResource("org/silverpeas/util/i18n.properties");
       addAsResource("org/silverpeas/util/multilang/i18n_fr.properties");
       addAsResource("org/silverpeas/util/multilang/i18n_en.properties");
@@ -513,7 +514,6 @@ public class WarBuilder4LibCore extends WarBuilder<WarBuilder4LibCore> {
   public WarBuilder4LibCore addPublicationTemplateFeatures() {
     addSecurityFeatures();
     addIndexEngineFeatures();
-    addApacheFileUploadFeatures();
     addPackages(true, "org.silverpeas.core.contribution.template.publication");
     addPackages(false, "org.silverpeas.core.contribution.content.form");
     addPackages(false, "org.silverpeas.core.contribution.content.form.record");
@@ -523,7 +523,7 @@ public class WarBuilder4LibCore extends WarBuilder<WarBuilder4LibCore> {
     return this;
   }
 
-  /**
+  /** 
    * Sets Security features.
    * @return the instance of the war builder.
    */
@@ -667,7 +667,6 @@ public class WarBuilder4LibCore extends WarBuilder<WarBuilder4LibCore> {
       addClasses(Pagination.class);
       addClasses(PaginationPage.class);
       addClasses(RightProfile.class);
-      addPackages(true, "org.silverpeas.core.i18n");
       addPackages(true, "org.silverpeas.core.admin.component");
       addPackages(true, "org.silverpeas.core.admin.space");
       addPackages(true, "org.silverpeas.core.admin.service");
@@ -808,15 +807,6 @@ public class WarBuilder4LibCore extends WarBuilder<WarBuilder4LibCore> {
   public WarBuilder4LibCore addImageToolFeatures() {
     addMavenDependencies("org.im4java:im4java");
     addPackages(true, "org.silverpeas.core.io.media.image");
-    return this;
-  }
-
-  /**
-   * Add apache file upload libraries in web archive (war)
-   * @return the instance of the war builder with apache file upload
-   */
-  public WarBuilder4LibCore addApacheFileUploadFeatures() {
-    addMavenDependencies("commons-fileupload:commons-fileupload");
     return this;
   }
 

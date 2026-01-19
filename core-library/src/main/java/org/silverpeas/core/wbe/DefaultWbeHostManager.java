@@ -39,9 +39,9 @@ import org.silverpeas.kernel.annotation.Technical;
 import org.silverpeas.kernel.util.Pair;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.WebApplicationException;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.WebApplicationException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;

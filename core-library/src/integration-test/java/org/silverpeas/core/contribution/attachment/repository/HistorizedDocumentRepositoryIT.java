@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.contribution.attachment.repository;
 
+import jakarta.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -40,6 +41,7 @@ import org.silverpeas.core.contribution.attachment.model.SimpleAttachment;
 import org.silverpeas.core.contribution.attachment.model.SimpleDocument;
 import org.silverpeas.core.contribution.attachment.model.SimpleDocumentPK;
 import org.silverpeas.core.contribution.attachment.model.SimpleDocumentVersion;
+import org.silverpeas.core.i18n.I18n;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.jcr.JcrIntegrationIT;
 import org.silverpeas.core.test.util.RandomGenerator;
@@ -85,7 +87,12 @@ import static org.silverpeas.core.jcr.util.SilverpeasProperty.*;
 public class HistorizedDocumentRepositoryIT extends JcrIntegrationIT {
 
   private static final String instanceId = "kmelia73";
-  private final DocumentRepository documentRepository = new DocumentRepository();
+
+  @Inject
+  private I18n i18n;
+
+  @Inject
+  private DocumentRepository documentRepository;
 
   @Deployment
   public static Archive<?> createTestArchive() {
@@ -3746,7 +3753,7 @@ public class HistorizedDocumentRepositoryIT extends JcrIntegrationIT {
       VersionHistory versionHistory =
           session.getWorkspace().getVersionManager().getVersionHistory(doc.getFullJcrPath());
       NodeIterator frozenNodeIt = versionHistory.getAllFrozenNodes();
-      DocumentConverter converter = new DocumentConverter();
+      DocumentConverter converter = new DocumentConverter(i18n);
       Version rootNode = versionHistory.getRootVersion();
       while (frozenNodeIt.hasNext()) {
         Node frozenNode = frozenNodeIt.nextNode();

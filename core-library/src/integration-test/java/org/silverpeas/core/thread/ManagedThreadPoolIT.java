@@ -36,7 +36,7 @@ import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.util.UnitUtil;
 import org.silverpeas.core.util.time.Duration;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -500,19 +500,18 @@ public class ManagedThreadPoolIT {
       threadIdCalls.add("ID_" + Thread.currentThread().getId());
     }
 
-    @SuppressWarnings("unchecked")
     public synchronized List<String> getThreadIdCalls() {
       return new ArrayList<>(threadIdCalls);
     }
   }
 
   @FunctionalInterface
-  private static interface InvokeRunnableTest {
+  private interface InvokeRunnableTest {
     void execute() throws Exception;
   }
 
   @FunctionalInterface
-  private static interface InvokeCallableTest {
+  private interface InvokeCallableTest {
     List<Future<Long>> execute() throws Exception;
   }
 }

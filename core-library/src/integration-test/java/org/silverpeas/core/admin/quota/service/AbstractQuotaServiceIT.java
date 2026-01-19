@@ -43,7 +43,7 @@ import org.silverpeas.core.admin.quota.offset.SimpleQuotaCountingOffset;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -93,8 +93,8 @@ public class AbstractQuotaServiceIT {
     return WarBuilder4LibCore.onWarForTestClass(AbstractQuotaServiceIT.class)
         .addSilverpeasExceptionBases()
         .addAdministrationFeatures()
-        .testFocusedOn(
-            (warBuilder) -> warBuilder.addPackages(true, "org.silverpeas.core.admin.quota"))
+        .testFocusedOn(warBuilder ->
+            warBuilder.addPackages(true, "org.silverpeas.core.admin.quota"))
         .build();
   }
 

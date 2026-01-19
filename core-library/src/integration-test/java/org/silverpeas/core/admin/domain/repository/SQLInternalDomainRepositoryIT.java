@@ -42,7 +42,7 @@ import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
 import org.silverpeas.core.util.file.FileRepositoryManager;
 import org.silverpeas.kernel.util.SystemWrapper;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -111,9 +111,8 @@ public class SQLInternalDomainRepositoryIT extends DataSetTest {
         .addJpaPersistenceFeatures()
         .addAdministrationFeatures()
         .addPublicationTemplateFeatures()
-        .testFocusedOn(warBuilder -> {
-          warBuilder.addPackages(true, "org.silverpeas.core.admin.domain");
-        }).build();
+        .testFocusedOn(warBuilder ->
+            warBuilder.addPackages(true, "org.silverpeas.core.admin.domain")).build();
   }
 
   @Before
@@ -123,34 +122,28 @@ public class SQLInternalDomainRepositoryIT extends DataSetTest {
   }
 
   @After
-  public void unsetSilverpeasHome() throws Exception {
+  public void unsetSilverpeasHome() {
     deleteQuietly(silverpeasHome);
   }
 
   @Test
   public void testCreateDomainStorage() throws Exception {
     Domain domain = new Domain();
-    domain.setName("TestCreation");
+    domain.setName("TestNewDomain");
 
-    try {
+    File testCreationFile =
+        getFile(FileRepositoryManager.getDomainPropertiesPath("TestNewDomain"));
+    touch(testCreationFile);
+    populateFile(testCreationFile);
 
-      File testCreationFile =
-          getFile(FileRepositoryManager.getDomainPropertiesPath("TestCreation"));
-      touch(testCreationFile);
-      populateFile(testCreationFile);
+    // Create domain storage
+    Transaction.performInOne(() -> {
+      dao.createDomainStorage(domain);
+      return null;
+    });
 
-      // Create domain storage
-      Transaction.performInOne(() -> {
-        dao.createDomainStorage(domain);
-        return null;
-      });
-
-      // Looks for domain created tables
-      testTablesExistence(domain.getName(), true);
-
-    } catch (Exception e) {
-      throw e;
-    }
+    // Looks for domain created tables
+    testTablesExistence(domain.getName(), true);
   }
 
   private void testTablesExistence(final String name, boolean mustExists) throws SQLException {

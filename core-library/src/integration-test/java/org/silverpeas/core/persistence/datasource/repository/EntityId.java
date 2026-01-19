@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000 - 2024 Silverpeas
+ * Copyright (C) 2000 - 2025 Silverpeas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -11,7 +11,7 @@
  * Open Source Software ("FLOSS") applications as described in Silverpeas's
  * FLOSS exception.  You should have received a copy of the text describing
  * the FLOSS exception, and it is also available here:
- * "https://www.silverpeas.org/legal/floss_exception.html"
+ * "http://www.silverpeas.com/legal/licensing"
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,26 +19,31 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.silverpeas.core.socialnetwork.service;
 
-import org.silverpeas.kernel.SilverpeasException;
+package org.silverpeas.core.persistence.datasource.repository;
 
-public class SocialNetworkAuthorizationException extends SilverpeasException {
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 
-  private static final long serialVersionUID = -7964169729516682237L;
+@MappedSuperclass
+public abstract class EntityId<T> {
 
+  @Column(name = "id", nullable = false, updatable = false)
+  private T id;
 
-  public SocialNetworkAuthorizationException(final String message, final String... parameters) {
-    super(message, parameters);
+  public T getId() {
+    return id;
   }
 
-  public SocialNetworkAuthorizationException(final String message, final Throwable cause) {
-    super(message, cause);
+  protected EntityId<T> setId(T id) {
+    this.id = id;
+    return this;
   }
 
-  public SocialNetworkAuthorizationException(final Throwable cause) {
-    super(cause);
+  public boolean isNull() {
+    return id == null;
   }
 }
+  

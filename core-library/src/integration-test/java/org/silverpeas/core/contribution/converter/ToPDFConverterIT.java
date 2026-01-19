@@ -29,7 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 
 import static org.silverpeas.core.contribution.converter.DocumentFormat.*;
@@ -63,7 +63,7 @@ public class ToPDFConverterIT extends AbstractConverterIntegrationTest {
   }
 
   @Test
-  public void convertAnODTDocumentToPDF() throws Exception {
+  public void convertAnODTDocumentToPDF() {
     final File convertedDocument = converter.convert(document, inFormat(pdf));
     assertThat(convertedDocument.exists(), is(true));
   }
@@ -103,13 +103,13 @@ public class ToPDFConverterIT extends AbstractConverterIntegrationTest {
   }
 
   @Test(expected = DocumentFormatException.class)
-  public void convertAnODTDocumentToDoc() throws Exception {
+  public void convertAnODTDocumentToDoc() {
     final File convertedDocument = converter.convert(document, inFormat(doc));
     assertThat(convertedDocument.exists(), is(true));
   }
 
   @Test(expected = DocumentFormatException.class)
-  public void convertAnODTDocumentToRTF() throws Exception {
+  public void convertAnODTDocumentToRTF() {
     final File convertedDocument = converter.convert(document, inFormat(rtf));
     assertThat(convertedDocument.exists(), is(true));
   }

@@ -45,7 +45,7 @@ import org.silverpeas.core.util.exec.ExternalExecutionException;
 import org.silverpeas.core.util.time.Duration;
 import org.silverpeas.core.util.time.DurationConversionBoardKey;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -62,8 +62,6 @@ public class FFmpegThumbnailExtractorIT {
 
   @Inject
   private FFmpegToolManager ffmpegToolManager;
-
-  private String BASE_PATH;
 
   private File mp4File;
   private File flvFile;
@@ -97,7 +95,7 @@ public class FFmpegThumbnailExtractorIT {
 
   @Before
   public void setUp() throws Exception {
-    BASE_PATH = getIntegrationTestResourcePath();
+    String BASE_PATH = getIntegrationTestResourcePath();
     mp4File = getDocumentNamed(BASE_PATH + "/video.mp4");
     flvFile = getDocumentNamed(BASE_PATH + "/video.flv");
     movFile = getDocumentNamed(BASE_PATH + "/video.mov");

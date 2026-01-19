@@ -56,7 +56,7 @@ import org.silverpeas.core.util.WebEncodeHelper;
 import org.silverpeas.core.util.comparator.AbstractComplexComparator;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.*;
 
 import static org.silverpeas.core.notification.user.client.NotificationTemplateKey.NOTIFICATION_BASE_SERVER_URL;

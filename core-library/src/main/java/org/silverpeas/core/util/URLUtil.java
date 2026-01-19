@@ -36,11 +36,12 @@ import org.silverpeas.core.contribution.model.SilverpeasToolContent;
 import org.silverpeas.core.html.PermalinkRegistry;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.Temporal;
@@ -106,9 +107,9 @@ public class URLUtil {
   private static final Pattern MINIFY_FILTER = Pattern.compile(".*(/util/yui/|/ckeditor).*");
   private static final int DEFAULT_HTTP_PORT = 80;
   private static final int DEFAULT_HTTPS_PORT = 443;
-  static SettingBundle settings = null;
-  static String httpMode = null;
-  static boolean universalLinksUsed = false;
+  static SettingBundle settings;
+  static String httpMode;
+  static boolean universalLinksUsed;
   private static String silverpeasVersion = null; // ie 5.14.1-SNAPSHOT
   private static CacheBustingManager cacheBustingManager = null;
 
@@ -306,9 +307,6 @@ public class URLUtil {
     return httpMode;
   }
 
-  /**
-   * @return
-   */
   public static boolean displayUniversalLinks() {
     return universalLinksUsed;
   }
@@ -325,7 +323,7 @@ public class URLUtil {
       url = getApplicationURL();
     }
     Permalink permalink = Permalink.fromType(type);
-    if (permalink != null && permalink == Permalink.FORUM_MESSAGE) {
+    if (permalink == Permalink.FORUM_MESSAGE) {
       url += permalink.getURLPrefix() + id + "?ForumId=" + forumId;
     }
     return url;
@@ -392,11 +390,7 @@ public class URLUtil {
    */
   public static String encodeURL(String url) {
     String encodedUrl = url;
-    try {
-      encodedUrl = URLEncoder.encode(url, "UTF-8");
-    } catch (UnsupportedEncodingException ex) {
-      SilverLogger.getLogger(URLUtil.class).warn(ex.getMessage());
-    }
+    encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8);
     return encodedUrl;
   }
 
@@ -467,10 +461,10 @@ public class URLUtil {
     FORUM_MESSAGE(URL_MESSAGE, "/ForumsMessage/"),
     MEDIA(URL_MEDIA, "/Media/"),
     NEWSLETTER(URL_NEWSLETTER, "/Newsletter/");
-    private int type;
-    private String urlPrefix;
+    private final int type;
+    private final String urlPrefix;
 
-    private Permalink(int type, String urlPrefix) {
+    Permalink(int type, String urlPrefix) {
       this.type = type;
       this.urlPrefix = urlPrefix;
     }

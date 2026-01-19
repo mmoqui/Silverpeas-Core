@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery;
 import org.silverpeas.core.test.WarBuilder4LibCore;
-import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.test.integration.SQLRequester;
+import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.util.ServiceProvider;
 
 import java.util.List;
@@ -41,14 +41,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
 /**
- * Tests the isolation of the transaction when the service is a singleton (so each time an
- * instance of the service is requested, each time is provided the same instance).
- * Please compare tests with those of
- * {@link TransactionIsolationWithMultiServiceInstancesIntegrationTest}.
+ * Tests the isolation of any transactions when the Silverpeas service is a singleton. This test
+ * checks, among others things, the checked exceptions don't rollback the transaction.
+ * <p>
+ * Singletons are defined by the pseudo lifecycle scope @{@link jakarta.inject.Singleton} and any
+ * beans of singletons aren't proxified by CDI. For any others lifecycle scopes defined by Jakarta
+ * EE, the beans are proxified. This difference has a consequence on transactions: for singleton's
+ * beans, only the unchecked exceptions can rollback the current transaction whereas for any other
+ * scoped beans, because they are proxified, both the checked and unchecked exceptions can rollback
+ * the current transaction.
+ * </p>
+ * <p>
+ * This is why the services in Silverpeas shouldn't be a singleton.
+ * </p>
+ *
  * @author silveryocha.
  */
 @RunWith(Arquillian.class)
-public class TransactionIsolationWithOneServiceInstanceIT
+public class TransactionIsolationWithOneSingletonServiceInstanceIT
     extends AbstractTransactionIntegrationTest {
 
   @Rule
@@ -59,7 +69,7 @@ public class TransactionIsolationWithOneServiceInstanceIT
   @Deployment
   public static Archive<?> createTestArchive() {
     return configureTestArchive(WarBuilder4LibCore
-        .onWarForTestClass(TransactionIsolationWithOneServiceInstanceIT.class))
+        .onWarForTestClass(TransactionIsolationWithOneSingletonServiceInstanceIT.class))
         .build();
   }
 
@@ -140,7 +150,8 @@ public class TransactionIsolationWithOneServiceInstanceIT
   - T1 (REQUIRED) calls T2 (MANDATORY)
   - T2 does the JOB
 
-  The rollbackOn of T2 is ignored, only the one specified on the method which is opening the transaction is taken into account. (same service instance)
+  The rollbackOn of T2 is ignored, only the one specified on the method which is opening the
+  transaction is taken into account. (same service instance)
    */
 
   @Test
@@ -236,7 +247,8 @@ public class TransactionIsolationWithOneServiceInstanceIT
   - T1 (REQUIRED) calls T2 (REQUIRED)
   - T2 does the JOB
 
-  The rollbackOn of T2 is ignored, only the one specified on the method which is opening the transaction is taken into account. (same service instance)
+  The rollbackOn of T2 is ignored, only the one specified on the method which is opening the
+  transaction is taken into account. (same service instance)
    */
 
   @Test
@@ -332,7 +344,8 @@ public class TransactionIsolationWithOneServiceInstanceIT
   - T1 (REQUIRED) calls T2 (REQUIRES_NEW)
   - T2 does the JOB
 
-  The rollbackOn of T2 is ignored, only the one specified on the method which is opening the transaction is taken into account. (same service instance)
+  The rollbackOn of T2 is ignored, only the one specified on the method which is opening the
+  transaction is taken into account. (same service instance)
    */
 
   @Test
@@ -430,6 +443,7 @@ public class TransactionIsolationWithOneServiceInstanceIT
 
   /**
    * Returns the list of user lines persisted into st_user table.
+   *
    * @return List of lines represented by a map between column name and value.
    */
   private List<SQLRequester.ResultLine> getUserTableLines() throws Exception {

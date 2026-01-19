@@ -35,14 +35,13 @@ import org.silverpeas.core.calendar.repository.DefaultCalendarEventRepository;
 import org.silverpeas.core.exception.DecodingException;
 import org.silverpeas.core.exception.EncodingException;
 import org.silverpeas.core.reminder.DefaultReminderRepository;
-import org.silverpeas.core.test.BasicWarBuilder;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonWriter;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonWriter;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -174,7 +173,7 @@ public class JSONCodecIT {
     assertThat(bean, notNullValue());
     assertThat(bean.getId(), is("42"));
     assertThat(bean.getName(), is("Toto Chez-les-Papoos"));
-    assertThat(bean.getDate().getTime(), is(1416580107074l));
+    assertThat(bean.getDate().getTime(), is(1416580107074L));
   }
 
   @Test
@@ -209,11 +208,11 @@ public class JSONCodecIT {
     assertThat(beans.length, is(2));
     assertThat(beans[0].getId(), is("42"));
     assertThat(beans[0].getName(), is("Toto Chez-les-Papoos"));
-    assertThat(beans[0].getDate().getTime(), is(1416580107074l));
+    assertThat(beans[0].getDate().getTime(), is(1416580107074L));
     assertThat(beans[1], notNullValue());
     assertThat(beans[1].getId(), is("24"));
     assertThat(beans[1].getName(), is("Titi Gros-Minet"));
-    assertThat(beans[1].getDate().getTime(), is(1416580107074l));
+    assertThat(beans[1].getDate().getTime(), is(1416580107074L));
   }
 
   @Test

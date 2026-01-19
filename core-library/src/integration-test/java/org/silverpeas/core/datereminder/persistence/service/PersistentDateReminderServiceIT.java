@@ -40,8 +40,9 @@ import org.silverpeas.core.persistence.datasource.OperationContext;
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Date;
+import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -56,9 +57,9 @@ public class PersistentDateReminderServiceIT {
 
   private static final String DATASET_CREATION = "dateReminder_dataset.sql";
 
-  private final EntityReference dummyRef = new MyEntityReference("dummy");
-  private final EntityReference existingRef = new MyEntityReference("38");
-  private final EntityReference newRef = new MyEntityReference("26");
+  private final EntityReference<String> dummyRef = new MyEntityReference("dummy");
+  private final EntityReference<String> existingRef = new MyEntityReference("38");
+  private final EntityReference<String> newRef = new MyEntityReference("26");
 
   @Rule
   public DbSetupRule dbSetupRule =
@@ -129,10 +130,8 @@ public class PersistentDateReminderServiceIT {
    */
   private DateReminderDetail createNewDateReminderDetail() {
     final Date currentDate = new Date();
-    DateReminderDetail dateReminderDetail =
-        new DateReminderDetail(currentDate, "Rappel", DateReminderDetail.REMINDER_NOT_PROCESSED,
-            "0", "0");
-    return dateReminderDetail;
+    return new DateReminderDetail(currentDate, "Rappel", DateReminderDetail.REMINDER_NOT_PROCESSED,
+        "0", "0");
   }
 
   /**
@@ -149,7 +148,7 @@ public class PersistentDateReminderServiceIT {
 
     // create
     DateReminderDetail dateReminderDetail = createNewDateReminderDetail();
-    dateReminder = dateReminderService.create(newRef, dateReminderDetail);
+    dateReminderService.create(newRef, dateReminderDetail);
 
     // Verifying dateReminder after initializing
     dateReminder = dateReminderService.get(newRef);
@@ -247,8 +246,10 @@ public class PersistentDateReminderServiceIT {
     assertThat(dateReminder.notExists(), is(false));
     assertThat(dateReminder.getResource(MyEntityReference.class), is(existingRef));
     assertThat(dateReminder.getResource(MyUnknownEntityReference.class), nullValue());
-    assertThat(dateReminder.getResource(MyEntityReference.class).getId(), is("38"));
-    assertThat(dateReminder.getResource(MyEntityReference.class).getType(), is("STRING"));
+    assertThat(Objects.requireNonNull(dateReminder.getResource(MyEntityReference.class)).getId(),
+        is("38"));
+    assertThat(Objects.requireNonNull(dateReminder.getResource(MyEntityReference.class)).getType(),
+        is("STRING"));
     assertThat(dateReminder.getDateReminder(), notNullValue());
     assertThat(dateReminder.getDateReminder().getDateReminder().getTime(), lessThan(
         currentDate.getTime()));
@@ -283,8 +284,10 @@ public class PersistentDateReminderServiceIT {
     assertThat(dateReminder.notExists(), is(false));
     assertThat(dateReminder.getResource(MyEntityReference.class), is(existingRef));
     assertThat(dateReminder.getResource(MyUnknownEntityReference.class), nullValue());
-    assertThat(dateReminder.getResource(MyEntityReference.class).getId(), is("38"));
-    assertThat(dateReminder.getResource(MyEntityReference.class).getType(), is("STRING"));
+    assertThat(Objects.requireNonNull(dateReminder.getResource(MyEntityReference.class)).getId(),
+        is("38"));
+    assertThat(Objects.requireNonNull(dateReminder.getResource(MyEntityReference.class)).getType(),
+        is("STRING"));
     assertThat(dateReminder.getDateReminder(), notNullValue());
     assertThat(dateReminder.getDateReminder().getDateReminder().getTime(),
         lessThan(currentDate.getTime()));
@@ -313,7 +316,7 @@ public class PersistentDateReminderServiceIT {
   }
 
   @Test
-  public void testRemoveFromExistingKey() throws Exception {
+  public void testRemoveFromExistingKey() {
 
     // Verifying DateReminder before updating
     final Date currentDate = new Date();
@@ -323,8 +326,10 @@ public class PersistentDateReminderServiceIT {
     assertThat(dateReminder.notExists(), is(false));
     assertThat(dateReminder.getResource(MyEntityReference.class), is(existingRef));
     assertThat(dateReminder.getResource(MyUnknownEntityReference.class), nullValue());
-    assertThat(dateReminder.getResource(MyEntityReference.class).getId(), is("38"));
-    assertThat(dateReminder.getResource(MyEntityReference.class).getType(), is("STRING"));
+    assertThat(Objects.requireNonNull(dateReminder.getResource(MyEntityReference.class)).getId(),
+        is("38"));
+    assertThat(Objects.requireNonNull(dateReminder.getResource(MyEntityReference.class)).getType(),
+        is("STRING"));
     assertThat(dateReminder.getDateReminder(), notNullValue());
     assertThat(dateReminder.getDateReminder().getDateReminder().getTime(), lessThan(
         currentDate.getTime()));

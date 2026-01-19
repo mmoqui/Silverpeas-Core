@@ -29,7 +29,6 @@ import org.silverpeas.core.admin.user.model.SilverpeasRole;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.annotation.Service;
 
-import javax.inject.Singleton;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +47,6 @@ import static org.silverpeas.kernel.util.StringUtil.EMPTY;
  * @author Yohann Chastagnier
  */
 @Service
-@Singleton
 public class SpaceAccessController extends AbstractAccessController<String>
     implements SpaceAccessControl {
 

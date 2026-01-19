@@ -35,8 +35,8 @@ import org.silverpeas.core.admin.quota.service.TestDummyQuotaServiceWithAddition
 import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -65,9 +65,8 @@ public class DomainServiceProviderIT {
         .addSilverpeasExceptionBases()
         .addAdministrationFeatures()
         .addPublicationTemplateFeatures()
-        .testFocusedOn(warBuilder -> {
-          warBuilder.addPackages(true, "org.silverpeas.core.admin.domain");
-        }).build();
+        .testFocusedOn(warBuilder ->
+            warBuilder.addPackages(true, "org.silverpeas.core.admin.domain")).build();
   }
 
   @Test
@@ -93,7 +92,6 @@ public class DomainServiceProviderIT {
     assertThat(testSqlDomainService, instanceOf(SQLDomainService.class));
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void getUserDomainQuotaService() {
     // Verifying that it exists several implementation of QuotaService interface for the test in

@@ -42,9 +42,9 @@ import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.TestStatisticRule;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedThreadFactory;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -192,11 +192,11 @@ public class MassiveAsynchronousNotificationIT {
   }
 
   private Duration delay(int nbSend) {
-    return Duration.of(2000 + (nbSend * 10), ChronoUnit.MILLIS);
+    return Duration.of(2000 + (nbSend * 10L), ChronoUnit.MILLIS);
   }
 
   private Duration timeout(int nbSend) {
-    return Duration.of(3000 + (nbSend * 10), ChronoUnit.MILLIS);
+    return Duration.of(3000 + (nbSend * 10L), ChronoUnit.MILLIS);
   }
 
   private void assertThatEventIsWellReceived(int nbListeners,

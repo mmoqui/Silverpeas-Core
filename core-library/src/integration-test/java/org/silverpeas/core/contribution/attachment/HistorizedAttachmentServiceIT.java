@@ -49,7 +49,7 @@ import org.silverpeas.core.util.DateUtil;
 import org.silverpeas.core.util.MimeTypes;
 import org.silverpeas.core.jcr.JCRSession;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import java.io.ByteArrayInputStream;
@@ -75,10 +75,11 @@ public class HistorizedAttachmentServiceIT extends JcrIntegrationIT {
   private static final String instanceId = "kmelia974";
   private SimpleDocumentPK existingFrDoc;
   private SimpleDocumentPK existingEnDoc;
-  private final DocumentRepository documentRepository = new DocumentRepository();
 
   @Inject
   private AttachmentService instance;
+  @Inject
+  private DocumentRepository documentRepository;
 
   @Deployment
   public static Archive<?> createTestArchive() {
@@ -962,7 +963,7 @@ public class HistorizedAttachmentServiceIT extends JcrIntegrationIT {
           .build();
       SimpleDocument document1 = new HistorisedDocument(emptyId, foreignId, 10, attachment1);
       InputStream content = new ByteArrayInputStream("Ceci est un test".getBytes(Charsets.UTF_8));
-      SimpleDocumentPK id = new DocumentRepository().createDocument(session, document1);
+      SimpleDocumentPK id = documentRepository.createDocument(session, document1);
       document1.setPK(id);
       documentRepository.storeContent(document1, content);
 
@@ -978,7 +979,7 @@ public class HistorizedAttachmentServiceIT extends JcrIntegrationIT {
           .build();
       SimpleDocument document2 = new HistorisedDocument(emptyId, foreignId, 5, attachment2);
       content = new ByteArrayInputStream("Ceci est un test".getBytes(Charsets.UTF_8));
-      id = new DocumentRepository().createDocument(session, document2);
+      id = documentRepository.createDocument(session, document2);
       document2.setPK(id);
       documentRepository.storeContent(document2, content);
 
@@ -994,7 +995,7 @@ public class HistorizedAttachmentServiceIT extends JcrIntegrationIT {
           .build();
       SimpleDocument document3 = new HistorisedDocument(emptyId, foreignId, 100, attachment3);
       content = new ByteArrayInputStream("Ceci est un test".getBytes(Charsets.UTF_8));
-      id = new DocumentRepository().createDocument(session, document3);
+      id = documentRepository.createDocument(session, document3);
       document3.setPK(id);
       documentRepository.storeContent(document3, content);
 
@@ -1011,7 +1012,7 @@ public class HistorizedAttachmentServiceIT extends JcrIntegrationIT {
           .build();
       SimpleDocument document4 = new HistorisedDocument(emptyId, foreignId, 0, attachment4);
       content = new ByteArrayInputStream("This is a test".getBytes(Charsets.UTF_8));
-      id = new DocumentRepository().createDocument(session, document4);
+      id = documentRepository.createDocument(session, document4);
       document4.setPK(id);
       documentRepository.storeContent(document4, content);
 

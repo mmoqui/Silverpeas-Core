@@ -23,14 +23,11 @@
  */
 package org.silverpeas.core.contribution.content.form.fileitem;
 
-import java.io.File;
+import org.silverpeas.core.util.file.FileItem;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemHeaders;
+import java.nio.charset.Charset;
 
 /**
  * File item created manually, without being retrieved from an HTTP request. Used to update an
@@ -39,18 +36,12 @@ import org.apache.commons.fileupload.FileItemHeaders;
  */
 public class InternalFileItem implements FileItem {
 
-  private static final long serialVersionUID = 754043464419634444L;
-  private String fieldName;
-  private String value;
+  private final String fieldName;
+  private final String value;
 
   public InternalFileItem(String fieldName, String value) {
-    setFieldName(fieldName);
-    setValue(value);
-  }
-
-  @Override
-  public void setFieldName(String fieldName) {
     this.fieldName = fieldName;
+    this.value = value;
   }
 
   @Override
@@ -58,18 +49,10 @@ public class InternalFileItem implements FileItem {
     return fieldName;
   }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
 
   @Override
-  public String getString() {
+  public String getContent() {
     return value;
-  }
-
-  @Override
-  public void setFormField(boolean formField) {
-
   }
 
   @Override
@@ -78,16 +61,12 @@ public class InternalFileItem implements FileItem {
   }
 
   @Override
-  public void delete() {
+  public String getContent(Charset charset) {
+    return value;
   }
 
   @Override
-  public byte[] get() {
-    return null;
-  }
-
-  @Override
-  public String getContentType() {
+  public String getFileName() {
     return null;
   }
 
@@ -97,41 +76,12 @@ public class InternalFileItem implements FileItem {
   }
 
   @Override
-  public String getName() {
-    return null;
-  }
-
-  @Override
-  public OutputStream getOutputStream() throws IOException {
-    return null;
-  }
-
-  @Override
   public long getSize() {
     return 0;
   }
 
   @Override
-  public String getString(String arg0) throws UnsupportedEncodingException {
-    return getString();
-  }
-
-  @Override
-  public boolean isInMemory() {
-    return false;
-  }
-
-  @Override
-  public void write(File arg0) throws Exception {
-  }
-
-  @Override
-  public FileItemHeaders getHeaders() {
+  public String getContentType() {
     return null;
-  }
-
-  @Override
-  public void setHeaders(final FileItemHeaders fileItemHeaders) {
-
   }
 }
