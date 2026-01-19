@@ -41,6 +41,7 @@ public class WarBuilder4Sharing extends BasicWarBuilder {
   protected <T> WarBuilder4Sharing(final Class<T> test) {
     super(test);
     addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core");
+    addAsResource("org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties");
   }
 
   /**

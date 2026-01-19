@@ -25,6 +25,7 @@ package org.silverpeas.core.annotation;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Stereotype;
+import org.silverpeas.kernel.annotation.Managed;
 
 import java.lang.annotation.*;
 
@@ -50,6 +51,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Managed
 @ApplicationScoped
 @Stereotype
 public @interface Service {

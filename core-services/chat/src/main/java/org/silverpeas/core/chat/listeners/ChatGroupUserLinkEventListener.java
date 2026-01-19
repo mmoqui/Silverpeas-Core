@@ -24,15 +24,14 @@
 
 package org.silverpeas.core.chat.listeners;
 
+import jakarta.inject.Inject;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.admin.user.notification.GroupUserLinkEvent;
-import org.silverpeas.core.annotation.Service;
+import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.chat.ChatUser;
 import org.silverpeas.core.chat.ChatUsersRegistration;
 import org.silverpeas.core.notification.system.CDIAfterSuccessfulTransactionResourceEventListener;
 import org.silverpeas.kernel.annotation.Technical;
-
-import javax.inject.Inject;
 
 /**
  * Listens for adding or removing of users in user groups. When a user is in a group for which the
@@ -44,7 +43,7 @@ import javax.inject.Inject;
  * @author mmoquillon
  */
 @Technical
-@Service
+@Bean
 public class ChatGroupUserLinkEventListener extends
     CDIAfterSuccessfulTransactionResourceEventListener<GroupUserLinkEvent> {
 

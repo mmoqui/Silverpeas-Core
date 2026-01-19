@@ -32,6 +32,7 @@ import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.URLUtil;
 import org.silverpeas.core.util.file.FileItem;
 import org.silverpeas.core.util.file.FileUploadUtil;
+import org.silverpeas.kernel.annotation.Cacheable;
 import org.silverpeas.kernel.annotation.Technical;
 import org.silverpeas.kernel.bundle.LocalizationBundle;
 import org.silverpeas.kernel.bundle.ResourceLocator;
@@ -46,6 +47,7 @@ import java.util.*;
  */
 @Technical
 @Service
+@Cacheable
 public class I18NHelper implements I18n {
 
   // "fr" - List of I18NLanguage : all available languages in french

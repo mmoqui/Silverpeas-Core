@@ -43,7 +43,7 @@ import org.silverpeas.core.notification.user.client.NotificationMetaData;
 import org.silverpeas.core.notification.user.client.NotificationSender;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;

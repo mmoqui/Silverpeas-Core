@@ -39,8 +39,8 @@ import org.silverpeas.core.viewer.model.TemporaryPdfView;
 import org.silverpeas.core.viewer.util.JsonPdfUtil;
 import org.silverpeas.core.viewer.util.SwfUtil;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 

@@ -43,9 +43,9 @@ public class WorkflowIT {
   public static Archive<?> createTestArchive() {
     return BasicWarBuilder.onWarForTestClass(WorkflowIT.class)
         .addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core")
-        .createMavenDependenciesWithPersistence("org.silverpeas.core.services:silverpeas-core-pdc")
-        .createMavenDependencies("org.silverpeas.core.services:silverpeas-core-tagcloud")
-        .createMavenDependencies("org.silverpeas.core.services:silverpeas-core-personalorganizer")
+        .addMavenDependencies("org.silverpeas.core.services:silverpeas-core-personalorganizer")
+        .addAsResource(
+            "org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties")
         .testFocusedOn(war -> war.addPackages(true, "org.silverpeas.core.workflow"))
         .build();
   }

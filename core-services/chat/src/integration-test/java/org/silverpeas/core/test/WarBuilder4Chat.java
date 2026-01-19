@@ -26,6 +26,7 @@ package org.silverpeas.core.test;
 
 import org.silverpeas.core.chat.servers.ChatServer;
 import org.silverpeas.core.chat.servers.DefaultChatServer;
+import org.silverpeas.core.chat.servers.DummyChatServer;
 
 /**
  * The build of a war archive for the chat service.
@@ -53,13 +54,12 @@ public class WarBuilder4Chat extends BasicWarBuilder {
   public static <T> WarBuilder4Chat onWarForTestClass(Class<T> test) {
     return (WarBuilder4Chat) new WarBuilder4Chat(test)
         .addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core")
-        //.createMavenDependencies("org.silverpeas.core.services:silverpeas-core-tagcloud")
-        .testFocusedOn(war -> {
-          war.addPackages(false, "org.silverpeas.core.chat")
-              .addClasses(ChatServer.class, DefaultChatServer.class)
-              .addAsResource("org/silverpeas/chat/settings/chat.properties")
-              .addAsResource("org/silverpeas/lookAndFeel/generalLook.properties");
-        });
+        .testFocusedOn(war ->
+            war.addPackages(false, "org.silverpeas.core.chat")
+            .addClasses(ChatServer.class, DefaultChatServer.class, DummyChatServer.class)
+            .addAsResource("org/silverpeas/chat/settings/chat.properties")
+            .addAsResource("org/silverpeas/lookAndFeel/generalLook.properties")
+            .addAsResource("org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties"));
   }
 }
   

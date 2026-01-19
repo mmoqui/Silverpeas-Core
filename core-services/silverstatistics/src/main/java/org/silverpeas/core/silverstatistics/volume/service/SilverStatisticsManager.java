@@ -37,7 +37,6 @@ import org.silverpeas.kernel.bundle.ResourceLocator;
 import org.silverpeas.kernel.bundle.SettingBundle;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.inject.Singleton;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,7 +55,6 @@ import static org.silverpeas.core.silverstatistics.volume.model.StatType.*;
  * @author Marc Guillemin
  */
 @Service
-@Singleton
 public class SilverStatisticsManager implements Initialization {
 
   private static final String STAT_SIZE_JOB_NAME = "SilverStatisticsSize";

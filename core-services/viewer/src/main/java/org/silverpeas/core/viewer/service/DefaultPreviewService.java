@@ -39,8 +39,8 @@ import org.silverpeas.core.util.file.FileUtil;
 import org.silverpeas.core.viewer.model.Preview;
 import org.silverpeas.core.viewer.model.TemporaryPreview;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;

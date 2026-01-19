@@ -37,7 +37,7 @@ import org.silverpeas.core.persistence.Transaction;
 import org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery;
 import org.silverpeas.core.test.integration.rule.DbUnitLoadingRule;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;

@@ -25,13 +25,9 @@
 package org.silverpeas.core.chat.servers;
 
 import org.silverpeas.core.admin.user.model.User;
+import org.silverpeas.core.annotation.Service;
 
-import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -42,9 +38,13 @@ import static org.hamcrest.Matchers.is;
  * @author mmoquillon
  */
 @DefaultChatServer
-@Singleton
+@Service
 public class DummyChatServer implements ChatServer {
 
+  public static final String CREATE_USER = "createUser";
+  public static final String DELETE_USER = "deleteUser";
+  public static final String CREATE_RELATION_SHIP = "createRelationShip";
+  public static final String DELETE_RELATION_SHIP = "deleteRelationShip";
   private final Map<String, User[]> events = new HashMap<>();
 
   private final List<User> existingUsers = new ArrayList<>();
@@ -72,22 +72,38 @@ public class DummyChatServer implements ChatServer {
 
   @Override
   public void createUser(final User user) {
-    events.put("createUser", new User[] {user});
+    events.compute(CREATE_USER, (k, v) -> {
+      if (v == null) {
+        return new User[]{user};
+      } else {
+        var users = Arrays.copyOf(v, v.length + 1);
+        users[v.length] = user;
+        return users;
+      }
+    });
   }
 
   @Override
   public void deleteUser(final User user) {
-    events.put("deleteUser", new User[] {user});
+    events.compute(DELETE_USER, (k, v) -> {
+      if (v == null) {
+        return new User[]{user};
+      } else {
+        var users = Arrays.copyOf(v, v.length + 1);
+        users[v.length] = user;
+        return users;
+      }
+    });
   }
 
   @Override
   public void createRelationShip(final User user1, final User user2) {
-    events.put("createRelationShip", new User[] {user1, user2});
+    events.put(CREATE_RELATION_SHIP, new User[] {user1, user2});
   }
 
   @Override
   public void deleteRelationShip(final User user1, final User user2) {
-    events.put("deleteRelationShip", new User[] {user1, user2});
+    events.put(DELETE_RELATION_SHIP, new User[] {user1, user2});
   }
 
   @Override

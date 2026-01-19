@@ -35,7 +35,7 @@ import java.util.List;
  * @author Bensalem Nabil
  */
 @Provider
-public class SocialRelationShips implements SocialRelationShipProvider {
+public class SocialRelationShips implements SocialRelationShipProvider<SocialInformation> {
 
   @Inject
   private RelationShipService relationShipService;

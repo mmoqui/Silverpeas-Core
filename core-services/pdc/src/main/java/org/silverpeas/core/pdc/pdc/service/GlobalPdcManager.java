@@ -23,12 +23,13 @@
  */
 package org.silverpeas.core.pdc.pdc.service;
 
+import jakarta.inject.Inject;
 import org.silverpeas.core.ResourceReference;
 import org.silverpeas.core.admin.service.OrganizationControllerProvider;
 import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.contribution.contentcontainer.content.*;
 import org.silverpeas.core.contribution.publication.model.PublicationPK;
-import org.silverpeas.core.i18n.I18NHelper;
+import org.silverpeas.core.i18n.I18n;
 import org.silverpeas.core.index.indexing.model.IndexEngineProxy;
 import org.silverpeas.core.pdc.classification.ClassifyEngine;
 import org.silverpeas.core.pdc.classification.ObjectValuePair;
@@ -51,7 +52,6 @@ import org.silverpeas.core.util.DateUtil;
 import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -102,6 +102,8 @@ public class GlobalPdcManager implements PdcManager {
   private PdcSubscriptionManager pdcSubscriptionManager;
   @Inject
   private TreeService treeService;
+  @Inject
+  private I18n i18n;
 
   private static final Map<String, AxisHeader> axisHeaders =
       Collections.synchronizedMap(new HashMap<>());
@@ -371,7 +373,7 @@ public class GlobalPdcManager implements PdcManager {
     if (axisHeader.getLanguage() != null) {
       if (oldAxisHeader.getLanguage() == null) {
         // translation for the first time
-        oldAxisHeader.setLanguage(I18NHelper.DEFAULT_LANGUAGE);
+        oldAxisHeader.setLanguage(i18n.getDefaultLanguage());
       }
       if (!axisHeader.getLanguage().equalsIgnoreCase(oldAxisHeader.getLanguage())) {
         AxisHeaderI18N newAxis =
@@ -398,7 +400,7 @@ public class GlobalPdcManager implements PdcManager {
       Connection con) throws SQLException, PersistenceException {
     if (oldAxisHeader.getLanguage() == null) {
       // translation for the first time
-      oldAxisHeader.setLanguage(I18NHelper.DEFAULT_LANGUAGE);
+      oldAxisHeader.setLanguage(i18n.getDefaultLanguage());
     }
     if (oldAxisHeader.getLanguage().equalsIgnoreCase(axisHeader.getLanguage())) {
       List<AxisHeaderI18N> translations =
@@ -552,7 +554,7 @@ public class GlobalPdcManager implements PdcManager {
   }
 
   @Override
-  public String getTreeId(String axisId) throws PdcException {
+  public String getTreeId(String axisId) {
     // get the header of the axis to obtain the rootId.
     AxisHeaderPersistence axisHeader = getAxisHeaderPersistence(axisId);
     int treeId = -1;
@@ -1581,7 +1583,7 @@ public class GlobalPdcManager implements PdcManager {
   private void initUsedAxis(final String instanceId, final int silverObjectId,
       final List<UsedAxis> usedAxis) throws PdcException {
     for (UsedAxis axis : usedAxis) {
-      if (I18NHelper.isI18nContentActivated) {
+      if (i18n.isEnabled()) {
         AxisHeader header = getAxisHeader(Integer.toString(axis.getAxisId()));
         axis._setAxisHeader(header);
       }

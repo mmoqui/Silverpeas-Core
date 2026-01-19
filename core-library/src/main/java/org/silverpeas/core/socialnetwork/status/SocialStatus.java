@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 @Provider
-public class SocialStatus implements SocialStatusProvider {
+public class SocialStatus implements SocialStatusProvider<SocialInformation> {
 
   @Inject
   private StatusService statusService;

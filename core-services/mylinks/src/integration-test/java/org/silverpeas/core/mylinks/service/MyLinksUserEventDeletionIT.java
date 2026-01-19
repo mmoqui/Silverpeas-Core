@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 import org.silverpeas.core.mylinks.test.WarBuilder4MyLinks;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;

@@ -49,9 +49,9 @@ public class WarBuilder4MyLinks extends BasicWarBuilder {
   public static <T> WarBuilder4MyLinks onWarForTestClass(Class<T> test) {
     WarBuilder4MyLinks warBuilder = new WarBuilder4MyLinks(test);
     warBuilder.addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core");
-    warBuilder.createMavenDependencies("org.silverpeas.core.services:silverpeas-core-tagcloud");
     warBuilder.testFocusedOn(war -> war
         .addPackages(true, "org.silverpeas.core.mylinks")
+        .addAsResource("org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties")
         .addAsResource("create-database.sql"));
     return warBuilder;
   }

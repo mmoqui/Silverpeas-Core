@@ -38,10 +38,10 @@ import java.util.List;
  *
  * @author mmoquillon
  */
-public interface SocialInformationProvider {
+public interface SocialInformationProvider<T extends SocialInformation> {
 
-  List<SocialInformation> getSocialInformationList(String userId, Date begin, Date end);
+  List<T> getSocialInformationList(String userId, Date begin, Date end);
 
-  List<SocialInformation> getSocialInformationListOfMyContacts(String myId,
-      List<String> myContactsIds, Date begin, Date end);
+  List<T> getSocialInformationListOfMyContacts(String myId, List<String> myContactsIds,
+      Date begin, Date end);
 }

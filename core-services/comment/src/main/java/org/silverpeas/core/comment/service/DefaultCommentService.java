@@ -44,9 +44,9 @@ import org.silverpeas.kernel.bundle.ResourceLocator;
 import org.silverpeas.kernel.util.StringUtil;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 

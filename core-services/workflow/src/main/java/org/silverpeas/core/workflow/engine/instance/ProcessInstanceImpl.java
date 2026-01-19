@@ -65,14 +65,14 @@ import org.silverpeas.core.workflow.engine.datarecord.LazyProcessInstanceDataRec
 import org.silverpeas.core.workflow.engine.datarecord.ProcessInstanceDataRecord;
 import org.silverpeas.core.workflow.engine.datarecord.ProcessInstanceRowRecord;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -89,7 +89,7 @@ import static org.silverpeas.core.workflow.api.instance.ActionStatus.SAVED;
  */
 @Entity
 @Table(name = "sb_workflow_processinstance")
-@AttributeOverride(name = "id", column = @javax.persistence.Column(name = "instanceid"))
+@AttributeOverride(name = "id", column = @jakarta.persistence.Column(name = "instanceid"))
 public class ProcessInstanceImpl
     extends BasicJpaEntity<ProcessInstanceImpl, UniqueIntegerIdentifier>
     implements UpdatableProcessInstance {
