@@ -23,8 +23,11 @@
  */
 package org.silverpeas.web.test;
 
+import jakarta.ws.rs.client.*;
 import org.apache.commons.lang3.NotImplementedException;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.silverpeas.core.admin.component.model.ComponentInst;
 import org.silverpeas.core.admin.service.Administration;
@@ -41,15 +44,11 @@ import org.silverpeas.kernel.util.StringUtil;
 import org.silverpeas.core.web.rs.UserPrivilegeValidation;
 import org.silverpeas.web.test.environment.SilverpeasTestEnvironment;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +76,18 @@ public abstract class RESTWebServiceTest {
    * authenticated amongst the REST-based Web API.
    */
   private static final String SESSION_KEY_HTTP_HEADER = "X-Silverpeas-Session";
+
+  private static Client client;
+
+  @BeforeClass
+  public static void openWebClient() {
+    client = ClientBuilder.newClient();
+  }
+
+  @AfterClass
+  public static void closeWebClient() {
+    client.close();
+  }
 
   @Rule
   public DbSetupRule dbSetupRule = DbSetupRule.createTablesFrom(
@@ -134,8 +145,7 @@ public abstract class RESTWebServiceTest {
    * @return the {@link WebTarget} instance.
    */
   public WebTarget resource() {
-    return ClientBuilder.newClient()
-        .target(getBaseURI() + "test-" + this.getClass().getSimpleName() + "/services/");
+    return client.target(getBaseURI() + "test-" + this.getClass().getSimpleName() + "/services/");
   }
 
   protected URI getBaseURI() {
@@ -215,10 +225,9 @@ public abstract class RESTWebServiceTest {
   /**
    * Authenticates the specified user through the REST-based Web API and returns the opened session
    * identifier. The returned session identifier can then be used in the subsequent requests sent
-   * during a test. Once the session is opened for the given user, the session cache service is then
-   * get to be set for the local thread of the current running test, so that the data prepared for
-   * the test and cached in the session cache of the user will be accessible within the thread of
-   * the tested web service.
+   * during a test. Once the session opened for the given user, the session cache service is then
+   * set to the local thread of the current running test so that any data in the session cache
+   * will be accessible to the tests.
    * <p></p>
    * <p>
    * Warning: the authentication is performed by the corresponding REST-based web service and as

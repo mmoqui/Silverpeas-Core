@@ -39,7 +39,7 @@ import org.silverpeas.core.security.token.exception.TokenException;
 import org.silverpeas.core.security.token.persistent.PersistentResourceToken;
 import org.silverpeas.core.util.ServiceProvider;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * This class allows to load easily a Silverpeas environment dedicated to the tests:
