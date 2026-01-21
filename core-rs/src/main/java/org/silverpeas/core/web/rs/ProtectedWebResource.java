@@ -26,7 +26,7 @@ package org.silverpeas.core.web.rs;
 
 import org.silverpeas.core.web.SilverpeasWebResource;
 
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.WebApplicationException;
 
 /**
  * A protected Web resource is a Web resource in Silverpeas that can require the user to be

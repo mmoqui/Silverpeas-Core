@@ -31,8 +31,8 @@ import org.silverpeas.core.cache.service.SessionCacheAccessor;
 import org.silverpeas.core.notification.message.MessageManager;
 import org.silverpeas.core.security.session.SessionInfo;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.WebApplicationException;
 
 /**
  * Validation of the authentication of a user accessing a web endpoint in Silverpeas.

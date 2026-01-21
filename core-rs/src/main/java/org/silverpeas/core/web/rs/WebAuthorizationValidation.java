@@ -28,9 +28,9 @@ package org.silverpeas.core.web.rs;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.WebApplicationException;
 
 /**
  * Validation of the authorization of a user to access a web endpoint in Silverpeas. This interface
