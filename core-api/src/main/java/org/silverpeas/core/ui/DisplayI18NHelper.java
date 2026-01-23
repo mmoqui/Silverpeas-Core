@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.ui;
 
-import org.silverpeas.core.util.I18nSettings;
+import org.silverpeas.core.i18n.I18nSettings;
 
 import java.time.ZoneId;
 import java.util.ArrayList;

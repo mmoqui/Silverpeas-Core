@@ -149,7 +149,7 @@ public class SimpleDocumentService
 
   @Override
   public void deleteIndex(SimpleDocument document) {
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       deleteIndex(document, lang);
     }
   }
@@ -310,7 +310,7 @@ public class SimpleDocumentService
       throws RepositoryException {
     repository.fillNodeName(session, document);
     repository.deleteDocument(session, document.getPk());
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       deleteIndex(document, lang);
     }
     if (document.isOpenOfficeCompatible()) {

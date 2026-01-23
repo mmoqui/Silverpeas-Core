@@ -27,9 +27,9 @@ import org.silverpeas.core.util.Charsets;
 import org.silverpeas.kernel.util.StringUtil;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -46,10 +46,10 @@ public class FileUploadData {
   static final String X_UPLOAD_SESSION = "X-UPLOAD-SESSION";
   static final String X_FULL_PATH = "X-FULL-PATH";
 
-  private String uploadSessionId;
-  private String fullPath;
-  private String name;
-  private String componentInstanceId;
+  private final String uploadSessionId;
+  private final String fullPath;
+  private final String name;
+  private final String componentInstanceId;
 
   /**
    * Hidden constructor.
@@ -95,7 +95,7 @@ public class FileUploadData {
     if (StringUtil.isNotDefined(brutFullPath)) {
       brutFullPath = "";
     }
-    String fullPath = URLDecoder.decode(brutFullPath, Charsets.UTF_8.name());
+    String fullPath = URLDecoder.decode(brutFullPath, Charsets.UTF_8);
     fullPath = StringUtil.normalize(fullPath);
     return new FileUploadData(request.getHeader(X_UPLOAD_SESSION), fullPath,
         request.getHeader(X_COMPONENT_INSTANCE_ID));

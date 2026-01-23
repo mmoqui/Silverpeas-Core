@@ -23,91 +23,62 @@
  */
 package org.silverpeas.core.i18n;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import org.silverpeas.core.annotation.Service;
-import org.silverpeas.core.util.I18nSettings;
 import org.silverpeas.core.util.MultiSilverpeasBundle;
-import org.silverpeas.core.util.ServiceProvider;
 import org.silverpeas.core.util.URLUtil;
 import org.silverpeas.core.util.file.FileItem;
 import org.silverpeas.core.util.file.FileUploadUtil;
-import org.silverpeas.kernel.annotation.Cacheable;
-import org.silverpeas.kernel.annotation.Technical;
-import org.silverpeas.kernel.bundle.LocalizationBundle;
 import org.silverpeas.kernel.bundle.ResourceLocator;
 import org.silverpeas.kernel.util.StringUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * This class permits to manage the activated and displayed content languages.<br> Be careful, this
- * class handles possible content languages and not possible user languages.<br> The different user
- * languages are managed by the {@link org.silverpeas.core.util.I18nSettings} object.
+ * A helper class about i18n properties as defined with the {@link I18n} bean. It allows unmanaged
+ * beans to statically access some of the {@link I18n} methods.
  */
-@Technical
-@Service
-@Cacheable
-public class I18NHelper implements I18n {
-
-  // "fr" - List of I18NLanguage : all available languages in french
-  // "en" - List of I18NLanguage : all available languages in english
-  private final Map<String, List<I18NLanguage>> allContentLanguages = new LinkedHashMap<>();
-
-  // The languages set for content writing are not necessarily the same set for user languages.
-  // This fallback container permits to store the content language labels translated into a
-  // language that is not managed by content language mechanism.
-  // By this way, even if the user language does not correspond to a managed content language,
-  // the labels are displayed according to the user language.
-  private final Map<String, List<I18NLanguage>> fallbackContentLanguages =
-      new LinkedHashMap<>();
-
-  private int nbContentLanguages = 0;
-  private boolean isI18nContentActivated;
-  private String defaultLanguage;
-  private Locale defaultLocale;
-  private final List<String> allContentLanguageCodes = new ArrayList<>();
+public final class I18NHelper {
 
   private static final String HTML_SELECT_OBJECT_NAME = "I18NLanguage";
   private static final String HTML_HIDDEN_REMOVED_TRANSLATION_MODE = "TranslationRemoveIt";
 
-  @PostConstruct
-  public void loadSupportedContentLanguages() {
-    I18nSettings i18n = new I18nSettings();
-    List<String> rsLanguages = i18n.getContentLanguages();
-    for (String contentLanguageCode : rsLanguages) {
-      allContentLanguageCodes.add(contentLanguageCode);
-      loadLanguageLabels(contentLanguageCode, rsLanguages, allContentLanguages);
-    }
-    nbContentLanguages = rsLanguages.size();
-    defaultLanguage = i18n.getDefaultContentLanguage();
-    defaultLocale = new Locale(defaultLanguage);
-    isI18nContentActivated = i18n.isL10nContentEnabled();
+  private final I18n i18n = I18n.get();
 
-    // Fallback languages
-    List<String> fallbackLanguageCodes = i18n.getUserLanguages();
-    fallbackLanguageCodes.removeAll(allContentLanguageCodes);
-    for (String fallbackLanguageCode : fallbackLanguageCodes) {
-      loadLanguageLabels(fallbackLanguageCode, allContentLanguageCodes, fallbackContentLanguages);
+  private static I18NHelper instance;
+
+  private static I18NHelper getInstance() {
+    if (instance == null) {
+      instance = new I18NHelper();
     }
+    return instance;
   }
 
-  private void loadLanguageLabels(String contentLanguageCode, List<String> rsLanguages,
-      Map<String, List<I18NLanguage>> allContentLanguages) {
-    List<I18NLanguage> contentLanguageLabels = new ArrayList<>();
-    LocalizationBundle translations =
-        ResourceLocator.getLocalizationBundle("org.silverpeas.util.multilang.i18n",
-            contentLanguageCode);
-
-    for (String language : rsLanguages) {
-        I18NLanguage i18nLanguage =
-            new I18NLanguage(language, translations.getString("language_" + language));
-        contentLanguageLabels.add(i18nLanguage);
-    }
-    allContentLanguages.put(contentLanguageCode, contentLanguageLabels);
+  public static int getNumberOfLanguages() {
+    return getInstance().i18n.getSupportedLanguageCodes().size();
   }
 
-  String getLanguageLabel(String code, String userLanguage) {
+  public static String checkLanguage(String language) {
+    return getInstance().i18n.checkLanguage(language);
+  }
+
+  public static boolean isDefaultLanguage(String language) {
+    return getInstance().i18n.isDefaultLanguage(language);
+  }
+
+  public static boolean isI18nContentActivated() {
+    return getInstance().i18n.isEnabled();
+  }
+
+  private List<String> getSupportedLanguageCodes() {
+    return i18n.getSupportedLanguageCodes();
+  }
+
+  private boolean isNotEnabled() {
+    return !i18n.isEnabled();
+  }
+
+  public static String getLanguageLabel(String code, String userLanguage) {
     List<I18NLanguage> labels = getAllUserTranslationsOfContentLanguages(userLanguage);
     for (I18NLanguage language : labels) {
       if (language.getCode().equalsIgnoreCase(code)) {
@@ -117,67 +88,21 @@ public class I18NHelper implements I18n {
     return "";
   }
 
-  /**
-   * Gets all translations of enabled content languages according to the specified user language.
-   *
-   * @param userLanguage the favorite language of a user.
-   * @return the language labels with their code translated into the user favorite language.
-   */
-  private List<I18NLanguage> getAllUserTranslationsOfContentLanguages(String userLanguage) {
-    List<I18NLanguage> allContentLanguageUserTranslations = allContentLanguages.get(userLanguage);
-    if (allContentLanguageUserTranslations == null) {
-      // The user language is not one of the handled content languages. The labels to display are
-      // retrieved from the fallback container.
-      allContentLanguageUserTranslations = fallbackContentLanguages.get(userLanguage);
-    }
-    return allContentLanguageUserTranslations;
-  }
-
-  @Override
-  public String getDefaultLanguage() {
-    return defaultLanguage;
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return isI18nContentActivated;
-  }
-
-  @Override
-  public Set<String> getSupportedLanguages() {
-    return allContentLanguages.keySet();
-  }
-
-  @Override
-  public boolean isDefaultLanguage(String language) {
-    if (StringUtil.isDefined(language)) {
-      return defaultLanguage.equalsIgnoreCase(language);
-    }
-    return true;
-  }
-
-  @Override
-  public String checkLanguage(String language) {
-    String lang;
-    if (StringUtil.isNotDefined(language) || !allContentLanguageCodes.contains(language)) {
-      lang = defaultLanguage;
-    } else {
-      lang = language;
-    }
-    return lang;
-  }
-
   public static Locale getDefaultLocale() {
-    return I18NHelper.getInstance().defaultLocale;
+    return new Locale(getDefaultLanguage());
   }
 
-  public static Set<String> getAllSupportedLanguages() {
-    return Collections.unmodifiableSet(getInstance().getSupportedLanguages());
+  public static String getDefaultLanguage() {
+    return getInstance().i18n.getDefaultLanguage();
+  }
+
+  public static List<String> getAllSupportedLanguages() {
+    return getInstance().getSupportedLanguageCodes();
   }
 
   public static String getHTMLLinks(String url, String currentLanguage) {
     I18NHelper helper = getInstance();
-    if (!helper.isEnabled()) {
+    if (helper.isNotEnabled()) {
       return "";
     }
     String baseUrl = url;
@@ -190,7 +115,7 @@ public class I18NHelper implements I18n {
 
     StringBuilder links = new StringBuilder(512);
     boolean first = true;
-    for (String code : helper.getSupportedLanguages()) {
+    for (String code : helper.getSupportedLanguageCodes()) {
       String className = "";
       String link = baseUrl + code;
       if (!first) {
@@ -201,7 +126,7 @@ public class I18NHelper implements I18n {
       }
       links.append("<a href=\"").append(link).append("\" class=\"").append(className)
           .append("\" id=\"translation_").append(code).append("\">")
-          .append(code.toUpperCase(helper.defaultLocale)).append("</a>");
+          .append(code.toUpperCase(getDefaultLocale())).append("</a>");
       first = false;
     }
 
@@ -210,14 +135,14 @@ public class I18NHelper implements I18n {
 
   public static String getHTMLLinks(List<String> languages, String currentLanguage) {
     I18NHelper helper = getInstance();
-    if (!helper.isEnabled() || languages == null) {
+    if (helper.isNotEnabled() || languages == null) {
       return "";
     }
 
     StringBuilder links = new StringBuilder(512);
     String link;
     boolean first = true;
-    for (String code : helper.getSupportedLanguages()) {
+    for (String code : helper.getSupportedLanguageCodes()) {
       String className = "";
 
       if (languages.contains(code)) {
@@ -232,7 +157,7 @@ public class I18NHelper implements I18n {
 
         links.append("<a href=\"").append(link).append("\" class=\"").append(className)
             .append("\" id=\"translation_").append(code).append("\">")
-            .append(code.toUpperCase(helper.defaultLocale)).append("</a>");
+            .append(code.toUpperCase(getDefaultLocale())).append("</a>");
         first = false;
       }
     }
@@ -242,7 +167,7 @@ public class I18NHelper implements I18n {
   public static String getHTMLLinks(I18NBean<?> bean, String currentLanguage) {
     String lang = currentLanguage;
     I18NHelper helper = getInstance();
-    if (!helper.isEnabled() || bean == null) {
+    if (helper.isNotEnabled() || bean == null) {
       return "";
     }
 
@@ -263,7 +188,7 @@ public class I18NHelper implements I18n {
   public static String getFormLine(MultiSilverpeasBundle resources, I18NBean<?> bean,
       String translation) {
     I18NHelper helper = getInstance();
-    if (helper.nbContentLanguages == 1) {
+    if (helper.getSupportedLanguageCodes().size() == 1) {
       return "";
     }
     return "<tr>\n" +
@@ -276,8 +201,7 @@ public class I18NHelper implements I18n {
 
   public static String getHTMLSelectObject(String userLanguage, I18NBean<?> bean,
       String selectedTranslation) {
-    I18NHelper helper = getInstance();
-    List<I18NLanguage> languages = helper.getAllUserTranslationsOfContentLanguages(userLanguage);
+    List<I18NLanguage> languages = getAllUserTranslationsOfContentLanguages(userLanguage);
 
     List<I18NLanguage> result = new ArrayList<>();
     for (I18NLanguage lang : languages) {
@@ -292,6 +216,12 @@ public class I18NHelper implements I18n {
       result.add(newLang);
     }
     return getHTMLSelectObject(result, bean, selectedTranslation, userLanguage);
+  }
+
+  public static List<I18NLanguage> getAllUserTranslationsOfContentLanguages(String userLanguage) {
+    return getInstance().i18n.getSupportedLanguages(userLanguage).stream()
+        .map(l -> new I18NLanguage(l.getCode(), l.getName()))
+        .collect(Collectors.toList());
   }
 
   private static String getHTMLSelectObject(List<I18NLanguage> toDisplay, I18NBean<?> bean,
@@ -429,9 +359,5 @@ public class I18NHelper implements I18n {
       // check if translation must be removed
       bean.setRemoveTranslation("true".equalsIgnoreCase(removeParam));
     }
-  }
-
-  private static I18NHelper getInstance() {
-    return ServiceProvider.getService(I18NHelper.class);
   }
 }

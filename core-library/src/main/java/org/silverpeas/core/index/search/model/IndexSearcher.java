@@ -258,7 +258,7 @@ public class IndexSearcher {
     if (!StringUtil.isDefined(query.getQuery())) {
       return null;
     }
-    final Set<String> languages = getRequestedLanguages(query);
+    final List<String> languages = getRequestedLanguages(query);
     final Query queryOnContent = getQuery(IndexManager.CONTENT, query.getQuery(), languages);
     final Query queryOnHeader = getQuery(IndexManager.HEADER, query.getQuery(), languages);
     final BoostQuery boostQuery = new BoostQuery(queryOnHeader, fieldHeaderBoost);
@@ -272,7 +272,7 @@ public class IndexSearcher {
   private Query getMultiFieldQuery(QueryDescription query)
       throws org.silverpeas.core.index.search.model.ParseException {
     try {
-      Set<String> languages = getRequestedLanguages(query);
+      List<String> languages = getRequestedLanguages(query);
       BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
 
       Query plainTextQuery = getPlainTextQuery(query);
@@ -303,10 +303,10 @@ public class IndexSearcher {
     }
   }
 
-  private Set<String> getRequestedLanguages(final QueryDescription query) {
+  private List<String> getRequestedLanguages(final QueryDescription query) {
     return query.getRequestedLanguage()
-        .map(Collections::singleton)
-        .orElseGet(i18n::getSupportedLanguages);
+        .map(Collections::singletonList)
+        .orElseGet(i18n::getSupportedLanguageCodes);
   }
 
   /**
@@ -319,7 +319,7 @@ public class IndexSearcher {
    * @return a Query limited to given fieldName
    * @throws ParseException if an error occurs while parsing the text of the query.
    */
-  private Query getQuery(String fieldName, String queryStr, Set<String> languages)
+  private Query getQuery(String fieldName, String queryStr, List<String> languages)
       throws ParseException {
     BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
     for (String language : languages) {
@@ -441,7 +441,7 @@ public class IndexSearcher {
   }
 
   private void setIndexEntryLanguageData(final MatchingIndexEntry indexEntry, final Document doc) {
-    final Collection<String> languages = i18n.getSupportedLanguages();
+    final Collection<String> languages = i18n.getSupportedLanguageCodes();
     for (final String language : languages) {
       indexEntry.setTitle(doc.get(getFieldName(IndexManager.TITLE, language)), language);
       indexEntry.setPreview(doc.get(getFieldName(IndexManager.PREVIEW, language)), language);

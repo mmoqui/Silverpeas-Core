@@ -186,7 +186,7 @@ class DocumentConverter extends AbstractJcrConverter {
     }
     SimpleAttachment file = getAttachment(node, language);
     if (file == null) {
-      Iterator<String> iter = i18n.getSupportedLanguages().iterator();
+      Iterator<String> iter = i18n.getSupportedLanguageCodes().iterator();
       while (iter.hasNext() && file == null) {
         file = getAttachment(node, iter.next());
       }

@@ -65,12 +65,6 @@ public class SilverStatisticsManager implements Initialization {
   private StatisticsConfig statsConfig = null;
 
   /**
-   * Prevent the class from being instantiate (private)
-   */
-  private SilverStatisticsManager() {
-  }
-
-  /**
    * Init attributes.
    * This method is invoked by the IoC container. Don't invoke it!
    */

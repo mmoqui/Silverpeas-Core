@@ -27,7 +27,7 @@ import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.security.authentication.AuthenticationCredential;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Navigation case : user has changed his password.

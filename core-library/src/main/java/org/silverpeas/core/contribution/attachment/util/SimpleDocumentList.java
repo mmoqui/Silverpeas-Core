@@ -201,7 +201,7 @@ public class SimpleDocumentList<T extends SimpleDocument>
         ORDER_BY... orderBy) {
       super();
       this.orderBy = orderBy;
-      var allLanguagesByPriority = I18n.get().getSupportedLanguages();
+      var allLanguagesByPriority = I18n.get().getSupportedLanguageCodes();
       if (ArrayUtil.contains(orderBy, ORDER_BY.LANGUAGE_PRIORITY_DESC)) {
         for (String language : allLanguagesByPriority) {
           languagePriorityCache

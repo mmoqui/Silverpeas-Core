@@ -501,7 +501,7 @@ public class IndexEntry implements Serializable {
   private String getTranslation(final Map<String, String> translations, final String lang) {
     String preview = translations.get(i18n.checkLanguage(lang));
     if (!StringUtil.isDefined(preview)) {
-      Set<String> languages = I18n.get().getSupportedLanguages();
+      List<String> languages = I18n.get().getSupportedLanguageCodes();
       for (String language : languages) {
         preview = translations.get(language);
         if (StringUtil.isDefined(preview)) {

@@ -394,7 +394,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(listWysiwygs(resourceDestTestPK), hasSize(0));
 
     // One image
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang), hasSize(0));
@@ -422,7 +422,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(listImages(resourceSrcTestPK), hasSize(1));
     SimpleDocumentList<SimpleDocument> copiedImages = listImages(resourceDestTestPK);
     assertThat(copiedImages, hasSize(1));
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang),
@@ -479,7 +479,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(wysiwygs, hasSize(0));
 
     // One image
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang), hasSize(0));
@@ -507,7 +507,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(listImages(resourceSrcTestPK), hasSize(1));
     SimpleDocumentList<SimpleDocument> copiedImages = listImages(resourceDestTestPK);
     assertThat(copiedImages, hasSize(1));
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang),
@@ -572,7 +572,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(wysiwygs, hasSize(0));
 
     // One image
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang), hasSize(0));
@@ -594,7 +594,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(listWysiwygsWithNoLanguageFallback(resourceDestTestPK, "de"), hasSize(0));
 
     // No image copied
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang), hasSize(0));
@@ -744,7 +744,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(listWysiwygs(resourceDestTestPK), hasSize(0));
 
     // One image
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang), hasSize(0));
@@ -769,7 +769,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(listWysiwygsWithNoLanguageFallback(resourceDestTestPK, "de"), hasSize(0));
 
     // One image
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang), hasSize(0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
@@ -823,7 +823,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(wysiwygs, hasSize(0));
 
     // One image
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang), hasSize(0));
@@ -848,7 +848,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(listWysiwygsWithNoLanguageFallback(resourceDestTestPK, "de"), hasSize(0));
 
     // One image
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang), hasSize(0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
@@ -908,7 +908,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(wysiwygs, hasSize(0));
 
     // One image
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang), hasSize(0));
@@ -929,7 +929,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
     assertThat(listWysiwygsWithNoLanguageFallback(resourceDestTestPK, "de"), hasSize(0));
 
     // Images moved
-    for (String lang : i18n.getSupportedLanguages()) {
+    for (String lang : i18n.getSupportedLanguageCodes()) {
       assertThat(listImagesWithNoLanguageFallback(resourceSrcTestPK, lang), hasSize(0));
       assertThat(listImagesWithNoLanguageFallback(resourceDestTestPK, lang),
           hasSize(i18n.getDefaultLanguage().equals(lang) ? 1 : 0));
@@ -1960,11 +1960,7 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
   protected SimpleDocument addWysiwygForTest(SimpleDocument document) throws Exception {
     String content = "contentEN";
     if (StringUtil.isNotDefined(content)) {
-      if (content != null && content.isEmpty()) {
-        content = "";
-      } else {
-        content = "en" + "_content_" + document.getInstanceId() + "_" + document.getForeignId();
-      }
+      content = "en" + "_content_" + document.getInstanceId() + "_" + document.getForeignId();
     }
     return getJcr().updateAttachmentForTest(document, "en", content);
   }

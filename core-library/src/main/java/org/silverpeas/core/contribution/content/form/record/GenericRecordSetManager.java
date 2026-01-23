@@ -264,7 +264,7 @@ public class GenericRecordSetManager {
       if (record != null) {
         record.setLanguage(language);
       } else if (i18n.isEnabled()) {
-        List<String> languages = new ArrayList<>(i18n.getSupportedLanguages());
+        List<String> languages = new ArrayList<>(i18n.getSupportedLanguageCodes());
         languages.remove(language);
         for (String lang : languages) {
           record = selectRecordRow(con, template, objectId, lang);

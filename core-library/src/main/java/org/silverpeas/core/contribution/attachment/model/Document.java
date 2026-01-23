@@ -160,7 +160,7 @@ public class Document implements I18nContribution, LocalizedAttachment {
   public List<SimpleDocument> getAllTranslations() {
     AttachmentService service = AttachmentService.get();
     SimpleDocumentPK pk = new SimpleDocumentPK(id.getLocalId(), id.getComponentInstanceId());
-    return I18n.get().getSupportedLanguages()
+    return I18n.get().getSupportedLanguageCodes()
         .stream()
         .map(l -> service.searchDocumentById(pk, l))
         .collect(Collectors.toList());
@@ -197,7 +197,7 @@ public class Document implements I18nContribution, LocalizedAttachment {
     SimpleDocumentPK pk = new SimpleDocumentPK(id.getLocalId(), id.getComponentInstanceId());
     SimpleDocument document = service.searchDocumentById(pk, lang);
     if (document == null) {
-      return i18n.getSupportedLanguages()
+      return i18n.getSupportedLanguageCodes()
           .stream()
           .map(l -> service.searchDocumentById(pk, l))
           .filter(Objects::nonNull)

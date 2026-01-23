@@ -15,8 +15,8 @@ import org.silverpeas.kernel.test.util.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
@@ -97,10 +97,10 @@ public class JEETestContext extends SilverTestEnvContext {
 
   private void mockI18n() {
     // the languages should be ordered when loaded from config
-    var languages = new LinkedHashSet<>(Arrays.asList("fr", "en", "de"));
+    var languages = new ArrayList<>(Arrays.asList("fr", "en", "de"));
     when(i18n.isEnabled()).thenReturn(true);
     when(i18n.getDefaultLanguage()).thenReturn("fr");
-    when(i18n.getSupportedLanguages()).thenReturn(languages);
+    when(i18n.getSupportedLanguageCodes()).thenReturn(languages);
     when(i18n.checkLanguage(null)).thenReturn("fr");
     when(i18n.checkLanguage(anyString())).thenAnswer(i -> {
       String language = i.getArgument(0);

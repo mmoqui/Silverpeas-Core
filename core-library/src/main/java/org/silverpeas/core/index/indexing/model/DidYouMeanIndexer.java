@@ -135,7 +135,7 @@ public class DidYouMeanIndexer {
    */
   public static void createSpellIndexForAllLanguage(String field, String originalIndexDirectory) {
     StringBuilder localizedField = new StringBuilder(field);
-    for (String language : I18n.get().getSupportedLanguages()) {
+    for (String language : I18n.get().getSupportedLanguageCodes()) {
       if (!language.equalsIgnoreCase(DEFAULT_LANGUAGE)) {
         localizedField.append("_").append(language);
       }

@@ -401,7 +401,7 @@ public class WysiwygFCKFieldDisplayer extends AbstractFieldDisplayer<TextField> 
           File destFile = new File(toPath, getFileName(fieldName, toPK.getId()));
           moveOrCopyFile(fromPK, toPK, srcFile, destFile, copy, oldAndNewFileIds);
 
-          Collection<String> languages = i18n.getSupportedLanguages();
+          Collection<String> languages = i18n.getSupportedLanguageCodes();
           for (final String language: languages) {
             if (fieldName.startsWith(language + "_")) {
               // skip en_
@@ -493,7 +493,7 @@ public class WysiwygFCKFieldDisplayer extends AbstractFieldDisplayer<TextField> 
           setContentIntoFile(componentIdTo, objectIdTo, fieldName, fieldContent, null);
 
           // paste translations
-          Collection<String> languages = i18n.getSupportedLanguages();
+          Collection<String> languages = i18n.getSupportedLanguageCodes();
           for (final String language: languages) {
             if (fieldName.startsWith(language + "_")) {
               // skip en_

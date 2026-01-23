@@ -301,7 +301,7 @@ public class DocumentRepository {
       // language content updated.
       Set<String> checkedLanguages = new HashSet<>();
       checkedLanguages.add(doc.getLanguage());
-      for (String language : i18n.getSupportedLanguages()) {
+      for (String language : i18n.getSupportedLanguageCodes()) {
         if (!checkedLanguages.contains(language)) {
           SimpleDocument temp = findDocumentById(session, doc.getPk(), language);
           if (temp != null && !checkedLanguages.contains(temp.getLanguage()) &&
@@ -321,7 +321,7 @@ public class DocumentRepository {
     // The first version can have several language contents.
     Set<String> checkedLanguages = new HashSet<>();
     checkedLanguages.add(targetDoc.getLanguage());
-    for (String language : i18n.getSupportedLanguages()) {
+    for (String language : i18n.getSupportedLanguageCodes()) {
       if (!checkedLanguages.contains(language)) {
         HistorisedDocument temp = (HistorisedDocument) findDocumentById(session, document.getPk(),
             language);

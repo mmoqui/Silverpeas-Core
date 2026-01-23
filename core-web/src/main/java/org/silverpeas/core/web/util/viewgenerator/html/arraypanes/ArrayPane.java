@@ -31,10 +31,10 @@ import org.silverpeas.core.web.util.viewgenerator.html.pagination.Pagination;
 
 import javax.portlet.RenderParameters;
 import javax.portlet.RenderRequest;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.jsp.PageContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -274,11 +274,11 @@ public interface ArrayPane extends SimpleGraphicElement {
    */
   void init(String name, PageContext pageContext);
 
-  void init(String name, javax.servlet.ServletRequest request,
+  void init(String name, jakarta.servlet.ServletRequest request,
       HttpSession session);
 
   void init(String name, String url,
-      javax.servlet.ServletRequest request, HttpSession session);
+      jakarta.servlet.ServletRequest request, HttpSession session);
 
   /**
    * Add a new column to the table.

@@ -23,13 +23,17 @@
  */
 package org.silverpeas.core.i18n;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.silverpeas.core.util.MultiSilverpeasBundle;
 import org.silverpeas.kernel.TestManagedBeanFeeder;
 import org.silverpeas.kernel.test.UnitTest;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -44,14 +48,17 @@ import static org.mockito.Mockito.when;
 @UnitTest
 public class I18NHelperTest {
 
-  private static I18NHelper i18NHelper;
-
   @BeforeAll
-  public static void loadLanguages() {
-    i18NHelper = new I18NHelper();
+  public static void setUpI18n() {
+    I18n i18n = new I18n();
     TestManagedBeanFeeder feeder = new TestManagedBeanFeeder();
-    feeder.manageBean(i18NHelper, I18NHelper.class);
-    feeder.manageBean(i18NHelper, I18n.class);
+    feeder.manageBean(i18n, I18n.class);
+  }
+
+  @AfterAll
+  public static void releaseI18n() {
+    TestManagedBeanFeeder feeder = new TestManagedBeanFeeder();
+    feeder.removeAllManagedBeans();
   }
 
   /**
@@ -61,13 +68,13 @@ public class I18NHelperTest {
   public void testGetLanguageLabel() {
     String code = "fr";
     String userLanguage = "en";
-    String label = i18NHelper.getLanguageLabel(code, userLanguage);
+    String label = I18NHelper.getLanguageLabel(code, userLanguage);
     assertThat(label, is("French"));
     userLanguage = "fr";
-    label = i18NHelper.getLanguageLabel(code, userLanguage);
+    label = I18NHelper.getLanguageLabel(code, userLanguage);
     assertThat(label, is("Français"));
     code = "de";
-    label = i18NHelper.getLanguageLabel(code, userLanguage);
+    label = I18NHelper.getLanguageLabel(code, userLanguage);
     assertThat(label, is("Allemand"));
   }
 
@@ -76,7 +83,7 @@ public class I18NHelperTest {
    */
   @Test
   public void testGetAllSupportedLanguages() {
-    Set<String> supportedLanguages = i18NHelper.getSupportedLanguages();
+    List<String> supportedLanguages = I18NHelper.getAllSupportedLanguages();
     assertThat(supportedLanguages, containsInAnyOrder("en", "fr", "de"));
   }
 
@@ -86,13 +93,13 @@ public class I18NHelperTest {
   @Test
   public void testIsDefaultLanguage() {
     String language = "en";
-    boolean result = i18NHelper.isDefaultLanguage(language);
+    boolean result = I18NHelper.isDefaultLanguage(language);
     assertThat(result, is(false));
     language = "fr";
-    result = i18NHelper.isDefaultLanguage(language);
+    result = I18NHelper.isDefaultLanguage(language);
     assertThat(result, is(true));
     language = "de";
-    result = i18NHelper.isDefaultLanguage(language);
+    result = I18NHelper.isDefaultLanguage(language);
     assertThat(result, is(false));
   }
 
@@ -102,13 +109,13 @@ public class I18NHelperTest {
   @Test
   public void testCheckLanguage() {
     String language = "";
-    String result = i18NHelper.checkLanguage(language);
+    String result = I18NHelper.checkLanguage(language);
     assertThat(result, is("fr"));
     language = "fr";
-    result = i18NHelper.checkLanguage(language);
+    result = I18NHelper.checkLanguage(language);
     assertThat(result, is("fr"));
     language = "en";
-    result = i18NHelper.checkLanguage(language);
+    result = I18NHelper.checkLanguage(language);
     assertThat(result, is("en"));
   }
 
@@ -117,23 +124,29 @@ public class I18NHelperTest {
    */
   @Test
   public void testGetHTMLLinksForCurrentLanguageByUrl() {
-    String url = "http://www.google.fr";
+    String url = "https://www.google.fr";
     String currentLanguage = "fr";
     String result = I18NHelper.getHTMLLinks(url, currentLanguage);
     assertThat(result,
         is(
-        "<a href=\"http://www.google.fr?SwitchLanguage=fr\" class=\"ArrayNavigationOn\" id=\"translation_fr\">FR</a>"
-        + "&nbsp;<a href=\"http://www.google.fr?SwitchLanguage=en\" class=\"\" id=\"translation_en\">EN</a>"
-        + "&nbsp;<a href=\"http://www.google.fr?SwitchLanguage=de\" class=\"\" id=\"translation_de\">DE</a>"));
+        "<a href=\"https://www.google.fr?SwitchLanguage=fr\" class=\"ArrayNavigationOn\" " +
+            "id=\"translation_fr\">FR</a>"
+        + "&nbsp;<a href=\"https://www.google.fr?SwitchLanguage=en\" class=\"\" " +
+            "id=\"translation_en\">EN</a>"
+        + "&nbsp;<a href=\"https://www.google.fr?SwitchLanguage=de\" class=\"\" " +
+            "id=\"translation_de\">DE</a>"));
 
-    url = "http://www.google.com/search?client=ubuntu&ie=utf-8&oe=utf-8";
+    url = "https://www.google.com/search?client=ubuntu&ie=utf-8&oe=utf-8";
     currentLanguage = "en";
     result = I18NHelper.getHTMLLinks(url, currentLanguage);
     assertThat(result,
         is(
-        "<a href=\"http://www.google.com/search?client=ubuntu&ie=utf-8&oe=utf-8&SwitchLanguage=fr\" class=\"\" id=\"translation_fr\">FR</a>"
-        + "&nbsp;<a href=\"http://www.google.com/search?client=ubuntu&ie=utf-8&oe=utf-8&SwitchLanguage=en\" class=\"ArrayNavigationOn\" id=\"translation_en\">EN</a>"
-        + "&nbsp;<a href=\"http://www.google.com/search?client=ubuntu&ie=utf-8&oe=utf-8&SwitchLanguage=de\" class=\"\" id=\"translation_de\">DE</a>"));
+        "<a href=\"https://www.google.com/search?client=ubuntu&ie=utf-8&oe=utf-8&SwitchLanguage" +
+            "=fr\" class=\"\" id=\"translation_fr\">FR</a>"
+        + "&nbsp;<a href=\"https://www.google" +
+            ".com/search?client=ubuntu&ie=utf-8&oe=utf-8&SwitchLanguage=en\" class=\"ArrayNavigationOn\" id=\"translation_en\">EN</a>"
+        + "&nbsp;<a href=\"https://www.google" +
+            ".com/search?client=ubuntu&ie=utf-8&oe=utf-8&SwitchLanguage=de\" class=\"\" id=\"translation_de\">DE</a>"));
   }
 
   /**
@@ -155,7 +168,7 @@ public class I18NHelperTest {
    */
   @Test
   public void testGetHTMLLinksForI18NBeanAndCurrentLanguage() {
-    I18NBean bean = mock(I18NBean.class);
+    @SuppressWarnings("rawtypes") I18NBean bean = mock(I18NBean.class);
     BeanTranslation tradFR = new BeanTranslation();
     tradFR.setId("1");
     tradFR.setLanguage("fr");
@@ -193,112 +206,4 @@ public class I18NHelperTest {
         + "<option value=\"en_-1\" >Anglais</option>\n"
         + "<option value=\"de_-1\" >Allemand</option>\n</SELECT></td></tr>\n"));
   }
-//
-//  /**
-//   * Test of getFormLine method, of class I18NHelper.
-//   */
-//  @Test
-//  public void testGetFormLine_3args() {
-//    System.out.println("getFormLine");
-//    ResourcesWrapper resources = null;
-//    I18NBean bean = null;
-//    String translation = "";
-//    String expResult = "";
-//    String result = I18NHelper.getFormLine(resources, bean, translation);
-//    assertEquals(expResult, result);
-//    // TODO review the generated test code and remove the default call to fail.
-//    fail("The test case is a prototype.");
-//  }
-//
-//  /**
-//   * Test of getHTMLSelectObject method, of class I18NHelper.
-//   */
-//  @Test
-//  public void testGetHTMLSelectObject() {
-//    String userLanguage = "fr";
-//    I18NBean bean = mock(I18NBean.class);
-//    BeanTranslation tradFR = new BeanTranslation();
-//    tradFR.setId(1);
-//    tradFR.setLanguage("fr");
-//    tradFR.setObjectId("18");
-//    BeanTranslation tradEN = new BeanTranslation();
-//    tradEN.setId(2);
-//    tradEN.setLanguage("en");
-//    tradEN.setObjectId("28");
-//    String selectedTranslation = "rn";
-//    String expResult = "";
-//    String result = I18NHelper.getHTMLSelectObject(userLanguage, bean, selectedTranslation);
-//    assertThat(result, is("<SELECT name=\"I18NLanguage\" >\n" +
-//        "<option value=\"fr_-1\" >Français</option>\n" +
-//        "<option value=\"en_-1\" >Anglais</option>\n" +
-//        "<option value=\"de_-1\" >Allemand</option>\n</SELECT>"));
-//  }
-
-//  /**
-//   * Test of updateHTMLLinks method, of class I18NHelper.
-//   */
-//  @Test
-//  public void testUpdateHTMLLinks() {
-//    System.out.println("updateHTMLLinks");
-//    I18NBean bean = null;
-//    String expResult = "";
-//    String result = I18NHelper.updateHTMLLinks(bean);
-//    assertEquals(expResult, result);
-//    // TODO review the generated test code and remove the default call to fail.
-//    fail("The test case is a prototype.");
-//  }
-//
-//  /**
-//   * Test of getLanguageAndTranslationId method, of class I18NHelper.
-//   */
-//  @Test
-//  public void testGetLanguageAndTranslationId() {
-//    System.out.println("getLanguageAndTranslationId");
-//    HttpServletRequest request = null;
-//    String[] expResult = null;
-//    String[] result = I18NHelper.getLanguageAndTranslationId(request);
-//    assertEquals(expResult, result);
-//    // TODO review the generated test code and remove the default call to fail.
-//    fail("The test case is a prototype.");
-//  }
-//
-//  /**
-//   * Test of getSelectedContentLanguage method, of class I18NHelper.
-//   */
-//  @Test
-//  public void testGetSelectedLanguage() {
-//    System.out.println("getSelectedContentLanguage");
-//    HttpServletRequest request = null;
-//    String expResult = "";
-//    String result = I18NHelper.getSelectedContentLanguage(request);
-//    assertEquals(expResult, result);
-//    // TODO review the generated test code and remove the default call to fail.
-//    fail("The test case is a prototype.");
-//  }
-//
-//  /**
-//   * Test of setI18NInfo method, of class I18NHelper.
-//   */
-//  @Test
-//  public void testSetI18NInfo_I18NBean_HttpServletRequest() {
-//    System.out.println("setI18NInfo");
-//    I18NBean bean = null;
-//    HttpServletRequest request = null;
-//    I18NHelper.setI18NInfo(bean, request);
-//    // TODO review the generated test code and remove the default call to fail.
-//    fail("The test case is a prototype.");
-//  }
-//
-//  /**
-//   * Test of setI18NInfo method, of class I18NHelper.
-//   */
-//  @Test
-//  public void testSetI18NInfo_I18NBean_List() {
-//    System.out.println("setI18NInfo");
-//    I18NBean bean = null;
-//    List<FileItem> parameters = null;
-//    I18NHelper.setI18NInfo(bean, parameters);
-//    // TODO review the generated test code and remove the default call to fail.
-//    fail("The test case is a prototype.");
-//  }
 }

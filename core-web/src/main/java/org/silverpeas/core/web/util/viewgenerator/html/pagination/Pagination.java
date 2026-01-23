@@ -32,7 +32,7 @@ import org.silverpeas.core.web.util.viewgenerator.html.SimpleGraphicElement;
 
 import javax.portlet.RenderParameters;
 import javax.portlet.RenderRequest;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

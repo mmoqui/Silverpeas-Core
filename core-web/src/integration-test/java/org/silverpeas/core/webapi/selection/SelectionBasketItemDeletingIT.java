@@ -35,16 +35,14 @@ import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.contribution.publication.model.PublicationDetail;
 import org.silverpeas.core.contribution.publication.service.PublicationService;
 import org.silverpeas.core.selection.SelectionBasket;
-import org.silverpeas.core.test.util.TestRuntime;
 import org.silverpeas.web.test.AuthId;
 import org.silverpeas.web.test.ResourceDeletionTest;
 
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.is;
@@ -84,8 +82,9 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
 
   @Test
   public void popAnEmptyBasket() {
-    Response response = deleteAt(aResourceURI());
-    assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    try (Response response = deleteAt(aResourceURI())) {
+      assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    }
   }
 
   @Test
@@ -96,12 +95,14 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
     PublicationDetail publication = getPublication(1);
     SelectionBasket.get().put(publication);
 
-    Response response = deleteAt(aResourceURI(), withAsAuthId(authId));
-    assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+    try (Response response = deleteAt(aResourceURI(), withAsAuthId(authId))) {
+      assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
 
-    GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {};
-    List<SelectionBasketEntry> content = response.readEntity(contentType);
-    assertThat(content.isEmpty(), is(true));
+      GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {
+      };
+      List<SelectionBasketEntry> content = response.readEntity(contentType);
+      assertThat(content.isEmpty(), is(true));
+    }
   }
 
   @Test
@@ -114,22 +115,25 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
     basket.put(publication);
     basket.put(getPublication(1));
 
-    Response response = deleteAt(aResourceURI(), withAsAuthId(authId));
-    assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+    try (Response response = deleteAt(aResourceURI(), withAsAuthId(authId))) {
+      assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
 
-    BasketItem item = BasketItem.from(publication);
-    var expected = new SelectionBasketEntry(item);
-    GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {};
-    List<SelectionBasketEntry> content = response.readEntity(contentType);
-    assertThat(content.size(), is(1));
-    assertThat(content.get(0).getURI(), is(uriOf(publication)));
-    assertThat(content.get(0), is(expected));
+      BasketItem item = BasketItem.from(publication);
+      var expected = new SelectionBasketEntry(item);
+      GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {
+      };
+      List<SelectionBasketEntry> content = response.readEntity(contentType);
+      assertThat(content.size(), is(1));
+      assertThat(content.get(0).getURI(), is(uriOf(publication)));
+      assertThat(content.get(0), is(expected));
+    }
   }
 
   @Test
   public void deleteAnItemInAnEmptyBasket() {
-    Response response = deleteAt(uriPathOf(getPublication(0)));
-    assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    try (Response response = deleteAt(uriPathOf(getPublication(0)))) {
+      assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    }
   }
 
   @Test
@@ -140,8 +144,9 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
     PublicationDetail publication = getPublication(1);
     SelectionBasket.get().put(publication);
 
-    Response response = deleteAt(uriPathOf(getPublication(0)), withAsAuthId(authId));
-    assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    try (Response response = deleteAt(uriPathOf(getPublication(0)), withAsAuthId(authId))) {
+      assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    }
   }
 
   @Test
@@ -153,12 +158,14 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
     SelectionBasket.get().put(publication);
     awaitUntil(1, SECONDS);
 
-    Response response = deleteAt(uriPathOf(publication), withAsAuthId(authId));
-    assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+    try (Response response = deleteAt(uriPathOf(publication), withAsAuthId(authId))) {
+      assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
 
-    GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {};
-    List<SelectionBasketEntry> content = response.readEntity(contentType);
-    assertThat(content.isEmpty(), is(true));
+      GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {
+      };
+      List<SelectionBasketEntry> content = response.readEntity(contentType);
+      assertThat(content.isEmpty(), is(true));
+    }
   }
 
   @Test
@@ -173,22 +180,25 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
     basket.put(publication2);
     awaitUntil(1, SECONDS);
 
-    Response response = deleteAt(uriPathOf(publication1), withAsAuthId(authId));
-    assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+    try (Response response = deleteAt(uriPathOf(publication1), withAsAuthId(authId))) {
+      assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
 
-    BasketItem item = BasketItem.from(publication2);
-    var expected = new SelectionBasketEntry(item);
-    GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {};
-    List<SelectionBasketEntry> content = response.readEntity(contentType);
-    assertThat(content.size(), is(1));
-    assertThat(content.get(0).getURI(), is(uriOf(publication2)));
-    assertThat(content.get(0), is(expected));
+      BasketItem item = BasketItem.from(publication2);
+      var expected = new SelectionBasketEntry(item);
+      GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {
+      };
+      List<SelectionBasketEntry> content = response.readEntity(contentType);
+      assertThat(content.size(), is(1));
+      assertThat(content.get(0).getURI(), is(uriOf(publication2)));
+      assertThat(content.get(0), is(expected));
+    }
   }
 
   @Test
   public void deleteAtAGivenIndexInAnEmptyBasket() {
-    Response response = deleteAt(uriPathOf(0));
-    assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    try (Response response = deleteAt(uriPathOf(0))) {
+      assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    }
   }
 
   @Test
@@ -199,8 +209,9 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
     PublicationDetail publication = getPublication(1);
     SelectionBasket.get().put(publication);
 
-    Response response = deleteAt(uriPathOf(1), withAsAuthId(authId));
-    assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    try (Response response = deleteAt(uriPathOf(1), withAsAuthId(authId))) {
+      assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+    }
   }
 
   @Test
@@ -211,12 +222,14 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
     PublicationDetail publication = getPublication(1);
     SelectionBasket.get().put(publication);
 
-    Response response = deleteAt(uriPathOf(0), withAsAuthId(authId));
-    assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+    try (Response response = deleteAt(uriPathOf(0), withAsAuthId(authId))) {
+      assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
 
-    GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {};
-    List<SelectionBasketEntry> content = response.readEntity(contentType);
-    assertThat(content.isEmpty(), is(true));
+      GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {
+      };
+      List<SelectionBasketEntry> content = response.readEntity(contentType);
+      assertThat(content.isEmpty(), is(true));
+    }
   }
 
   @Test
@@ -230,16 +243,18 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
     basket.put(publication1);
     basket.put(publication2);
 
-    Response response = deleteAt(uriPathOf(1), withAsAuthId(authId));
-    assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+    try (Response response = deleteAt(uriPathOf(1), withAsAuthId(authId))) {
+      assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
 
-    BasketItem item = BasketItem.from(publication2);
-    var expected = new SelectionBasketEntry(item);
-    GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {};
-    List<SelectionBasketEntry> content = response.readEntity(contentType);
-    assertThat(content.size(), is(1));
-    assertThat(content.get(0).getURI(), is(uriOf(publication2)));
-    assertThat(content.get(0), is(expected));
+      BasketItem item = BasketItem.from(publication2);
+      var expected = new SelectionBasketEntry(item);
+      GenericType<List<SelectionBasketEntry>> contentType = new GenericType<>() {
+      };
+      List<SelectionBasketEntry> content = response.readEntity(contentType);
+      assertThat(content.size(), is(1));
+      assertThat(content.get(0).getURI(), is(uriOf(publication2)));
+      assertThat(content.get(0), is(expected));
+    }
   }
 
   @Override

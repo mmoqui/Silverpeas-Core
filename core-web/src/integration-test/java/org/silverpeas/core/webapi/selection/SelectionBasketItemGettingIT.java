@@ -41,8 +41,8 @@ import org.silverpeas.kernel.util.Mutable;
 import org.silverpeas.web.test.AuthId;
 import org.silverpeas.web.test.ResourceGettingTest;
 
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.ArrayList;

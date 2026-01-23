@@ -25,10 +25,7 @@ package org.silverpeas.web.test;
 
 import jakarta.ws.rs.client.*;
 import org.apache.commons.lang3.NotImplementedException;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.junit.*;
 import org.silverpeas.core.admin.component.model.ComponentInst;
 import org.silverpeas.core.admin.service.Administration;
 import org.silverpeas.core.admin.service.OrganizationController;
@@ -49,6 +46,7 @@ import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -77,17 +75,7 @@ public abstract class RESTWebServiceTest {
    */
   private static final String SESSION_KEY_HTTP_HEADER = "X-Silverpeas-Session";
 
-  private static Client client;
-
-  @BeforeClass
-  public static void openWebClient() {
-    client = ClientBuilder.newClient();
-  }
-
-  @AfterClass
-  public static void closeWebClient() {
-    client.close();
-  }
+  private Client client;
 
   @Rule
   public DbSetupRule dbSetupRule = DbSetupRule.createTablesFrom(
@@ -101,6 +89,16 @@ public abstract class RESTWebServiceTest {
   @Before
   public void reloadAdminCaches() {
     Administration.get().reloadCache();
+  }
+
+  @Before
+  public void openWebClient() {
+    this.client = ClientBuilder.newClient();
+  }
+
+  @After
+  public void closeWebClient() {
+    this.client.close();
   }
 
   /**

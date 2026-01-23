@@ -31,7 +31,7 @@ import org.silverpeas.core.i18n.I18n;
 import org.silverpeas.kernel.TestManagedBeanFeeder;
 import org.silverpeas.kernel.test.UnitTest;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -50,7 +50,7 @@ class MailSettingsTest {
   void setUpI18n() {
     I18n i18n = mock(I18n.class);
     when(i18n.getDefaultLanguage()).thenReturn("fr");
-    when(i18n.getSupportedLanguages()).thenReturn(Set.of("fr", "en", "de"));
+    when(i18n.getSupportedLanguageCodes()).thenReturn(List.of("fr", "en", "de"));
     feeder.manageBean(i18n, I18n.class);
   }
 

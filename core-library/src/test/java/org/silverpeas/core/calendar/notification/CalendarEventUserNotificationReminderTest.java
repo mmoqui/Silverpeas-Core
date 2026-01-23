@@ -206,7 +206,7 @@ class CalendarEventUserNotificationReminderTest {
     final Map<String, String> titles = computeNotificationTitles(durationReminder);
     assertThat(titles.get(DE), is("Reminder about the event super test - 21.02.2018 (UTC)"));
     assertThat(titles.get(EN), is("Reminder about the event super test - 02/21/2018 (UTC)"));
-    assertThat(titles.get(FR), is("Rappel sur l'événement super test - 21/02/2018 (UTC)"));
+    assertThat(titles.get(FR), is("Rappel sur l&#39;événement super test - 21/02/2018 (UTC)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be on 21.02.2018 (UTC)."));
@@ -220,7 +220,7 @@ class CalendarEventUserNotificationReminderTest {
     final Map<String, String> titles = computeNotificationTitles(durationReminder);
     assertThat(titles.get(DE), is("Reminder about the event super test - 21.02.2018"));
     assertThat(titles.get(EN), is("Reminder about the event super test - 02/21/2018"));
-    assertThat(titles.get(FR), is("Rappel sur l'événement super test - 21/02/2018"));
+    assertThat(titles.get(FR), is("Rappel sur l&#39;événement super test - 21/02/2018"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be on 21.02.2018."));
@@ -239,7 +239,7 @@ class CalendarEventUserNotificationReminderTest {
     final Map<String, String> titles = computeNotificationTitles(durationReminder);
     assertThat(titles.get(DE), is("Reminder about the event super test - 21.02.2018 - 22.02.2018"));
     assertThat(titles.get(EN), is("Reminder about the event super test - 02/21/2018 - 02/22/2018"));
-    assertThat(titles.get(FR), is("Rappel sur l'événement super test - 21/02/2018 - 22/02/2018"));
+    assertThat(titles.get(FR), is("Rappel sur l&#39;événement super test - 21/02/2018 - 22/02/2018"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be from 21.02.2018 to 22.02.2018."));
@@ -264,7 +264,7 @@ class CalendarEventUserNotificationReminderTest {
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 - 02/22/2018 (UTC)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 - 22/02/2018 (UTC)"));
+        is("Rappel sur l&#39;événement super test - 21/02/2018 - 22/02/2018 (UTC)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be from 21.02.2018 to 22.02.2018 (UTC)."));
@@ -289,7 +289,7 @@ class CalendarEventUserNotificationReminderTest {
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 - 02/22/2018 (America/Cancun)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 - 22/02/2018 (America/Cancun)"));
+        is("Rappel sur l&#39;événement super test - 21/02/2018 - 22/02/2018 (America/Cancun)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be from 21.02.2018 to 22.02.2018 " +
@@ -317,7 +317,7 @@ class CalendarEventUserNotificationReminderTest {
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 - 02/22/2018 (Asia/Muscat)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 - 22/02/2018 (Asia/Muscat)"));
+        is("Rappel sur l&#39;événement super test - 21/02/2018 - 22/02/2018 (Asia/Muscat)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be from 21.02.2018 to 22.02.2018 " +
@@ -341,7 +341,7 @@ class CalendarEventUserNotificationReminderTest {
         is("Reminder about the event super test - 21.02.2018 21:00 - 23:00"));
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 21:00 - 23:00"));
-    assertThat(titles.get(FR), is("Rappel sur l'événement super test - 21/02/2018 21:00 - 23:00"));
+    assertThat(titles.get(FR), is("Rappel sur l&#39;événement super test - 21/02/2018 21:00 - 23:00"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be on 21.02.2018 from 21:00 to 23:00."));
@@ -365,7 +365,7 @@ class CalendarEventUserNotificationReminderTest {
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 21:00 - 23:00 (UTC)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 21:00 - 23:00 (UTC)"));
+        is("Rappel sur l&#39;événement super test - 21/02/2018 21:00 - 23:00 (UTC)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be on 21.02.2018 from 21:00 to 23:00 (UTC)" +
@@ -391,7 +391,7 @@ class CalendarEventUserNotificationReminderTest {
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 21:00 - 23:00 (America/Cancun)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 21:00 - 23:00 (America/Cancun)"));
+        is("Rappel sur l&#39;événement super test - 21/02/2018 21:00 - 23:00 (America/Cancun)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be on 21.02.2018 from 21:00 to 23:00 " +
@@ -417,7 +417,7 @@ class CalendarEventUserNotificationReminderTest {
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 21:00 - 23:00 (Asia/Muscat)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 21:00 - 23:00 (Asia/Muscat)"));
+        is("Rappel sur l&#39;événement super test - 21/02/2018 21:00 - 23:00 (Asia/Muscat)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be on 21.02.2018 from 21:00 to 23:00 " +
@@ -442,7 +442,7 @@ class CalendarEventUserNotificationReminderTest {
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 23:00 - 02/22/2018 01:00"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 23:00 - 22/02/2018 01:00"));
+        is("Rappel sur l&#39;événement super test - 21/02/2018 23:00 - 22/02/2018 01:00"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be from 21.02.2018 at 23:00 to 22.02.2018 " +
@@ -470,7 +470,7 @@ class CalendarEventUserNotificationReminderTest {
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 23:00 - 02/22/2018 01:00 (UTC)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 23:00 - 22/02/2018 01:00 (UTC)"));
+        is("Rappel sur l&#39;événement super test - 21/02/2018 23:00 - 22/02/2018 01:00 (UTC)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be from 21.02.2018 at 23:00 to 22.02.2018 " +
@@ -498,7 +498,7 @@ class CalendarEventUserNotificationReminderTest {
     assertThat(titles.get(EN),
         is("Reminder about the event super test - 02/21/2018 23:00 - 02/22/2018 01:00 (UTC)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 23:00 - 22/02/2018 01:00 (UTC)"));
+        is("Rappel sur l&#39;événement super test - 21/02/2018 23:00 - 22/02/2018 01:00 (UTC)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
         is("REMINDER: The event <b>super test</b> will be from 21.02.2018 at 23:00 to 22.02.2018 " +
@@ -526,7 +526,7 @@ class CalendarEventUserNotificationReminderTest {
         is("Reminder about the event super test - 02/21/2018 23:00 - 02/22/2018 01:00 " +
             "(America/Cancun)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 23:00 - 22/02/2018 01:00 " +
+        is("Rappel sur l&#39;événement super test - 21/02/2018 23:00 - 22/02/2018 01:00 " +
             "(America/Cancun)"));
     final Map<String, String> contents = computeNotificationContents(durationReminder);
     assertThat(contents.get(DE),
@@ -555,7 +555,7 @@ class CalendarEventUserNotificationReminderTest {
         is("Reminder about the event super test - 02/21/2018 23:00 - 02/22/2018 01:00 " +
             "(Asia/Muscat)"));
     assertThat(titles.get(FR),
-        is("Rappel sur l'événement super test - 21/02/2018 23:00 - 22/02/2018 01:00 " +
+        is("Rappel sur l&#39;événement super test - 21/02/2018 23:00 - 22/02/2018 01:00 " +
             "(Asia/Muscat)"
         ));
     final Map<String, String> contents = computeNotificationContents(durationReminder);

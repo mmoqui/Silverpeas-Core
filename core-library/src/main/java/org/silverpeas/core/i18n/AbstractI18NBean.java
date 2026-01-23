@@ -259,7 +259,7 @@ public abstract class AbstractI18NBean<T extends BeanTranslation>
   @Override
   public T getNextTranslation() {
     Map<String, T> l10n = getTranslations();
-    return getI18n().getSupportedLanguages()
+    return getI18n().getSupportedLanguageCodes()
         .stream()
         .map(l10n::get)
         .filter(Objects::nonNull)

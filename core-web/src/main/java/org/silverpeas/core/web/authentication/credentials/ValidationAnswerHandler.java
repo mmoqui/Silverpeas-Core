@@ -28,7 +28,7 @@ import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.security.encryption.cipher.CryptMD5;
 import org.silverpeas.kernel.logging.SilverLogger;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Navigation case : user validates his answer to his login question.

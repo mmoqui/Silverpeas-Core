@@ -586,7 +586,7 @@ public class WysiwygManager implements WysiwygContentRepository {
   public WysiwygContent getByContribution(final LocalizedContribution contribution) {
     String content = internalLoad(contribution.getIdentifier(), contribution.getLanguage());
     if (i18n.isEnabled() && content != null && StringUtil.isNotDefined(content)) {
-      List<String> languages = new ArrayList<>(i18n.getSupportedLanguages());
+      List<String> languages = new ArrayList<>(i18n.getSupportedLanguageCodes());
       languages.remove(contribution.getLanguage());
       for (String lang : languages) {
         content = internalLoad(contribution.getIdentifier(), lang);
@@ -753,7 +753,7 @@ public class WysiwygManager implements WysiwygContentRepository {
     List<Pair<SimpleDocumentPK, SimpleDocumentPK>> oldNewImagePkMapping = new ArrayList<>();
     Map<String, String> fileIds = new HashMap<>();
     List<String> languagesWithEmptyContent = new ArrayList<>();
-    for (String language : i18n.getSupportedLanguages()) {
+    for (String language : i18n.getSupportedLanguageCodes()) {
       SimpleDocumentList<SimpleDocument> documents =
           attachmentService.
               listDocumentsByForeignKeyAndType(foreignKey, DocumentType.wysiwyg, language)
@@ -959,7 +959,7 @@ public class WysiwygManager implements WysiwygContentRepository {
       String newComponentId, String newObjectId) {
     ResourceReference foreignKey = new ResourceReference(newObjectId, newComponentId);
     List<SimpleDocument> images = null;
-    for (String language : i18n.getSupportedLanguages()) {
+    for (String language : i18n.getSupportedLanguageCodes()) {
       List<SimpleDocument> documents = attachmentService.
           listDocumentsByForeignKeyAndType(foreignKey, DocumentType.wysiwyg, language)
           .removeLanguageFallbacks();
