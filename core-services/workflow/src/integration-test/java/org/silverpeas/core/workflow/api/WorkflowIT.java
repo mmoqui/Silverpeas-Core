@@ -43,6 +43,7 @@ public class WorkflowIT {
   public static Archive<?> createTestArchive() {
     return BasicWarBuilder.onWarForTestClass(WorkflowIT.class)
         .addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core")
+        .addAsResource("org/silverpeas/util/logging")
         .addMavenDependencies("org.silverpeas.core.services:silverpeas-core-personalorganizer")
         .addAsResource(
             "org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties")

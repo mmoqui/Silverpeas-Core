@@ -95,6 +95,7 @@ public class QuestionContainerDAOIT extends DataSetTest {
     return BasicWarBuilder.onWarForTestClass(QuestionContainerDAOIT.class)
         .addMavenDependencies("org.silverpeas.core:silverpeas-core-api")
         .addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core")
+        .addAsResource("org/silverpeas/util/logging")
         .addAsResource("org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties")
         .testFocusedOn(war ->
             war.addPackages(true, "org.silverpeas.core.questioncontainer.container")

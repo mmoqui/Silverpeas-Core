@@ -41,6 +41,7 @@ public class WarBuilder4Statistics extends BasicWarBuilder {
   protected <T> WarBuilder4Statistics(final Class<T> test) {
     super(test);
     addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core");
+    addAsResource("org/silverpeas/util/logging");
     addAsResource("org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties");
   }
 

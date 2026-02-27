@@ -24,6 +24,7 @@
 
 package org.silverpeas.core.webapi.selection;
 
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -62,6 +63,8 @@ public class SelectionBasketItemPostingIT extends ResourceCreationTest {
 
   private String authToken;
   private User user;
+  @Inject
+  private PublicationService service;
 
   @Deployment
   public static Archive<?> createTestArchive() {
@@ -243,8 +246,7 @@ public class SelectionBasketItemPostingIT extends ResourceCreationTest {
   }
 
   private PublicationDetail getPublication(int index) {
-    Collection<PublicationDetail> publications = PublicationService.get()
-        .getAllPublications("toto1");
+    Collection<PublicationDetail> publications = service.getAllPublications("toto2");
     assertThat(publications.size(), greaterThanOrEqualTo(index + 1));
 
     Iterator<PublicationDetail> iterator = publications.iterator();

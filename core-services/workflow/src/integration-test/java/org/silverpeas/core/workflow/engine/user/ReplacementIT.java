@@ -73,6 +73,7 @@ public class ReplacementIT {
     return BasicWarBuilder.onWarForTestClass(ReplacementIT.class)
         .addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core")
         .addMavenDependencies("org.silverpeas.core.services:silverpeas-core-personalorganizer")
+        .addAsResource("org/silverpeas/util/logging")
         .addAsResource(
             "org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties")
         .addAsResource("org/silverpeas/lookAndFeel")

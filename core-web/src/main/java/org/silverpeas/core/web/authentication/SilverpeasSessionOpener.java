@@ -245,7 +245,7 @@ public class SilverpeasSessionOpener {
    */
   private void registerSuccessfulConnexion(SessionInfo sessionInfo) {
     // Last login date + nb successful login (reloading user data explicitly)
-    UserDetail user = sessionInfo.getUserDetail();
+    UserDetail user = (UserDetail) sessionInfo.getUser();
     user.setLastLoginDate(DateUtil.getNow());
     user.setNbSuccessfulLoginAttempts(user.getNbSuccessfulLoginAttempts() + 1);
     AdminController adminController = ServiceProvider.getService(AdminController.class);

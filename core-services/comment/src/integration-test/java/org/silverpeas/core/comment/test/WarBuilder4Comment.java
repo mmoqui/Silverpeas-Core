@@ -44,6 +44,7 @@ public class WarBuilder4Comment extends BasicWarBuilder {
   public static <T> WarBuilder4Comment onWarForTestClass(Class<T> test) {
     return (WarBuilder4Comment) new WarBuilder4Comment(test)
         .addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core")
+        .addAsResource("org/silverpeas/util/logging")
         .testFocusedOn(war ->
             war.addPackages(true, "org.silverpeas.core.comment")
                 .addAsResource(

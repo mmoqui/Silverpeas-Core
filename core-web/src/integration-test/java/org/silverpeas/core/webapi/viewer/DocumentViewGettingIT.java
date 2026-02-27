@@ -25,6 +25,7 @@ package org.silverpeas.core.webapi.viewer;
 
 import jakarta.annotation.Priority;
 import jakarta.enterprise.inject.Alternative;
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -60,6 +61,9 @@ public class DocumentViewGettingIT extends ResourceGettingTest {
 
   static String ATTACHMENT_ID = "7";
 
+  @Inject
+  private SimpleDocumentEmbedMediaViewProvider provider;
+
   @Deployment
   public static Archive<?> createTestArchive() {
     return WarBuilder4WebCore.onWarForTestClass(DocumentViewGettingIT.class)
@@ -72,7 +76,7 @@ public class DocumentViewGettingIT extends ResourceGettingTest {
 
   @Before
   public void setup() throws Exception {
-    ServiceProvider.getService(SimpleDocumentEmbedMediaViewProvider.class).init();
+    provider.init();
   }
 
   @Service

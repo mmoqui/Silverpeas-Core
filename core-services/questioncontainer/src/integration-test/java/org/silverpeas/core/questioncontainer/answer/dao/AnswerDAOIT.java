@@ -89,6 +89,7 @@ public class AnswerDAOIT extends DataSetTest {
   public static Archive<?> createTestArchive() {
     return BasicWarBuilder.onWarForTestClass(AnswerDAOIT.class)
         .addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core")
+        .addAsResource("org/silverpeas/util/logging")
         .addAsResource("org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties")
         .testFocusedOn(war -> war.addPackages(true, "org.silverpeas.core.questioncontainer.answer"))
         .build();

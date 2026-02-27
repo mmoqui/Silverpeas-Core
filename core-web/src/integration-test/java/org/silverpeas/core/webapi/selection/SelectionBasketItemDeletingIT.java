@@ -24,6 +24,9 @@
 
 package org.silverpeas.core.webapi.selection;
 
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,13 +36,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.contribution.publication.model.PublicationDetail;
-import org.silverpeas.core.contribution.publication.service.PublicationService;
+import org.silverpeas.core.contribution.publication.service.DefaultPublicationService;
 import org.silverpeas.core.selection.SelectionBasket;
 import org.silverpeas.web.test.AuthId;
 import org.silverpeas.web.test.ResourceDeletionTest;
 
-import jakarta.ws.rs.core.GenericType;
-import jakarta.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +63,8 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
 
   private String authToken;
   private User user;
+  @Inject
+  private DefaultPublicationService service;
 
   @Deployment
   public static Archive<?> createTestArchive() {
@@ -281,8 +284,7 @@ public class SelectionBasketItemDeletingIT extends ResourceDeletionTest {
   }
 
   private PublicationDetail getPublication(int index) {
-    Collection<PublicationDetail> publications = PublicationService.get()
-        .getAllPublications("toto1");
+    Collection<PublicationDetail> publications = service.getAllPublications("toto2");
     assertThat(publications.size(), greaterThanOrEqualTo(index + 1));
 
     Iterator<PublicationDetail> iterator = publications.iterator();

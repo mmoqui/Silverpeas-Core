@@ -252,7 +252,7 @@ public class UserPrivilegeValidator implements UserPrivilegeValidation {
    * Silverpeas. In this case it validates this session matches the one within which the current
    * HTTP request was sent. If the validation succeeds, the HTTP session is returned. If the key
    * doesn't identify any opened session, the method validates it matches the token of an existing
-   * user session and in this case a session is then created only for the current request and it
+   * user session and in this case a session is then created only for the current request, and it
    * is returned. If the validation fails, a WebApplicationException exception is thrown.
    * </p>
    * <p>

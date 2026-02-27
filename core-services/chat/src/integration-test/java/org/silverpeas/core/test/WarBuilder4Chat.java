@@ -37,7 +37,7 @@ public class WarBuilder4Chat extends BasicWarBuilder {
   /**
    * Constructs a war builder for the specified test class. It will load all the resources in the
    * same packages of the specified test class.
-   * @param classOfTest the class of the test for which a war archive will be build.
+   * @param classOfTest the class of the test for which a war archive will be built.
    */
   protected <U> WarBuilder4Chat(final Class<U> classOfTest) {
     super(classOfTest);
@@ -60,6 +60,7 @@ public class WarBuilder4Chat extends BasicWarBuilder {
             .addAsResource("org/silverpeas/general.properties")
             .addAsResource("org/silverpeas/chat/settings/chat.properties")
             .addAsResource("org/silverpeas/lookAndFeel/generalLook.properties")
+            .addAsResource("org/silverpeas/util/logging")
             .addAsResource("org/silverpeas/jobStartPagePeas/settings/jobStartPagePeasSettings.properties"));
   }
 }

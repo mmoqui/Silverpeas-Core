@@ -88,7 +88,7 @@ public abstract class WebComponentRequestRouterTest {
 
   @BeforeEach
   public void setUp(@TestManagedMock SilverpeasComponentInstanceProvider provider) {
-    when(provider.getComponentName(any())).thenReturn("componentName");
+    //when(provider.getComponentName(any())).thenReturn("componentName");
     user = new UserDetail();
     user.setId("400");
     WebComponentManager.managedWebComponentRouters.clear();

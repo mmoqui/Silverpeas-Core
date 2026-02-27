@@ -34,7 +34,7 @@ import jakarta.ws.rs.WebApplicationException;
 
 /**
  * Validation of the authorization of a user to access a web endpoint in Silverpeas. This interface
- * requires to be implemented by all of authorization validators in Silverpeas. The validation of
+ * requires to be implemented by all authorization validators in Silverpeas. The validation of
  * the authorization can be only performed against authenticated users.
  * @author mmoquillon
  */

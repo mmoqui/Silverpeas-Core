@@ -34,6 +34,7 @@ public class WarBuilder4PersonalOrganizer extends BasicWarBuilder {
   public static <T> WarBuilder4PersonalOrganizer onWarForTestClass(Class<T> test) {
     return (WarBuilder4PersonalOrganizer) new WarBuilder4PersonalOrganizer(test)
         .addMavenDependenciesWithPersistence("org.silverpeas.core:silverpeas-core")
+        .addAsResource("org/silverpeas/util/logging")
         .testFocusedOn(war ->
             war.addPackages(true, "org.silverpeas.core.personalorganizer")
             .addAsResource("org/silverpeas/core/personalorganizer")
@@ -43,7 +44,7 @@ public class WarBuilder4PersonalOrganizer extends BasicWarBuilder {
   /**
    * Constructs a war builder for the specified test class. It will load all the resources in the
    * same packages of the specified test class.
-   * @param test the class of the test for which a war archive will be build.
+   * @param test the class of the test for which a war archive will be built.
    */
   protected <T> WarBuilder4PersonalOrganizer(final Class<T> test) {
     super(test);
