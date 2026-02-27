@@ -24,11 +24,11 @@
 
 package org.silverpeas.core.admin.user.notification.role.test;
 
-import org.silverpeas.core.annotation.Service;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.silverpeas.core.annotation.Service;
+import org.silverpeas.core.persistence.datasource.model.jpa.EntityManagerProvider;
+
 import java.util.List;
 
 /**
@@ -39,12 +39,13 @@ import java.util.List;
 @Service
 public class ResourceValidators {
 
-  @PersistenceContext
-  private EntityManager entityManager;
+  @Inject
+  private EntityManagerProvider entityManagerProvider;
 
   @Transactional
   public List<Validator> getAll(String instanceId) {
-    return entityManager.createNamedQuery("Validator.findAllByInstanceId", Validator.class)
+    return entityManagerProvider.getEntityManager()
+        .createNamedQuery("Validator.findAllByInstanceId", Validator.class)
         .setParameter("instanceId", instanceId)
         .getResultList();
   }

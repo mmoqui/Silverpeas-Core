@@ -33,6 +33,7 @@ import org.silverpeas.core.security.token.TokenGeneratorProvider;
 import org.silverpeas.core.security.token.exception.TokenException;
 import org.silverpeas.core.security.token.persistent.PersistentResourceToken;
 import org.silverpeas.core.security.token.persistent.repository.PersistentResourceTokenRepository;
+import org.silverpeas.kernel.annotation.NonNull;
 
 import static org.silverpeas.core.security.token.persistent.PersistentResourceTokenGenerator.RESOURCE_PARAM;
 
@@ -54,7 +55,7 @@ public class DefaultTokenService implements PersistentResourceTokenService {
    */
   @Override
   @Transactional(Transactional.TxType.REQUIRED)
-  public PersistentResourceToken initialize(EntityReference resource) throws TokenException {
+  public PersistentResourceToken initialize(EntityReference<?> resource) throws TokenException {
 
     // Checking that it does not exist a token with same key
     TokenGenerator generator = TokenGeneratorProvider.getTokenGenerator(
@@ -81,7 +82,7 @@ public class DefaultTokenService implements PersistentResourceTokenService {
    * @see PersistentResourceTokenService#get(EntityReference)
    */
   @Override
-  public PersistentResourceToken get(final EntityReference resource) {
+  public PersistentResourceToken get(final EntityReference<?> resource) {
     return bind(tokenRepository.getByTypeAndResourceId(resource.getType(), resource.getId()));
   }
 
@@ -98,7 +99,7 @@ public class DefaultTokenService implements PersistentResourceTokenService {
    */
   @Override
   @Transactional(Transactional.TxType.REQUIRED)
-  public void remove(final EntityReference resource) {
+  public void remove(final EntityReference<?> resource) {
     final PersistentResourceToken token = get(resource);
     if (token.exists()) {
       tokenRepository.delete(token);
@@ -122,9 +123,10 @@ public class DefaultTokenService implements PersistentResourceTokenService {
    * NoneToken that is an instance of a PersistentResourceToken class, otherwise the token is simply
    * returned.
    *
-   * @param token the token to bind to a non null <code>PersistentResourceToken</code> instance.
-   * @return a non null instance of PersistentResourceToken class
+   * @param token the token to bind to a non-null <code>PersistentResourceToken</code> instance.
+   * @return a non-null instance of PersistentResourceToken class
    */
+  @NonNull
   private PersistentResourceToken bind(final PersistentResourceToken token) {
     if (token == null) {
       return PersistentResourceToken.NoneToken;

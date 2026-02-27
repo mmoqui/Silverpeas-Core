@@ -29,10 +29,6 @@ import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyFactory;
 import net.fortuna.ical4j.validate.ValidationResult;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-
 public class HtmlProperty extends Property implements Encodable {
 
   public static final String X_ALT_DESC = "X-ALT-DESC";

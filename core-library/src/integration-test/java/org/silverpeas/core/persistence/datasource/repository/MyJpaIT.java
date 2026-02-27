@@ -27,6 +27,7 @@ package org.silverpeas.core.persistence.datasource.repository;
 
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.operation.Operation;
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -34,10 +35,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.persistence.Transaction;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.persistence.jdbc.bean.SilverpeasBeanDAOIT;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
-
-import jakarta.inject.Inject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -63,12 +63,10 @@ public class MyJpaIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(MyJpaIT.class)
-        .addAdministrationFeatures()
-        .testFocusedOn(warBuilder -> warBuilder
-            .addClasses(MyPerson.class, MyPersonRepository.class)
-            .addAsResource(
-            "org/silverpeas/core/persistence/datasource/create_table.sql")).build();
+    return LibCoreWarBuilder.onWarForTestClass(SilverpeasBeanDAOIT.class)
+        .addPackages(true, "org.silverpeas.core.persistence.datasource.repository")
+        .addAsResource("org/silverpeas/core/persistence/datasource/create_table.sql")
+        .build();
   }
 
   @Test

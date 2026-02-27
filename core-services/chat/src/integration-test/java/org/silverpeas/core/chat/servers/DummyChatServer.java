@@ -24,14 +24,11 @@
 
 package org.silverpeas.core.chat.servers;
 
+import jakarta.annotation.PreDestroy;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.annotation.Service;
 
 import java.util.*;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 
 /**
  *
@@ -48,6 +45,12 @@ public class DummyChatServer implements ChatServer {
   private final Map<String, User[]> events = new HashMap<>();
 
   private final List<User> existingUsers = new ArrayList<>();
+
+  @PreDestroy
+  public void clear() {
+    this.events.clear();
+    this.existingUsers.clear();
+  }
 
   /**
    * Adds the specified user as an existing one for tests.
@@ -66,7 +69,6 @@ public class DummyChatServer implements ChatServer {
    */
   public boolean wasExecuted(final String method, final User ... users) {
     User[] usersInArg = events.getOrDefault(method, new User[0]);
-    assertThat(users.length, is(equalTo(usersInArg.length)));
     return Arrays.equals(users, usersInArg);
   }
 

@@ -24,10 +24,9 @@
 
 package org.silverpeas.core.notification.system;
 
+import jakarta.enterprise.event.Observes;
 import org.silverpeas.core.persistence.Transaction;
 import org.silverpeas.kernel.logging.SilverLogger;
-
-import jakarta.enterprise.event.Observes;
 
 import static jakarta.enterprise.event.TransactionPhase.AFTER_SUCCESS;
 

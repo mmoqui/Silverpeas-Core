@@ -23,6 +23,8 @@
  */
 package org.silverpeas.core.process.management;
 
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -31,7 +33,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.silverpeas.kernel.SilverpeasRuntimeException;
 import org.silverpeas.core.admin.user.model.UserDetail;
 import org.silverpeas.core.process.ProcessProvider;
 import org.silverpeas.core.process.check.ProcessCheck;
@@ -39,12 +40,11 @@ import org.silverpeas.core.process.io.file.FileBasePath;
 import org.silverpeas.core.process.io.file.FileHandler;
 import org.silverpeas.core.process.session.ProcessSession;
 import org.silverpeas.core.process.util.ProcessList;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.util.Charsets;
+import org.silverpeas.kernel.SilverpeasRuntimeException;
 import org.silverpeas.kernel.bundle.ResourceLocator;
 
-import jakarta.annotation.Resource;
-import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -74,11 +74,8 @@ public class ProcessManagementIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(ProcessManagementIT.class)
-        .addSilverpeasExceptionBases()
-        .addFileRepositoryFeatures()
-        .addCommonUserBeans()
-        .testFocusedOn((warBuilder) -> warBuilder.addPackages(true, "org.silverpeas.core.process"))
+    return LibCoreWarBuilder.onFullWarForTestClass(ProcessManagementIT.class)
+        .addPackages(true, "org.silverpeas.core.process")
         .build();
   }
 

@@ -26,6 +26,8 @@ package org.silverpeas.core.persistence.jdbc.sql;
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.operation.Insert;
 import com.ninja_squad.dbsetup.operation.Operation;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -34,11 +36,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.persistence.Transaction;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
-import jakarta.annotation.Resource;
-import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -67,11 +67,11 @@ public class JdbcSqlQueryIT {
   private final static long NB_ROW_AT_BEGINNING = 100L;
 
   static {
-    Insert.Builder insertBulider = Operations.insertInto("a_table").columns("id", "val");
+    Insert.Builder insertBuilder = Operations.insertInto("a_table").columns("id", "val");
     for (long l = 0; l < NB_ROW_AT_BEGINNING; l++) {
-      insertBulider.values(l, "value_" + l);
+      insertBuilder.values(l, "value_" + l);
     }
-    TABLE_SET_UP = insertBulider.build();
+    TABLE_SET_UP = insertBuilder.build();
   }
 
   @Resource
@@ -83,9 +83,7 @@ public class JdbcSqlQueryIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(JdbcSqlQueryIT.class)
-        .addCommonBasicUtilities()
-        .addSilverpeasExceptionBases()
+    return LibCoreWarBuilder.onWarForTestClass(JdbcSqlQueryIT.class)
         .build();
   }
 

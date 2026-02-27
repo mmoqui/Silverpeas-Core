@@ -15,7 +15,8 @@ INSERT INTO st_user
 VALUES
   (0, 0, '0', NULL, 'Administrateur', 'SilverAdmitn', 'A', 'VALID', '2012-01-01 00:00:00.000', 0),
   (1, 0, '1', 'Toto', 'Chez-les-Papoos', 'toto', 'U', 'VALID', '2012-01-01 00:00:00.000', 0),
-  (2, 0, '2', 'Gustave', 'Eiffel', 'gustave', 'U', 'VALID', '2012-01-01 00:00:00.000', 0);
+  (2, 0, '2', 'Gustave', 'Eiffel', 'gustave', 'U', 'VALID', '2012-01-01 00:00:00.000', 0),
+  (26, 0, '26', 'Yohan', 'Drômois', 'yoyo', 'U', 'VALID', '2012-01-01 00:00:00.000', 0);
 
 /*
   Some Calendars.
@@ -24,10 +25,11 @@ INSERT INTO sb_cal_calendar
   (id, instanceId, title, zoneid, createDate, createdBy, lastUpdateDate, lastUpdatedBy, version)
 VALUES
   ('ID_CAL_WITHOUT_EVENT', 'instance_WE', 'title WE', 'UTC', '2016-07-28T16:50:00Z', '0', '2016-07-28T16:50:00Z', '0', 0),
-  ('ID_4', 'instance_C', 'title 4', 'UTC', '2016-07-28T16:50:00Z', '1', '2016-07-28T16:50:00Z', '1', 0),
-  ('ID_3', 'instance_A', 'title 3', 'UTC', '2016-07-28T16:50:00Z', '0', '2016-07-28T16:50:00Z', '0', 0),
-  ('ID_2', 'instance_B', 'title 2', 'UTC', '2016-07-28T16:50:00Z', '0', '2016-07-28T16:50:00Z', '0', 0),
-  ('ID_1', 'instance_A', 'title 1', 'UTC', '2016-07-28T16:50:00Z', '0', '2016-07-28T16:55:00Z', '1', 1);
+  ('ID_4', 'calendar3', 'title 4', 'UTC', '2016-07-28T16:50:00Z', '1', '2016-07-28T16:50:00Z', '1', 0),
+  ('ID_3', 'calendar1', 'title 3', 'UTC', '2016-07-28T16:50:00Z', '0', '2016-07-28T16:50:00Z', '0', 0),
+  ('ID_2', 'calendar2', 'title 2', 'UTC', '2016-07-28T16:50:00Z', '0', '2016-07-28T16:50:00Z','0', 0),
+  ('ID_1', 'calendar1', 'title 1', 'UTC', '2016-07-28T16:50:00Z', '0', '2016-07-28T16:55:00Z','1',
+   1);
 
 /*
   The events' recurrence.

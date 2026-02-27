@@ -32,7 +32,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.util.UnitUtil;
 import org.silverpeas.core.util.time.Duration;
 
@@ -73,8 +73,8 @@ public class ManagedThreadPoolIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(ManagedThreadPoolIT.class)
-        .addCommonBasicUtilities().addSilverpeasExceptionBases().build();
+    return LibCoreWarBuilder.onWarForTestClass(ManagedThreadPoolIT.class)
+        .build();
   }
 
   @Before

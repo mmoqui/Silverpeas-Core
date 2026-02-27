@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.datereminder.persistence.service;
 
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -37,10 +38,10 @@ import org.silverpeas.core.datereminder.persistence.MyUnknownEntityReference;
 import org.silverpeas.core.datereminder.persistence.PersistentResourceDateReminder;
 import org.silverpeas.core.persistence.EntityReference;
 import org.silverpeas.core.persistence.datasource.OperationContext;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
+import org.silverpeas.core.test.stub.StubbedUserProvider;
 
-import jakarta.inject.Inject;
 import java.util.Date;
 import java.util.Objects;
 
@@ -67,13 +68,10 @@ public class PersistentDateReminderServiceIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(PersistentDateReminderServiceIT.class)
-        .addSilverpeasExceptionBases()
-        .addJpaPersistenceFeatures()
-        .addAdministrationFeatures()
-        .addPublicationTemplateFeatures()
-        .testFocusedOn(
-            (warBuilder) -> warBuilder.addPackages(true, "org.silverpeas.core.datereminder"))
+    return LibCoreWarBuilder.onWarForTestClass(PersistentDateReminderServiceIT.class)
+        .addStubbedUserAPI()
+        .addSchedulingEngine()
+        .addPackages(true, "org.silverpeas.core.datereminder")
         .build();
   }
 
@@ -82,6 +80,7 @@ public class PersistentDateReminderServiceIT {
 
   @Before
   public void setUpTestContext() {
+    StubbedUserProvider.addUser("0");
     OperationContext.fromUser("0");
   }
 
@@ -89,7 +88,7 @@ public class PersistentDateReminderServiceIT {
   public void testGetNullDateReminder() {
 
     // Testing getting a null resource
-    PersistentResourceDateReminder dateReminder = dateReminderService.get(null);
+    dateReminderService.get(null);
   }
 
   @Test

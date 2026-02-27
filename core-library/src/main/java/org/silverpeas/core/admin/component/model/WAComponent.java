@@ -101,7 +101,8 @@ public class WAComponent extends AbstractSilverpeasComponent {
    * @return optionally a WAComponent object related to the component instance.
    */
   public static Optional<WAComponent> getByInstanceId(String componentInstanceId) {
-    return getByName(ComponentInst.getComponentName(componentInstanceId));
+    return getByName(
+        SilverpeasSharedComponentInstance.getIdentity(componentInstanceId).getComponentName());
   }
 
   /**

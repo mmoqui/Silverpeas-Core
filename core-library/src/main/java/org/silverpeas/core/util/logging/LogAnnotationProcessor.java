@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.util.logging;
 
-import org.silverpeas.core.admin.user.model.UserDetail;
+import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.kernel.logging.Level;
 import org.silverpeas.kernel.logging.SilverLogger;
 import org.silverpeas.kernel.util.StringUtil;
@@ -81,7 +81,7 @@ public class LogAnnotationProcessor {
   private Object logCustomMessage(SilverLogger logger, LogProperties logProps,
       InvocationContext context)
       throws Exception {
-    UserDetail currentUser = UserDetail.getCurrentRequester();
+    User currentUser = User.getCurrentRequester();
     Result result;
     String message = computeCustomMessage(logProps.getMessage(), context);
     if (currentUser == null) {
@@ -110,7 +110,7 @@ public class LogAnnotationProcessor {
   private Object logDefaultMessage(SilverLogger logger, LogProperties logProps,
       InvocationContext context)
       throws Exception {
-    UserDetail currentUser = UserDetail.getCurrentRequester();
+    User currentUser = User.getCurrentRequester();
     Result result;
     String className = context.getMethod().getDeclaringClass().getSimpleName();
     String message = computeDefaultMessage(context);

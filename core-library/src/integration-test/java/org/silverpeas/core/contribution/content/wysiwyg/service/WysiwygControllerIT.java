@@ -37,7 +37,7 @@ import org.silverpeas.core.contribution.attachment.AttachmentServiceProvider;
 import org.silverpeas.core.contribution.attachment.model.*;
 import org.silverpeas.core.contribution.attachment.util.SimpleDocumentList;
 import org.silverpeas.core.i18n.I18n;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.jcr.JcrIntegrationIT;
 import org.silverpeas.core.util.JSONCodec;
 import org.silverpeas.core.util.MimeTypes;
@@ -65,12 +65,11 @@ public class WysiwygControllerIT extends JcrIntegrationIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(WysiwygControllerIT.class)
-        .addJcrFeatures()
-        .addWysiwygFeatures()
+    return LibCoreWarBuilder.onFullWarForTestClass(WysiwygControllerIT.class)
         .addAsResource(DATABASE_CREATION_SCRIPT)
         .addAsResource(DATASET_SCRIPT)
-        .addPackages(true, "org.silverpeas.core.wbe")
+        .addAsResource("silverpeas-oak.properties")
+        .addAsResource("org/silverpeas/util/attachment/Attachment.properties")
         .build();
   }
 

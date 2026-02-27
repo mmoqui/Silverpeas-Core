@@ -25,7 +25,7 @@ package org.silverpeas.core.notification.user.client;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.silverpeas.core.admin.user.model.UserDetail;
+import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.admin.user.notification.UserEvent;
 import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.notification.system.CDIResourceEventListener;
@@ -58,7 +58,7 @@ public class NotificationUserEventListener extends CDIResourceEventListener<User
 
   @Transactional
   public void dereferenceUserFromUserNotification(UserEvent event) {
-    UserDetail user = event.getTransition().getBefore();
+    User user = event.getTransition().getBefore();
     int userId = Integer.parseInt(user.getId());
     try {
       notificationSchema.notifDefaultAddress().dereferenceUserId(userId);
@@ -72,12 +72,12 @@ public class NotificationUserEventListener extends CDIResourceEventListener<User
   @Override
   @Transactional
   public void onCreation(final UserEvent event) {
-    UserDetail user = event.getTransition().getAfter();
+    User user = event.getTransition().getAfter();
     checkNotificationChannel(user);
   }
 
   @Transactional
-  public void checkNotificationChannel(UserDetail user) {
+  public void checkNotificationChannel(User user) {
     // if user have no email defined, using silvermail by default
     if (StringUtil.isNotDefined(user.getEmailAddress())) {
       int silverMailChannelId = BuiltInNotifAddress.BASIC_SILVERMAIL.getId();

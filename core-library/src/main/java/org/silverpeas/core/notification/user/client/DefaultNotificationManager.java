@@ -37,7 +37,6 @@ import org.silverpeas.core.admin.space.SpaceInst;
 import org.silverpeas.core.admin.space.SpaceInstLight;
 import org.silverpeas.core.admin.user.constant.UserAccessLevel;
 import org.silverpeas.core.admin.user.model.User;
-import org.silverpeas.core.admin.user.model.UserDetail;
 import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.exception.DecodingException;
 import org.silverpeas.core.i18n.I18n;
@@ -482,9 +481,9 @@ public class DefaultNotificationManager
   @Override
   public Collection<UserRecipient> getUsersFromGroup(String groupId) throws NotificationException {
     try {
-      UserDetail[] users = AdministrationServiceProvider.getAdminService().getAllUsersOfGroup(groupId);
+      User[] users = AdministrationServiceProvider.getAdminService().getAllUsersOfGroup(groupId);
       List<UserRecipient> recipients = new ArrayList<>(users.length);
-      for (UserDetail user : users) {
+      for (User user : users) {
         if (user.isActivatedState()) {
           recipients.add(new UserRecipient(user));
         }

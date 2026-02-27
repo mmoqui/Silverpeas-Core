@@ -179,6 +179,24 @@ CREATE TABLE st_delayednotification (
   CONSTRAINT const_st_dn_fk_userId FOREIGN KEY (userId) REFERENCES ST_User(id)
 );
 
+CREATE TABLE IF NOT EXISTS sb_reminder
+(
+    id                   VARCHAR(41)  NOT NULL,
+    reminderType         VARCHAR(40)  NOT NULL,
+    contrib_id           VARCHAR(40)  NOT NULL,
+    contrib_instanceId   VARCHAR(30)  NOT NULL,
+    contrib_type         VARCHAR(40)  NOT NULL,
+    userId               VARCHAR(40)  NOT NULL,
+    text                 VARCHAR(255),
+    triggered            BOOLEAN      NOT NULL DEFAULT FALSE,
+    trigger_datetime     TIMESTAMP,
+    trigger_durationTime INTEGER,
+    trigger_durationUnit VARCHAR(12),
+    trigger_prop         VARCHAR(30),
+    process_name         VARCHAR(200) NOT NULL,
+    CONSTRAINT PK_REMINDER PRIMARY KEY (id)
+);
+
 -- Calendar API
 
 CREATE TABLE IF NOT EXISTS SB_Cal_Calendar (

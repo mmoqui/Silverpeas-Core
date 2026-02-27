@@ -27,7 +27,7 @@ import jakarta.annotation.Resource;
 import jakarta.enterprise.event.Observes;
 import jakarta.jms.Destination;
 import jakarta.jms.Queue;
-import org.silverpeas.core.annotation.Service;
+import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.notification.system.JMSResourceEventNotifier;
 import org.silverpeas.core.notification.system.ResourceEvent;
 import org.silverpeas.core.notification.system.TestResource;
@@ -38,7 +38,7 @@ import org.silverpeas.core.notification.system.TestResourceEvent;
  * or a topic by annotation can only be done with either Web or EJB components)
  * @author mmoquillon
  */
-@Service
+@Bean
 public class JMSQueueTestResourceEventNotifier
     extends JMSResourceEventNotifier<TestResource, TestResourceEvent> {
 

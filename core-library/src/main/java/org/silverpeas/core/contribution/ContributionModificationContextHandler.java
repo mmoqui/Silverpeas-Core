@@ -47,7 +47,7 @@ import static org.silverpeas.kernel.util.StringUtil.isDefined;
  * This class permits to handle a contribution modification context.
  * <p>
  * A such context can give additional information to adopt different kind of behaviors. For example,
- * it can indicates if the user modification is a minor one which permits the contribution services
+ * it can indicate if the user modification is a minor one which permits the contribution services
  * to adopt a different behavior against a normal one.
  * </p>
  * @author silveryocha

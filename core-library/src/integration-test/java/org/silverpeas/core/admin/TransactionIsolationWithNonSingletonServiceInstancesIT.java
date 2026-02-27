@@ -30,7 +30,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery;
-import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.SQLRequester;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.util.ServiceProvider;
@@ -46,10 +45,10 @@ import static org.hamcrest.Matchers.hasSize;
  * transaction.
  * <p>
  * Singletons are defined by the pseudo lifecycle scope @{@link jakarta.inject.Singleton} and any
- * beans of singletons aren't proxified by CDI. For any others lifecycle scopes defined by Jakarta
- * EE, the beans are proxified. This difference has a consequence on transactions: for singleton's
- * beans, only the unchecked exceptions can rollback the current transaction whereas for any other
- * scoped beans, because they are proxified, both the checked and unchecked exceptions can rollback
+ * beans of singletons aren't proxied by CDI. For any others lifecycle scopes defined by Jakarta
+ * EE, the beans are proxied. This difference has a consequence on transactions: for singleton's
+ * beans, only the unchecked exceptions can roll back the current transaction whereas for any other
+ * scoped beans, because they are proxied, both the checked and unchecked exceptions can roll back
  * the current transaction.
  * </p>
  * <p>
@@ -69,9 +68,7 @@ public class TransactionIsolationWithNonSingletonServiceInstancesIT
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return configureTestArchive(WarBuilder4LibCore
-        .onWarForTestClass(TransactionIsolationWithNonSingletonServiceInstancesIT.class))
-        .build();
+    return testArchiveFor(TransactionIsolationWithNonSingletonServiceInstancesIT.class);
   }
 
   /*

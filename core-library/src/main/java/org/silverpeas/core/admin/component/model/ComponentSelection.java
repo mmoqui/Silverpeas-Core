@@ -100,7 +100,9 @@ public class ComponentSelection extends ClipboardSelection implements Serializab
     keyData.setType(TYPE);
     keyData.setLink(URLUtil.getSimpleURL(URLUtil.URL_COMPONENT, componentInst.getId()));
     try {
-      keyData.setProperty("COMPONENT_NAME", ComponentInst.getComponentName(componentInst.getId()));
+      String componentName = SilverpeasSharedComponentInstance.getIdentity(componentInst.getId())
+          .getComponentName();
+      keyData.setProperty("COMPONENT_NAME", componentName);
     } catch (SKDException e) {
       SilverLogger.getLogger(this).error(e);
     }

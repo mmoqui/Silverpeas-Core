@@ -24,6 +24,7 @@
 
 package org.silverpeas.core.admin.user.notification.role;
 
+import jakarta.transaction.Transactional;
 import org.silverpeas.core.admin.component.model.ComponentInst;
 import org.silverpeas.core.admin.service.OrganizationController;
 import org.silverpeas.core.admin.user.model.Group;
@@ -63,6 +64,7 @@ class ProfileInstUpdateEventListener
   private UserRoleChangeNotifier notifier;
 
   @Override
+  @Transactional
   public void onUpdate(ProfileInstEvent event) {
     ProfileInst before = event.getTransition().getBefore();
     ProfileInst after = event.getTransition().getAfter();

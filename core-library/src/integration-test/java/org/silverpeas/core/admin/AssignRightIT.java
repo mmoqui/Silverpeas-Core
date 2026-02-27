@@ -27,8 +27,7 @@
  */
 package org.silverpeas.core.admin;
 
-import org.silverpeas.core.admin.service.AdminException;
-import org.silverpeas.core.admin.user.model.ProfileInst;
+import jakarta.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -38,14 +37,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.silverpeas.core.admin.service.AdminException;
 import org.silverpeas.core.admin.service.Administration;
+import org.silverpeas.core.admin.user.model.ProfileInst;
 import org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.kernel.util.StringUtil;
 
-import jakarta.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -53,9 +53,9 @@ import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.logging.Logger;
 
+import static org.junit.Assert.fail;
 import static org.silverpeas.core.admin.service.RightAssignationContext.MODE.COPY;
 import static org.silverpeas.core.admin.service.RightAssignationContext.MODE.REPLACE;
-import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
 public class AssignRightIT {
@@ -104,20 +104,18 @@ public class AssignRightIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(AssignRightIT.class)
-        .addCommonBasicUtilities()
-        .addPublicationTemplateFeatures()
-        .addSilverpeasExceptionBases().testFocusedOn(
-            (warBuilder) -> ((WarBuilder4LibCore) warBuilder).addAdministrationFeatures()).build();
+    return LibCoreWarBuilder.onFullWarForTestClass(AssignRightIT.class)
+        .addAsResource("org/silverpeas/core/admin/domain/driver")
+        .build();
   }
 
   /*
   FUNCTIONAL CASES - VERY HEADACHE CASES:
-  A user is in a sub group of a group and the group has right on component that handles node
+  A user is in a subgroup of a group and the group has right on component that handles node
   structure (kmelia for example).
-  This user has direct right on a sub node of the component and a direct right on the component.
-  When the direct right on the component is removed for the user, as it is part of the sub group
-  of the group that has access to the component, the direct right on the node of the component
+  This user has direct right on a subnode of the component and a direct right on the component.
+  When the direct right on the component is removed for the user, as it is part of the subgroup
+  of the group that has access the component, the direct right on the node of the component
   must not be deleted.
    */
 
@@ -185,7 +183,7 @@ public class AssignRightIT {
     administrationService.updateProfileInst(profileInst);
 
     // Verifying that the writer right on component has been removed,
-    // but the rights on the sub nodes are kept even if the the user is no more in a group that has
+    // but the rights on the sub nodes are kept even if the user is no more in a group that has
     // yet right on kmelia component
     verifyCurrentDirectRights("test-assign-rights-expected-userAWithKmeliaSubNodeRight" +
         "-removedFromGoupG1_2AndDirectRightRemovedFromKmelia.txt");

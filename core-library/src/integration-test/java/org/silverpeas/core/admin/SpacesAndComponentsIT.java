@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.admin;
 
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -42,25 +43,18 @@ import org.silverpeas.core.admin.service.cache.TreeCache;
 import org.silverpeas.core.admin.space.SpaceInst;
 import org.silverpeas.core.admin.space.SpaceInstLight;
 import org.silverpeas.core.admin.space.SpaceProfileInst;
-import org.silverpeas.core.admin.space.SpaceServiceProvider;
 import org.silverpeas.core.admin.user.model.GroupDetail;
 import org.silverpeas.core.admin.user.model.ProfileInst;
 import org.silverpeas.core.admin.user.model.SilverpeasRole;
-import org.silverpeas.core.contribution.attachment.AttachmentServiceProvider;
-import org.silverpeas.core.contribution.template.publication.PublicationTemplateManager;
+import org.silverpeas.core.calendar.subscription.SubscriptionCalendarEventListener;
+import org.silverpeas.core.contribution.publication.subscription.SubscriptionPublicationEventListener;
 import org.silverpeas.core.index.indexing.IndexingLogger;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
 import org.silverpeas.kernel.util.Pair;
 import org.silverpeas.kernel.util.StringUtil;
-import org.silverpeas.core.util.file.FileFolderManager;
-import org.silverpeas.core.util.file.FileRepositoryManager;
 import org.silverpeas.kernel.util.SystemWrapper;
-import org.silverpeas.core.util.memory.MemoryData;
-import org.silverpeas.core.util.memory.MemoryUnit;
-
-import jakarta.inject.Inject;
 
 import java.io.File;
 import java.util.*;
@@ -99,20 +93,18 @@ public class SpacesAndComponentsIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(SpacesAndComponentsIT.class)
-        .addSilverpeasExceptionBases()
-        .addAdministrationFeatures()
-        .addSynchAndAsynchResourceEventFeatures()
-        .addIndexEngineFeatures()
-        .addSilverpeasUrlFeatures()
-        .addAsResource("org/silverpeas/publication")
+    return LibCoreWarBuilder.onFullWarForTestClass(SpacesAndComponentsIT.class)
+        // remove all code about user subscriptions and those non-required by the test (but which is
+        // in interaction with the tested code by CDI)
+        .deletePackages(true, "org.silverpeas.core.subscription",
+            "org.silverpeas.core.io.media", "org.silverpeas.core.contribution.publication",
+            "org.silverpeas.core.node", "org.silverpeas.core.contribution.attachment",
+            "org.silverpeas.core.calendar", "org.silverpeas.core.importexport",
+            "org.silverpeas.core.contribution.rating")
+        .deleteClasses(SubscriptionCalendarEventListener.class,
+            SubscriptionPublicationEventListener.class)
+        .addAsResource("org/silverpeas/admin")
         .addAsResource("org/silverpeas/jobStartPagePeas/settings")
-        .addPackages(false, "org.silverpeas.core.admin.space.quota")
-        .addPackages(false, "org.silverpeas.core.contribution.contentcontainer.container")
-        .addPackages(false, "org.silverpeas.core.contribution.contentcontainer.content")
-        .addClasses(FileRepositoryManager.class, FileFolderManager.class, MemoryUnit.class,
-            MemoryData.class, SpaceServiceProvider.class, AttachmentServiceProvider.class,
-            PublicationTemplateManager.class)
         .build();
   }
 
@@ -706,10 +698,9 @@ public class SpacesAndComponentsIT {
   public void testCopyAndPasteRootSpace() throws AdminException, QuotaException {
     String[] rootSpaceIds = adminController.getAllRootSpaceIds();
     assertThat(rootSpaceIds.length, is(4));
-    String targetSpaceId = null;
     PasteDetail pasteDetail = new PasteDetail(userId);
     pasteDetail.setFromSpaceId("WA1");
-    pasteDetail.setToSpaceId(targetSpaceId);
+    pasteDetail.setToSpaceId(null);
     String newSpaceId = adminController.copyAndPasteSpace(pasteDetail);
     String expectedSpaceId = "WA200";
     assertThat(newSpaceId, is(expectedSpaceId));

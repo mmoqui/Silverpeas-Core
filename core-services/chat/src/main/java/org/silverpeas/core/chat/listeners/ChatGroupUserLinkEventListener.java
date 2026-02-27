@@ -25,6 +25,7 @@
 package org.silverpeas.core.chat.listeners;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.admin.user.notification.GroupUserLinkEvent;
 import org.silverpeas.core.annotation.Bean;
@@ -50,6 +51,7 @@ public class ChatGroupUserLinkEventListener extends
   @Inject
   private ChatUsersRegistration registration;
 
+  @Transactional
   @Override
   public void onCreation(final GroupUserLinkEvent event) {
     final String userId = event.getTransition().getAfter().getUserId();
@@ -57,6 +59,7 @@ public class ChatGroupUserLinkEventListener extends
     registration.registerUser(user);
   }
 
+  @Transactional
   @Override
   public void onDeletion(GroupUserLinkEvent event) {
     String userId = event.getTransition().getBefore().getUserId();

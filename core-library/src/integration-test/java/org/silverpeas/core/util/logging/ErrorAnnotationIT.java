@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.LoggerReaderRule;
 import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
 import org.silverpeas.kernel.SilverpeasException;
@@ -78,9 +78,9 @@ public class ErrorAnnotationIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(ErrorAnnotationIT.class)
-        .addAdministrationFeatures()
-        .addAsResource("org/silverpeas/util/logging/")
+    return LibCoreWarBuilder.onWarForTestClass(ErrorAnnotationIT.class)
+        .addStubbedUserAPI()
+        .addPackages(false, "org.silverpeas.core.util.logging")
         .build();
   }
 
@@ -154,7 +154,7 @@ public class ErrorAnnotationIT {
         MessageFormat.format(ErrorAnnotationProcessor.USER_DEFAULT_PATTERN, "Toto Rabbit",
             100, clazz, method);
     try {
-      // the log file can contains more than these two records as the tests can be ran several
+      // the log file can contain more than these two records as the tests can be running several
       // times.
       await().pollDelay(1, TimeUnit.SECONDS)
           .atMost(2, TimeUnit.SECONDS)
@@ -174,7 +174,7 @@ public class ErrorAnnotationIT {
   private void assertThatLogContainsTheExpectedRecordWith(String message) {
     String record = format(ErrorAnnotationProcessor.SYSTEM_CUSTOM_PATTERN, message);
     try {
-      // the log file can contains more than this record as the tests can be ran several
+      // the log file can contain more than this record as the tests can be running several
       // times.
       await().pollDelay(1, TimeUnit.SECONDS)
           .atMost(2, TimeUnit.SECONDS)

@@ -23,6 +23,8 @@
  */
 package org.silverpeas.core.process.management.interceptor;
 
+import jakarta.ejb.EJBException;
+import jakarta.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -33,11 +35,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.ResourceReference;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.LoggerReaderRule;
 
-import jakarta.ejb.EJBException;
-import jakarta.inject.Inject;
 import java.io.UncheckedIOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -67,13 +67,9 @@ public class SimulationActionInterceptorIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(SimulationActionInterceptorIT.class)
-        .addSilverpeasExceptionBases()
-        .addFileRepositoryFeatures()
-        .addAdministrationFeatures()
+    return LibCoreWarBuilder.onFullWarForTestClass(SimulationActionInterceptorIT.class)
         .addAsResource("org/silverpeas/util/logging/")
-        .testFocusedOn((warBuilder) ->
-            warBuilder.addPackages(true, "org.silverpeas.core.process")).build();
+        .build();
   }
 
   @Before

@@ -24,18 +24,18 @@
 
 package org.silverpeas.core.contribution.indicator;
 
+import jakarta.inject.Singleton;
+import org.silverpeas.core.admin.component.model.SilverpeasComponentInstance;
 import org.silverpeas.core.annotation.Bean;
 import org.silverpeas.core.contribution.model.ContributionIdentifier;
-import org.silverpeas.kernel.util.Pair;
 import org.silverpeas.core.util.ServiceProvider;
+import org.silverpeas.kernel.util.Pair;
 
-import jakarta.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
-import static org.silverpeas.core.admin.component.model.SilverpeasComponentInstance.getComponentName;
 
 /**
  * Registry of different kind of contribution indicator.
@@ -75,7 +75,9 @@ public class ContributionIndicatorRegistry {
    */
   protected Optional<NewContributionIndicator> getNewContributionIndicatorBy(
       final ContributionIdentifier cId) {
-    final String componentName = getComponentName(cId.getComponentInstanceId());
+    final String componentName = SilverpeasComponentInstance
+        .getIdentity(cId.getComponentInstanceId())
+        .getComponentName();
     return ofNullable(newRegistry.get(componentName + "@" + cId.getType()));
   }
 }

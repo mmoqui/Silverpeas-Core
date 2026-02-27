@@ -168,8 +168,7 @@ public final class ServiceProvider {
    * @see ManagedBeanProvider#getManagedBean(String)
    */
   public static <T> T getService(final String applicationId, final String apiName) {
-    final Mutable<String> componentName = Mutable.ofNullable(
-        SilverpeasComponentInstance.getComponentName(applicationId));
+    final Mutable<String> componentName = Mutable.ofNullable(getComponentName(applicationId));
     if (!componentName.isPresent()) {
       componentName.set(applicationId);
     }
@@ -187,6 +186,14 @@ public final class ServiceProvider {
           componentName.get().substring(1) + apiName;
     }
     return getService(serviceName);
+  }
+
+  private static String getComponentName(String applicationId) {
+    try {
+      return SilverpeasComponentInstance.getIdentity(applicationId).getComponentName();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   private static <T> T provide(Supplier<T> beanSupplier) {

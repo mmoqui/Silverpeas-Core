@@ -23,31 +23,24 @@
  */
 package org.silverpeas.core.node.dao;
 
+import jakarta.ejb.NoSuchEntityException;
 import jakarta.inject.Inject;
-import org.silverpeas.core.admin.component.model.ComponentInst;
+import org.silverpeas.core.admin.component.model.SilverpeasSharedComponentInstance;
 import org.silverpeas.core.annotation.Repository;
 import org.silverpeas.core.i18n.I18n;
-import org.silverpeas.core.node.model.NodeDetail;
-import org.silverpeas.core.node.model.NodeI18NDetail;
-import org.silverpeas.core.node.model.NodePK;
-import org.silverpeas.core.node.model.NodePath;
-import org.silverpeas.core.node.model.NodeRuntimeException;
+import org.silverpeas.core.node.model.*;
 import org.silverpeas.core.persistence.jdbc.AbstractDAO;
 import org.silverpeas.core.persistence.jdbc.DBUtil;
 import org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery;
 import org.silverpeas.core.util.DateUtil;
-import org.silverpeas.kernel.util.StringUtil;
 import org.silverpeas.kernel.logging.SilverLogger;
+import org.silverpeas.kernel.util.StringUtil;
 
-import jakarta.ejb.NoSuchEntityException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.*;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -447,7 +440,9 @@ public class NodeDAO extends AbstractDAO {
       final Collection<String> instanceIds) throws SQLException {
     final List<NodeDetail> entities = new ArrayList<>();
     final List<Integer> instanceIdsAsInt = instanceIds.stream()
-        .map(ComponentInst::getComponentLocalId).collect(Collectors.toList());
+        .map(SilverpeasSharedComponentInstance::getIdentity)
+        .map(SilverpeasSharedComponentInstance.Identity::getInstanceLocalId)
+        .collect(Collectors.toList());
     JdbcSqlQuery.executeBySplittingOn(instanceIdsAsInt, (idBatch, ignore) ->
       JdbcSqlQuery.select("nodeid, instanceid, rightsdependson")
           .from(NODE_TABLE + " N")

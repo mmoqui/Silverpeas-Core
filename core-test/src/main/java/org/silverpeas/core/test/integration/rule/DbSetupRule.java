@@ -322,7 +322,6 @@ public class DbSetupRule implements TestRule {
   /*
   CURRENT ME
    */
-
   private static final ThreadLocal<DbSetupRule> me = new ThreadLocal<>();
 
   /**

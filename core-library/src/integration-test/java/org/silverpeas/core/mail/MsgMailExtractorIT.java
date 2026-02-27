@@ -33,8 +33,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.contribution.converter.DocumentFormatConverterProvider;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
+import org.silverpeas.core.test.office.OfficeServiceInitializationListener;
 import org.silverpeas.core.util.DateUtil;
 import org.silverpeas.kernel.util.StringUtil;
 
@@ -68,15 +69,16 @@ public class MsgMailExtractorIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(MsgMailExtractorIT.class)
-        .addCommonBasicUtilities()
-        .addSilverpeasExceptionBases()
-        .addOfficeFeatures()
-        .testFocusedOn(warBuilder -> warBuilder
-            .addMavenDependencies("org.apache.poi:poi-scratchpad")
-            .addMavenDependencies("com.icegreen:greenmail")
-            .addPackages(true, "org.silverpeas.core.mail")
-            .addAsResource("org/silverpeas/core/mail/mailWithAttachments.msg")).build();
+    return LibCoreWarBuilder.onWarForTestClass(MsgMailExtractorIT.class)
+        .addMavenDependencies("org.apache.poi:poi-scratchpad")
+        .addMavenDependencies("com.icegreen:greenmail")
+        .addMavenDependencies("commons-io:commons-io")
+        .addMavenDependencies("org.jodconverter:jodconverter-local")
+        .addPackages(true, "org.silverpeas.core.contribution.converter")
+        .addPackages(true, "org.silverpeas.core.mail")
+        .addAsResource("org/silverpeas/core/mail/mailWithAttachments.msg")
+        .addWebListener(OfficeServiceInitializationListener.class)
+        .build();
   }
 
   @Test
@@ -128,8 +130,8 @@ public class MsgMailExtractorIT {
   protected String getRtfText(String rtfText) {
     ByteArrayOutputStream htmlText = new ByteArrayOutputStream();
     DocumentFormatConverterProvider.getToHTMLConverter()
-        .convert(new ByteArrayInputStream(rtfText.getBytes()), inFormat(rtf), htmlText,
-            inFormat(html));
+        .convert(new ByteArrayInputStream(rtfText.getBytes()),
+            inFormat(rtf), htmlText, inFormat(html));
     return htmlText.toString();
   }
 

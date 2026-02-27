@@ -29,7 +29,7 @@ import org.silverpeas.core.notification.system.AbstractResourceEvent;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * An lifecycle event of an {@link Attendee}. Such an event is triggered
+ * A lifecycle event of an {@link Attendee}. Such an event is triggered
  * when a change occurred in the lifecycle of an attendee (the attendee is added in an event, its
  * participation status has changed, and so on) and it is sent by the system notification bus.
  * @author mmoquillon

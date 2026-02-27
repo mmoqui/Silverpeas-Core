@@ -47,7 +47,7 @@
       <groupId>org.silverpeas.core</groupId>
       <artifactId>silverpeas-core-api</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.silverpeas.kernel</groupId>

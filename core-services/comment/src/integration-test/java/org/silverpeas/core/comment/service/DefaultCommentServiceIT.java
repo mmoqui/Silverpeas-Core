@@ -90,14 +90,6 @@ public class DefaultCommentServiceIT {
   }
 
   /**
-   * Empty test just to check all is ok before any test running.
-   */
-  @Test
-  public void emptyTest() {
-    assertThat(true, is(true));
-  }
-
-  /**
    * When a comment is added, then any listeners subscribed for a such events should be invoked.
    */
   @Test

@@ -57,7 +57,9 @@ public class MyLinksUserEventDeletionIT {
   @Deployment
   public static Archive<?> createTestArchive() {
     return WarBuilder4MyLinks
-        .onWarForTestClass(MyLinksUserEventDeletionIT.class).build();
+        .onWarForTestClass(MyLinksUserEventDeletionIT.class)
+        .addAsResource("org/silverpeas/core/mylinks/service/" + DATASET_SCRIPT)
+        .build();
   }
 
   @Test

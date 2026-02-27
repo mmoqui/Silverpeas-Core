@@ -88,7 +88,8 @@ public class PersonalComponent extends AbstractSilverpeasComponent {
    * @return optionally a PersonalComponent object related to the personal component instance.
    */
   public static Optional<PersonalComponent> getByInstanceId(String componentInstanceId) {
-    return getByName(PersonalComponentInstance.getComponentName(componentInstanceId));
+    return getByName(
+        SilverpeasPersonalComponentInstance.getIdentity(componentInstanceId).getComponentName());
   }
 
   /**

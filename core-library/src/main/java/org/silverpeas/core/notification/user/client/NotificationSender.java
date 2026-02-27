@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.notification.user.client;
 
-import org.silverpeas.core.admin.component.model.ComponentInst;
+import org.silverpeas.core.admin.component.model.SilverpeasSharedComponentInstance;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.i18n.I18n;
 import org.silverpeas.core.notification.NotificationException;
@@ -48,18 +48,12 @@ public class NotificationSender implements java.io.Serializable {
   private final int instanceId;
 
   /**
-   * Default constructor
-   */
-  protected NotificationSender() {
-    this(null);
-  }
-
-  /**
    * Constructor for a standard component
    * @param instanceId the instance Id of the calling's component
    */
   public NotificationSender(final String instanceId) {
-    this.instanceId = ComponentInst.getComponentLocalId(instanceId);
+    this.instanceId = instanceId == null ? -1 :
+        SilverpeasSharedComponentInstance.getIdentity(instanceId).getInstanceLocalId();
     notificationManager = NotificationManager.get();
   }
 
@@ -214,7 +208,10 @@ public class NotificationSender implements java.io.Serializable {
     if (instanceId != -1) {
       params.setComponentInstance(instanceId);
     } else {
-      params.setComponentInstance(ComponentInst.getComponentLocalId(metaData.getComponentId()));
+      var localId = StringUtil.isDefined(metaData.getComponentId()) ?
+          SilverpeasSharedComponentInstance.getIdentity(metaData.getComponentId())
+              .getInstanceLocalId() : -1;
+      params.setComponentInstance(localId);
     }
     String sender = metaData.getSender();
     if (aMediaType == BuiltInNotifAddress.BASIC_POPUP.getId()) {

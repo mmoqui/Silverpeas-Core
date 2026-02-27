@@ -25,9 +25,9 @@ package org.silverpeas.core.comment.service.notification;
 
 import org.silverpeas.core.ApplicationService;
 import org.silverpeas.core.ApplicationServiceProvider;
+import org.silverpeas.core.admin.component.model.SilverpeasComponentInstance;
 import org.silverpeas.kernel.exception.NotFoundException;
 import org.silverpeas.core.ResourceReference;
-import org.silverpeas.core.admin.component.service.SilverpeasComponentInstanceProvider;
 import org.silverpeas.core.admin.user.model.User;
 import org.silverpeas.core.annotation.Service;
 import org.silverpeas.core.comment.model.Comment;
@@ -170,7 +170,7 @@ public class CommentUserNotificationService extends CDIResourceEventListener<Com
   }
 
   private String getComponentName(String componentInstanceId) {
-    return SilverpeasComponentInstanceProvider.get().getComponentName(componentInstanceId);
+    return SilverpeasComponentInstance.getIdentity(componentInstanceId).getComponentName();
   }
 
 }

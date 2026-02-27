@@ -266,7 +266,7 @@ public abstract class QuartzScheduler implements Scheduler, Initialization {
   public void shutdown() throws SchedulerException {
     try {
       if (!this.quartz.isShutdown()) {
-        this.quartz.shutdown();
+        this.quartz.shutdown(true);
       }
     } catch (org.quartz.SchedulerException ex) {
       SilverLogger.getLogger(this).error("The scheduler shutdown failed!", ex);

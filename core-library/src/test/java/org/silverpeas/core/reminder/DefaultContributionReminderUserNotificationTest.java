@@ -131,7 +131,7 @@ class DefaultContributionReminderUserNotificationTest {
 
     when(componentInstance.getName()).thenReturn(COMPONENT_NAME);
     when(instanceProvider.getById(INSTANCE_ID)).thenReturn(Optional.of(componentInstance));
-    when(instanceProvider.getComponentName(INSTANCE_ID)).thenReturn(COMPONENT_NAME);
+    //when(instanceProvider.getComponentName(INSTANCE_ID)).thenReturn(COMPONENT_NAME);
 
     when(routingMap.getByInstanceId(INSTANCE_ID)).thenReturn(routingMapProvider);
     when(routingMapProvider.absolute()).thenReturn(instanceRoutingMap);

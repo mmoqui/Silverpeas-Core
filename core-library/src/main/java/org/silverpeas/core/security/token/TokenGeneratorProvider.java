@@ -25,13 +25,16 @@ package org.silverpeas.core.security.token;
 
 import org.silverpeas.core.security.token.exception.TokenGenerationException;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * A provider of a token generator according to the type of tokens to generate.
- *
+ * <p>
  * A token isn't simply just an atom or a symbol. It has a type that is related to the way it is
- * used. Because the use of tokens differ, their value (the atom) cannot follow the same pattern and
- * therefore they have to be generated in the way that matches their use. It is why the tokens
+ * used. Because the use of tokens differ, their value (the atom) cannot follow the same pattern,
+ * and therefore they have to be generated in the way that matches their use. It is why the tokens
  * differ by their type and their generation is related to their type.
+ * </p>
  *
  * @author mmoquillon
  */
@@ -55,8 +58,8 @@ public class TokenGeneratorProvider {
         org.silverpeas.core.security.token.annotation.TokenGenerator.class);
     try {
       Class<? extends TokenGenerator> generatorType = annotation.value();
-      return generatorType.newInstance();
-    } catch (InstantiationException ex) {
+      return generatorType.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException | InvocationTargetException ex) {
       throw new TokenGenerationException("Cannot instantiate the token generator mapped with "
           + "the token type " + type.getName(), ex);
     } catch (IllegalAccessException ex) {
@@ -65,6 +68,9 @@ public class TokenGeneratorProvider {
     } catch (NullPointerException ex) {
       throw new TokenGenerationException("No token generator mapped with the token type " + type.
           getName(), ex);
+    } catch (NoSuchMethodException ex) {
+      throw new TokenGenerationException("No default constructor for the token "
+          + "generator mapped with the token type " + type.getName(), ex);
     }
   }
 

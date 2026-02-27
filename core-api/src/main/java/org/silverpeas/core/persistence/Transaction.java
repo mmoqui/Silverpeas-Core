@@ -24,15 +24,15 @@
 package org.silverpeas.core.persistence;
 
 
-import org.silverpeas.core.annotation.Bean;
-import org.silverpeas.kernel.annotation.Technical;
-import org.silverpeas.core.util.Process;
-
 import jakarta.annotation.Resource;
+import jakarta.inject.Singleton;
 import jakarta.transaction.Status;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.TransactionManager;
 import jakarta.transaction.Transactional;
+import org.silverpeas.core.annotation.Bean;
+import org.silverpeas.core.util.Process;
+import org.silverpeas.kernel.annotation.Technical;
 
 /**
  * A transaction. All processes it performs will be in charge by the JPA transaction manager.
@@ -40,6 +40,7 @@ import jakarta.transaction.Transactional;
  */
 @Technical
 @Bean
+@Singleton
 public class Transaction {
 
   @Resource(mappedName = "java:/TransactionManager")

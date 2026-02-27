@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.contribution.attachment;
 
+import jakarta.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -39,25 +40,22 @@ import org.silverpeas.core.contribution.attachment.model.SimpleDocument;
 import org.silverpeas.core.contribution.attachment.model.SimpleDocumentPK;
 import org.silverpeas.core.contribution.attachment.repository.DocumentRepository;
 import org.silverpeas.core.contribution.attachment.repository.SimpleDocumentMatcher;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.contribution.content.wysiwyg.service.WysiwygControllerIT;
+import org.silverpeas.core.jcr.JCRSession;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.jcr.JcrIntegrationIT;
+import org.silverpeas.core.test.stub.StubbedWbeClientManager;
 import org.silverpeas.core.test.util.RandomGenerator;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.core.util.DateUtil;
 import org.silverpeas.core.util.MimeTypes;
 import org.silverpeas.kernel.util.Pair;
-import org.silverpeas.core.jcr.JCRSession;
 
-import jakarta.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -82,10 +80,11 @@ public class AttachmentServiceIT extends JcrIntegrationIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(AttachmentServiceIT.class)
-        .addJcrFeatures()
-        .addPublicationTemplateFeatures()
-        .testFocusedOn(war -> war.addAsResource("LibreOffice.odt"))
+    return LibCoreWarBuilder.onFullWarForTestClass(WysiwygControllerIT.class)
+        .addClasses(StubbedWbeClientManager.class)
+        .addAsResource("silverpeas-oak.properties")
+        .addAsResource("LibreOffice.odt")
+        .addAsResource("org/silverpeas/util/attachment/Attachment.properties")
         .build();
   }
 
@@ -147,7 +146,7 @@ public class AttachmentServiceIT extends JcrIntegrationIT {
     Node node;
     try (JCRSession session = JCRSession.openSystemSession()) {
       node = session.getNode('/' + StringUtils.join(path, '/'));
-      return new NodeResult(node.getPath(), node.getNodes().getSize());
+      return new NodeResult(node.getNodes().getSize());
     } catch (PathNotFoundException e) {
       // Nothing to do, the root node doesn't exist. That is all.
       return null;
@@ -157,21 +156,15 @@ public class AttachmentServiceIT extends JcrIntegrationIT {
   }
 
   private static class NodeResult {
-    private final String path;
 
     private final long nbChildren;
 
-    private NodeResult(final String path, final long nbChildren) {
-      this.path = path;
+    private NodeResult(final long nbChildren) {
       this.nbChildren = nbChildren;
     }
 
     public long getNbChildren() {
       return nbChildren;
-    }
-
-    public String getPath() {
-      return path;
     }
   }
 

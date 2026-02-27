@@ -61,7 +61,7 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.*;
-import static org.silverpeas.core.admin.component.model.SilverpeasComponentInstance.getComponentName;
+import static org.silverpeas.core.admin.component.model.SilverpeasComponentInstance.getIdentity;
 import static org.silverpeas.core.persistence.jdbc.bean.BeanCriteria.OPERATOR.GREATER_OR_EQUAL;
 import static org.silverpeas.core.security.authorization.AccessControlOperation.SEARCH;
 import static org.silverpeas.core.util.CollectionUtil.isEmpty;
@@ -225,7 +225,7 @@ public class GlobalPdcManager implements PdcManager {
   }
 
   /**
-   * Create an axe into the data base.
+   * Create an axe into the database.
    * @param axisHeader - the object which contains all data about an axe
    * @return 1 if the maximun of axe is atteignable, 2 if the axe already exist, 0 otherwise
    */
@@ -251,7 +251,7 @@ public class GlobalPdcManager implements PdcManager {
         BeanCriteria criteria = BeanCriteria.addCriterion(AXIS_TYPE, type)
             .and(AXIS_ORDER, GREATER_OR_EQUAL, order);
         criteria.setAscOrderBy(AXIS_ORDER);
-        // ATTENTION il faut traiter l'ordre des autres axes
+        // ATTENTION, il faut traiter l'ordre des autres axes
         Collection<AxisHeaderPersistence> axisToUpdate =
             dao.findBy(criteria);
 
@@ -299,7 +299,7 @@ public class GlobalPdcManager implements PdcManager {
   }
 
   /**
-   * Update an axe into the data base.
+   * Update an axe into the database.
    * @param axisHeader - the object which contains all data about an axe
    * @return 2 if the axe already exist, 0 otherwise
    */
@@ -457,7 +457,7 @@ public class GlobalPdcManager implements PdcManager {
         .and(AXIS_ORDER, GREATER_OR_EQUAL, order);
     criteria.setAscOrderBy(AXIS_ORDER);
 
-    // ATTENTION il faut traiter l'ordre des autres axes
+    // ATTENTION, il faut traiter l'ordre des autres axes
     Collection<AxisHeaderPersistence> axisToUpdate = dao.findBy(con, criteria);
 
     boolean axisHasMoved = true;
@@ -503,7 +503,7 @@ public class GlobalPdcManager implements PdcManager {
   }
 
   /**
-   * delete the axe from the data base and all its subtrees.
+   * delete the axe from the database and all its subtrees.
    * @param axisId - the id of the selected axe
    */
   @Override
@@ -2216,7 +2216,8 @@ public class GlobalPdcManager implements PdcManager {
           .getAllServices(GlobalSilverContentProcessor.class).stream()
           .collect(toMap(GlobalSilverContentProcessor::relatedToComponent, p -> p));
       return contentMgtEngine.getResourceReferencesByContentIds(silverContentIds).stream()
-          .collect(groupingBy(r -> getComponentName(r.getComponentInstanceId()),
+          .collect(groupingBy(r ->
+                  getIdentity(r.getComponentInstanceId()).getComponentName(),
               mapping(r -> r, toList())))
           .entrySet().stream()
           .flatMap(e -> {

@@ -271,3 +271,16 @@ CREATE TABLE st_quota
 );
 
 CREATE UNIQUE INDEX idx_uc_st_quota ON st_quota (quotatype, resourceid);
+
+CREATE TABLE Personalization
+(
+    id                  VARCHAR(100) PRIMARY KEY NOT NULL,
+    languages           VARCHAR(100)             NULL,
+    zoneId              VARCHAR(100)             NULL,
+    look                VARCHAR(50)              NULL,
+    personalWSpace      VARCHAR(50)              NULL,
+    thesaurusStatus     INT                      NOT NULL,
+    dragAndDropStatus   INT         DEFAULT 1,
+    webdavEditingStatus INT         DEFAULT 0,
+    menuDisplay         VARCHAR(50) DEFAULT 'DEFAULT'
+);

@@ -24,6 +24,7 @@
  */
 package org.silverpeas.core.contribution.attachment.repository;
 
+import jakarta.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -35,23 +36,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.ResourceReference;
 import org.silverpeas.core.admin.user.model.SilverpeasRole;
-import org.silverpeas.core.contribution.attachment.model.DocumentType;
-import org.silverpeas.core.contribution.attachment.model.HistorisedDocument;
-import org.silverpeas.core.contribution.attachment.model.SimpleAttachment;
-import org.silverpeas.core.contribution.attachment.model.SimpleDocument;
-import org.silverpeas.core.contribution.attachment.model.SimpleDocumentPK;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.contribution.attachment.model.*;
+import org.silverpeas.core.contribution.content.wysiwyg.service.WysiwygControllerIT;
+import org.silverpeas.core.jcr.JCRSession;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.jcr.JcrIntegrationIT;
 import org.silverpeas.core.test.util.RandomGenerator;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.core.util.DateUtil;
 import org.silverpeas.core.util.MimeTypes;
+import org.silverpeas.core.wbe.StubbedWbeHostManager;
 import org.silverpeas.core.wbe.WbeHostManager;
 import org.silverpeas.kernel.util.Pair;
-import org.silverpeas.core.wbe.StubbedWbeHostManager;
-import org.silverpeas.core.jcr.JCRSession;
 
-import jakarta.inject.Inject;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import java.io.ByteArrayInputStream;
@@ -59,13 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static javax.jcr.nodetype.NodeType.NT_FOLDER;
@@ -88,8 +79,11 @@ public class DocumentRepositoryIT extends JcrIntegrationIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(DocumentRepositoryIT.class)
-        .addJcrFeatures()
+    return LibCoreWarBuilder.onFullWarForTestClass(WysiwygControllerIT.class)
+        .addClasses(StubbedWbeHostManager.class)
+        .addMavenDependencies("commons-beanutils:commons-beanutils")
+        .addAsResource("silverpeas-oak.properties")
+        .addAsResource("org/silverpeas/util/attachment/Attachment.properties")
         .build();
   }
 

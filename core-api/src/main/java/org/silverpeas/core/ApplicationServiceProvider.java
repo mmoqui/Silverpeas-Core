@@ -77,7 +77,7 @@ public class ApplicationServiceProvider {
    */
   public Optional<ApplicationService> getApplicationServiceById(final String appId) {
     SimpleCache cache = CacheAccessorProvider.getThreadCacheAccessor().getCache();
-    String appName = SilverpeasComponentInstance.getComponentName(appId);
+    String appName = SilverpeasComponentInstance.getIdentity(appId).getComponentName();
     if (StringUtil.isNotDefined(appName)) {
       return Optional.empty();
     }

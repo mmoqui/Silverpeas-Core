@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.contribution.attachment;
 
+import jakarta.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -33,30 +34,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.ResourceReference;
 import org.silverpeas.core.admin.user.model.SilverpeasRole;
-import org.silverpeas.core.contribution.attachment.model.HistorisedDocument;
-import org.silverpeas.core.contribution.attachment.model.SimpleAttachment;
-import org.silverpeas.core.contribution.attachment.model.SimpleDocument;
-import org.silverpeas.core.contribution.attachment.model.SimpleDocumentPK;
-import org.silverpeas.core.contribution.attachment.model.UnlockContext;
+import org.silverpeas.core.contribution.attachment.model.*;
 import org.silverpeas.core.contribution.attachment.repository.DocumentRepository;
 import org.silverpeas.core.contribution.attachment.repository.SimpleDocumentMatcher;
+import org.silverpeas.core.contribution.content.wysiwyg.service.WysiwygControllerIT;
+import org.silverpeas.core.jcr.JCRSession;
 import org.silverpeas.core.scheduler.SchedulerInitializer;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.jcr.JcrIntegrationIT;
+import org.silverpeas.core.test.stub.StubbedWbeClientManager;
 import org.silverpeas.core.test.util.RandomGenerator;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.core.util.DateUtil;
 import org.silverpeas.core.util.MimeTypes;
-import org.silverpeas.core.jcr.JCRSession;
 
-import jakarta.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -83,11 +77,11 @@ public class HistorizedAttachmentServiceIT extends JcrIntegrationIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(HistorizedAttachmentServiceIT.class)
-        .addJcrFeatures()
-        .addPublicationTemplateFeatures()
-        .addSchedulerFeatures()
-        .testFocusedOn(war -> war.addAsResource("LibreOffice.odt"))
+    return LibCoreWarBuilder.onFullWarForTestClass(WysiwygControllerIT.class)
+        .addClasses(StubbedWbeClientManager.class)
+        .addAsResource("silverpeas-oak.properties")
+        .addAsResource("LibreOffice.odt")
+        .addAsResource("org/silverpeas/util/attachment/Attachment.properties")
         .build();
   }
 
@@ -159,15 +153,7 @@ public class HistorizedAttachmentServiceIT extends JcrIntegrationIT {
         assertThat(out.toString(Charsets.UTF_8), is("This is a test"));
       }
       session.save();
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw e;
     }
-  }
-
-  @Test
-  public void emptyTest() {
-    assertThat(true, is(true));
   }
 
   @Test
@@ -884,8 +870,8 @@ public class HistorizedAttachmentServiceIT extends JcrIntegrationIT {
       documentPK = instance.createAttachment(document, content)
           .getPk();
       session.save();
-
     }
+
     // Simulate another call ... closing old session and opening a new one
     //noinspection unused
     try (JCRSession session = JCRSession.openSystemSession()) {

@@ -149,8 +149,8 @@ class CalendarEventUserNotificationReminderTest {
     when(componentInstance.getName()).thenReturn(COMPONENT_NAME);
     when(silverpeasComponentInstanceProvider.getById(INSTANCE_ID)).thenReturn(
         Optional.of(componentInstance));
-    when(silverpeasComponentInstanceProvider.getComponentName(INSTANCE_ID)).thenReturn(
-        "componentNameTest");
+    /*when(silverpeasComponentInstanceProvider.getComponentName(INSTANCE_ID)).thenReturn(
+        "componentNameTest");*/
 
     when(componentInstanceRoutingMapProviderByInstance.getByInstanceId(INSTANCE_ID)).thenReturn(
         componentInstanceRoutingMapProvider);

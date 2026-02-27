@@ -231,7 +231,7 @@ public class ContentManagementEngine implements Serializable {
    */
   public ContentPeas getContentPeas(String sComponentId) {
     return getContentPeasByComponentName(
-        SilverpeasComponentInstance.getComponentName(sComponentId));
+        SilverpeasComponentInstance.getIdentity(sComponentId).getComponentName());
   }
 
   /**

@@ -25,26 +25,29 @@ package org.silverpeas.core.contribution.rating.model;
 
 import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.operation.Operation;
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.silverpeas.core.admin.user.model.UserDetail;
+import org.silverpeas.core.admin.component.ComponentInstanceDeletion;
+import org.silverpeas.core.admin.user.model.User;
+import org.silverpeas.core.contribution.model.SilverpeasContent;
+import org.silverpeas.core.contribution.rating.service.ComponentInstanceRatingDeletionIT;
 import org.silverpeas.core.contribution.rating.service.RatingRepository;
 import org.silverpeas.core.persistence.Transaction;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
+import org.silverpeas.core.test.stub.StubbedUserProvider;
 
-import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(Arquillian.class)
 public class RatingRepositoryIT {
@@ -73,18 +76,12 @@ public class RatingRepositoryIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(RatingRepositoryIT.class)
-        .addJpaPersistenceFeatures()
-        .testFocusedOn(
-            war -> war.addClasses(ContributionRating.class, Rating.class, RatingRepository.class,
-                RaterRatingPK.class, ContributionRatingPK.class))
+    return LibCoreWarBuilder.onWarForTestClass(ComponentInstanceRatingDeletionIT.class)
+        .addStubbedUserAPI()
+        .addPackages(true, "org.silverpeas.core.contribution.rating")
+        .addClasses(SilverpeasContent.class, ComponentInstanceDeletion.class)
+        .addAsResource("org/silverpeas/core/contribution/rating/model")
         .build();
-  }
-
-  @Test
-  @Ignore
-  public void emptyTest() {
-
   }
 
   @Test
@@ -138,8 +135,7 @@ public class RatingRepositoryIT {
 
   @Test
   public void getRating() {
-    UserDetail user = new UserDetail();
-    user.setId("42");
+    User user = StubbedUserProvider.addUser("42");
     RaterRatingPK pk = new RaterRatingPK("365", "kmelia12", "Publication", user);
     Rating rating = repository.getRating(pk);
     assertThat(rating.getId(), is("0"));
@@ -152,8 +148,7 @@ public class RatingRepositoryIT {
 
   @Test
   public void getRatingFromANonExistingContribution() {
-    UserDetail user = new UserDetail();
-    user.setId("42");
+    User user = StubbedUserProvider.addUser("42");
     RaterRatingPK pk = new RaterRatingPK("1000", "kmelia12", "Publication", user);
     Rating rating = repository.getRating(pk);
     assertThat(rating, nullValue());
@@ -161,8 +156,7 @@ public class RatingRepositoryIT {
 
   @Test
   public void getRatingFromANonExistingUser() {
-    UserDetail user = new UserDetail();
-    user.setId("100");
+    User user = StubbedUserProvider.addUser("100");
     RaterRatingPK pk = new RaterRatingPK("365", "kmelia12", "Publication", user);
     Rating rating = repository.getRating(pk);
     assertThat(rating, nullValue());

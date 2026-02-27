@@ -23,7 +23,7 @@
  */
 package org.silverpeas.core.node.service;
 
-import org.silverpeas.core.admin.component.ComponentInstanceDeletion;
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -31,13 +31,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.silverpeas.core.admin.component.ComponentInstanceDeletion;
 import org.silverpeas.core.persistence.Transaction;
 import org.silverpeas.core.persistence.jdbc.sql.JdbcSqlQuery;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 import org.silverpeas.core.util.ServiceProvider;
 
-import jakarta.inject.Inject;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -63,16 +63,9 @@ public class ComponentInstanceNodeDeletionIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(ComponentInstanceNodeDeletionIT.class)
-        .addSilverpeasExceptionBases()
-        .addAdministrationFeatures()
-        .addIndexEngineFeatures()
-        .addWysiwygFeatures()
-        .addPublicationTemplateFeatures()
-        .testFocusedOn(
-            war -> war.addPackages(true, "org.silverpeas.core.node")
-                .addAsResource("org/silverpeas/node")
-                .addAsResource("org/silverpeas/core/node"))
+    return LibCoreWarBuilder.onFullWarForTestClass(ComponentInstanceNodeDeletionIT.class)
+        .addAsResource("org/silverpeas/node")
+        .addAsResource("org/silverpeas/core/node")
         .build();
   }
 

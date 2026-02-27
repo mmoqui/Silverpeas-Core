@@ -30,7 +30,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.ui.DisplayI18NHelper;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,8 +50,8 @@ public class I18NHelperIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(I18NHelperIT.class)
-        .addAdministrationFeatures()
+    return LibCoreWarBuilder.onWarForTestClass(I18NHelperIT.class)
+        .addI18n()
         .build();
   }
 

@@ -73,12 +73,12 @@ import java.util.*;
 @Service
 public class PublicationTemplateManager implements ComponentInstanceDeletion {
 
-  // PublicationTemplates instances associated to silverpeas components. Theses templates should
+  // PublicationTemplates instances associated to silverpeas components. These templates should
   // already exist and be loaded.
   // map externalId -> PublicationTemplate
   private final Map<String, PublicationTemplate> externalTemplates = new HashMap<>();
-  // All of the PublicationTemplates loaded in silverpeas and identified by their XML file.
-  // map templateFileName -> PublicationTemplate to avoid multiple marshalling
+  // All the PublicationTemplates loaded in silverpeas and identified by their XML file.
+  // map templateFileName -> PublicationTemplate to avoid multiple marshallings
   private final Map<String, PublicationTemplateImpl> templates = new HashMap<>();
   private String templateDir;
   private String defaultTemplateDir;

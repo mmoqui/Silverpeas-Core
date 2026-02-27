@@ -35,9 +35,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.DataSetTest;
 import org.silverpeas.core.persistence.Transaction;
-import org.silverpeas.core.test.WarBuilder4LibCore;
 import org.silverpeas.core.test.integration.rule.MavenTargetDirectoryRule;
 import org.silverpeas.core.util.file.FileRepositoryManager;
 import org.silverpeas.kernel.util.SystemWrapper;
@@ -105,14 +105,8 @@ public class SQLInternalDomainRepositoryIT extends DataSetTest {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(SQLInternalDomainRepositoryIT.class)
-        .addSilverpeasExceptionBases()
-        .addFileRepositoryFeatures()
-        .addJpaPersistenceFeatures()
-        .addAdministrationFeatures()
-        .addPublicationTemplateFeatures()
-        .testFocusedOn(warBuilder ->
-            warBuilder.addPackages(true, "org.silverpeas.core.admin.domain")).build();
+    return LibCoreWarBuilder.onFullWarForTestClass(SQLInternalDomainRepositoryIT.class)
+        .build();
   }
 
   @Before

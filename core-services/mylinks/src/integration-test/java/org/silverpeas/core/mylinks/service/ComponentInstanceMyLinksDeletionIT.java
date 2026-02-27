@@ -63,7 +63,9 @@ public class ComponentInstanceMyLinksDeletionIT {
   @Deployment
   public static Archive<?> createTestArchive() {
     return WarBuilder4MyLinks
-        .onWarForTestClass(ComponentInstanceMyLinksDeletionIT.class).build();
+        .onWarForTestClass(ComponentInstanceMyLinksDeletionIT.class)
+        .addAsResource("org/silverpeas/core/mylinks/service/" + DATASET_SCRIPT)
+        .build();
   }
 
   @Before

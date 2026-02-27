@@ -376,6 +376,7 @@ class DefaultAdministration implements Administration {
     }
   }
 
+  @Transactional
   @Override
   public String deleteSpaceInstById(String userId, String spaceId, boolean definitive)
       throws AdminException {
@@ -1066,6 +1067,7 @@ class DefaultAdministration implements Administration {
    * instance is moved into the bin.
    * @throws AdminException if an error occurs while deleting the component instance.
    */
+  @Transactional
   @Override
   public String deleteComponentInst(String userId, String componentId, boolean definitive)
       throws AdminException {

@@ -23,22 +23,20 @@
  */
 package org.silverpeas.core.util;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
-import org.silverpeas.core.admin.component.model.ComponentInst;
 import org.silverpeas.core.admin.component.model.SilverpeasComponentInstance;
+import org.silverpeas.core.admin.component.model.SilverpeasSharedComponentInstance;
 import org.silverpeas.core.admin.service.AdministrationServiceProvider;
+import org.silverpeas.core.contribution.model.Contribution;
+import org.silverpeas.core.contribution.model.SilverpeasToolContent;
+import org.silverpeas.core.html.PermalinkRegistry;
 import org.silverpeas.kernel.bundle.ResourceLocator;
 import org.silverpeas.kernel.bundle.SettingBundle;
 import org.silverpeas.kernel.cache.model.Cache;
 import org.silverpeas.kernel.cache.model.SimpleCache;
-import org.silverpeas.core.contribution.model.Contribution;
-import org.silverpeas.core.contribution.model.SilverpeasToolContent;
-import org.silverpeas.core.html.PermalinkRegistry;
-import org.silverpeas.kernel.logging.SilverLogger;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -182,7 +180,7 @@ public class URLUtil {
       return "";
     }
     if (!isDefined(sureCompName)) {
-      sureCompName = SilverpeasComponentInstance.getComponentName(sComponentId);
+      sureCompName = SilverpeasComponentInstance.getIdentity(sComponentId).getComponentName();
     }
     String specialString = settings.getString(sureCompName, "");
     if (isDefined(specialString)) {
@@ -218,7 +216,8 @@ public class URLUtil {
    * @return la nouvelle URL
    */
   public static String getNewComponentURL(String spaceId, String componentId) {
-    String sureCompName = ComponentInst.getComponentName(componentId);
+    String sureCompName =
+        SilverpeasSharedComponentInstance.getIdentity(componentId).getComponentName();
     return buildStandardURL(sureCompName, componentId);
   }
 

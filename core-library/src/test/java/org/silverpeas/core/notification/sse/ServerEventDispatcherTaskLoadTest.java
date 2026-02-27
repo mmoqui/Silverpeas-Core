@@ -69,7 +69,7 @@ import static org.hamcrest.Matchers.*;
  * Built for development purpose.
  * @author Yohann Chastagnier
  */
-class ServerEventDispatcherTaskLoadTest extends AbstractServerEventDispatcherTaskTest {
+public class ServerEventDispatcherTaskLoadTest extends AbstractServerEventDispatcherTaskTest {
 
   private final static int NB_REG_THREAD = 10;
   private final static int NB_REG_BY_THREAD = 100;

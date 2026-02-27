@@ -66,7 +66,9 @@ public class LinkDAOIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4MyLinks.onWarForTestClass(LinkDAOIT.class).build();
+    return WarBuilder4MyLinks.onWarForTestClass(LinkDAOIT.class)
+        .addAsResource("org/silverpeas/core/mylinks/dao/" + DATASET_XML_SCRIPT)
+        .build();
   }
 
   @Test

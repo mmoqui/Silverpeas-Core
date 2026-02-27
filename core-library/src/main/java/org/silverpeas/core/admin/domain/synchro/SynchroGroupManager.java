@@ -23,7 +23,6 @@
  */
 package org.silverpeas.core.admin.domain.synchro;
 
-import org.silverpeas.core.admin.service.Administration;
 import org.silverpeas.core.admin.user.model.Group;
 import org.silverpeas.core.util.ServiceProvider;
 
@@ -40,7 +39,7 @@ import jakarta.annotation.PostConstruct;
  * @apiNote the synchronization group manager MUST be application scoped in order to be handled
  * properly.
  * @implNote no @{@link PostConstruct} annotation is used to call {@link #resetContext()} to
- * initialize the context. The reset method is called by {@link Administration} implementation.
+ * initialize the context.
  */
 public interface SynchroGroupManager {
 

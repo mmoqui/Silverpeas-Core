@@ -9,7 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.silverpeas.core.persistence.Transaction;
-import org.silverpeas.core.test.WarBuilder4LibCore;
+import org.silverpeas.core.test.LibCoreWarBuilder;
 import org.silverpeas.core.test.integration.rule.DbSetupRule;
 
 import java.sql.SQLException;
@@ -78,9 +78,7 @@ public class JdbcSqlQueryUseIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
-    return WarBuilder4LibCore.onWarForTestClass(JdbcSqlQueryIT.class)
-        .addCommonBasicUtilities()
-        .addSilverpeasExceptionBases()
+    return LibCoreWarBuilder.onWarForTestClass(JdbcSqlQueryUseIT.class)
         .addAsResource("org/silverpeas/core/persistence/datasource/create_table.sql")
         .build();
   }

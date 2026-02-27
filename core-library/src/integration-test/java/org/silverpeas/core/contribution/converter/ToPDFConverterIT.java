@@ -115,7 +115,7 @@ public class ToPDFConverterIT extends AbstractConverterIntegrationTest {
   }
 
   @Test(expected = DocumentFormatException.class)
-  public void convertAnODTDocumentIntoANonSupportedFormat() throws Exception {
+  public void convertAnODTDocumentIntoANonSupportedFormat() {
     converter.convert(document, inFormat(odt));
   }
 }

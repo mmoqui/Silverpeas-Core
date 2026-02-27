@@ -92,11 +92,7 @@ public class ChatGroupUserLinkEventListenerIT {
   @After
   public void cleanUpCache() {
     cache.clearCache();
-  }
-
-  @Test
-  public void emptyTest() {
-    assertThat(true, is(true));
+    server.clear();
   }
 
   @Test
