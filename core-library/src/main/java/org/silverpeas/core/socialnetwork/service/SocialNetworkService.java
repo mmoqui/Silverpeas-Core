@@ -75,18 +75,6 @@ public class SocialNetworkService {
         .orElse(null);
   }
 
-  /**
-   * Get social network service implementation specific to given social network
-   *
-   * @param networkIdAsString network id as String
-   * @return a connector to the specified social network or null if no such social network is
-   * supported.
-   */
-  public SocialNetworkConnector getSocialNetworkConnector(String networkIdAsString) {
-    SocialNetworkID networkId = SocialNetworkID.valueOf(networkIdAsString);
-    return getSocialNetworkConnector(networkId);
-  }
-
   public ExternalAccount getExternalAccount(SocialNetworkID networkId, String profileId) {
     return dao.getById(new ExternalAccountIdentifier(networkId, profileId).asString());
   }
@@ -147,17 +135,6 @@ public class SocialNetworkService {
         }
       }
     }
-  }
-
-  @Transactional(Transactional.TxType.REQUIRED)
-  public void removeAllExternalAccount(String userId) {
-    List<ExternalAccount> accounts = dao.findBySilverpeasUserId(userId);
-    if (accounts != null) {
-      for (ExternalAccount account : accounts) {
-        dao.delete(account);
-      }
-    }
-
   }
 
 }

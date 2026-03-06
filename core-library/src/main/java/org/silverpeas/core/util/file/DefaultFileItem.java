@@ -25,7 +25,9 @@
 package org.silverpeas.core.util.file;
 
 import org.apache.commons.fileupload2.core.DiskFileItem;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -92,6 +94,11 @@ public class DefaultFileItem implements FileItem {
   @Override
   public String getContentType() {
     return file.getContentType();
+  }
+
+  @Override
+  public void saveTo(File file) throws IOException {
+    FileUtils.copyInputStreamToFile(getInputStream(), file);
   }
 }
   

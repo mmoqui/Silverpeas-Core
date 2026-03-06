@@ -23,6 +23,7 @@
  */
 package org.silverpeas.web.jobdomain;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -30,18 +31,15 @@ import org.silverpeas.core.admin.user.constant.UserAccessLevel;
 import org.silverpeas.core.admin.user.model.UserDetail;
 import org.silverpeas.core.admin.user.model.UserFull;
 import org.silverpeas.core.notification.user.client.NotificationManagerSettings;
-import org.silverpeas.core.test.unit.extention.JEETestContext;
-import org.silverpeas.kernel.test.extension.EnableSilverTestEnv;
 import org.silverpeas.core.test.unit.extention.FieldMocker;
-import org.silverpeas.core.ui.DisplayI18NHelper;
-import org.silverpeas.kernel.bundle.SettingBundle;
+import org.silverpeas.core.test.unit.extention.JEETestContext;
 import org.silverpeas.core.web.http.HttpRequest;
 import org.silverpeas.core.web.http.RequestParameterDecoder;
+import org.silverpeas.kernel.bundle.SettingBundle;
+import org.silverpeas.kernel.test.extension.EnableSilverTestEnv;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneId;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
@@ -59,10 +57,6 @@ public class UserRequestDataTest {
 
   @BeforeEach
   public void setup() {
-    mocker.setField(DisplayI18NHelper.class, asList("fr", "en", "de"), "languages");
-    mocker.setField(DisplayI18NHelper.class, "en", "defaultLanguage");
-    mocker.setField(DisplayI18NHelper.class, asList("Europe/Paris", "Europe/Berlin"), "zoneIds");
-    mocker.setField(DisplayI18NHelper.class, ZoneId.of("Europe/Berlin"), "defaultZoneId");
     mockedSettings = mocker.mockField(NotificationManagerSettings.class,
         SettingBundle.class, "settings");
     httpServletRequestMock = mock(HttpServletRequest.class);
@@ -140,9 +134,9 @@ public class UserRequestDataTest {
     UserDetail newUser = aUser();
     assertThat(newUser.getId(), nullValue());
     assertThat(newUser.getLogin(), nullValue());
-    assertThat(newUser.getLastName(), isEmptyString());
-    assertThat(newUser.getFirstName(), isEmptyString());
-    assertThat(newUser.getEmailAddress(), isEmptyString());
+    assertThat(newUser.getLastName(), is(emptyString()));
+    assertThat(newUser.getFirstName(), is(emptyString()));
+    assertThat(newUser.getEmailAddress(), is(emptyString()));
     assertThat(newUser.getAccessLevel(), is(UserAccessLevel.USER));
     assertThat(newUser.getUserManualNotificationUserReceiverLimitValue(), is(0));
     assertThat(newUser.getNotifManualReceiverLimit(), nullValue());
@@ -167,12 +161,12 @@ public class UserRequestDataTest {
     existingUser.setPasswordAvailable(true);
     assertThat(existingUser.getId(), nullValue());
     assertThat(existingUser.getLogin(), nullValue());
-    assertThat(existingUser.getLastName(), isEmptyString());
-    assertThat(existingUser.getFirstName(), isEmptyString());
-    assertThat(existingUser.getEmailAddress(), isEmptyString());
+    assertThat(existingUser.getLastName(), is(emptyString()));
+    assertThat(existingUser.getFirstName(), is(emptyString()));
+    assertThat(existingUser.getEmailAddress(), is(emptyString()));
     assertThat(existingUser.getAccessLevel(), is(UserAccessLevel.USER));
     assertThat(existingUser.isPasswordValid(), is(false));
-    assertThat(existingUser.getPassword(), isEmptyString());
+    assertThat(existingUser.getPassword(), is(emptyString()));
     assertThat(existingUser.getUserManualNotificationUserReceiverLimitValue(), is(0));
     assertThat(existingUser.getNotifManualReceiverLimit(), nullValue());
 
@@ -194,13 +188,13 @@ public class UserRequestDataTest {
 
   @Test
   public void applyDataOnNewUserWithUserManualNotificationLimitEnabled() {
-    enableServerLimitationAt(5);
+    enableServerLimitationAt();
     UserDetail newUser = aUser();
     assertThat(newUser.getId(), nullValue());
     assertThat(newUser.getLogin(), nullValue());
-    assertThat(newUser.getLastName(), isEmptyString());
-    assertThat(newUser.getFirstName(), isEmptyString());
-    assertThat(newUser.getEmailAddress(), isEmptyString());
+    assertThat(newUser.getLastName(), is(emptyString()));
+    assertThat(newUser.getFirstName(), is(emptyString()));
+    assertThat(newUser.getEmailAddress(), is(emptyString()));
     assertThat(newUser.getAccessLevel(), is(UserAccessLevel.USER));
     assertThat(newUser.getUserManualNotificationUserReceiverLimitValue(), is(5));
     assertThat(newUser.getNotifManualReceiverLimit(), nullValue());
@@ -221,18 +215,18 @@ public class UserRequestDataTest {
 
   @Test
   public void applyDataOnExistingUserWithUserManualNotificationLimitEnabled() {
-    enableServerLimitationAt(5);
+    enableServerLimitationAt();
 
     UserFull existingUser = aUser();
     existingUser.setPasswordAvailable(true);
     assertThat(existingUser.getId(), nullValue());
     assertThat(existingUser.getLogin(), nullValue());
-    assertThat(existingUser.getLastName(), isEmptyString());
-    assertThat(existingUser.getFirstName(), isEmptyString());
-    assertThat(existingUser.getEmailAddress(), isEmptyString());
+    assertThat(existingUser.getLastName(), is(emptyString()));
+    assertThat(existingUser.getFirstName(), is(emptyString()));
+    assertThat(existingUser.getEmailAddress(), is(emptyString()));
     assertThat(existingUser.getAccessLevel(), is(UserAccessLevel.USER));
     assertThat(existingUser.isPasswordValid(), is(false));
-    assertThat(existingUser.getPassword(), isEmptyString());
+    assertThat(existingUser.getPassword(), is(emptyString()));
     assertThat(existingUser.getUserManualNotificationUserReceiverLimitValue(), is(5));
     assertThat(existingUser.getNotifManualReceiverLimit(), nullValue());
 
@@ -254,15 +248,15 @@ public class UserRequestDataTest {
 
   @Test
   public void applyDataOnNewUserWithUserManualNotificationLimitEnabledNoLimit() {
-    enableServerLimitationAt(5);
+    enableServerLimitationAt();
     setHttpParameter("userManualNotifReceiverLimitEnabled", "false");
 
     UserDetail newUser = aUser();
     assertThat(newUser.getId(), nullValue());
     assertThat(newUser.getLogin(), nullValue());
-    assertThat(newUser.getLastName(), isEmptyString());
-    assertThat(newUser.getFirstName(), isEmptyString());
-    assertThat(newUser.getEmailAddress(), isEmptyString());
+    assertThat(newUser.getLastName(), is(emptyString()));
+    assertThat(newUser.getFirstName(), is(emptyString()));
+    assertThat(newUser.getEmailAddress(), is(emptyString()));
     assertThat(newUser.getAccessLevel(), is(UserAccessLevel.USER));
     assertThat(newUser.getUserManualNotificationUserReceiverLimitValue(), is(5));
     assertThat(newUser.getNotifManualReceiverLimit(), nullValue());
@@ -283,19 +277,19 @@ public class UserRequestDataTest {
 
   @Test
   public void applyDataOnExistingUserWithUserManualNotificationLimitEnabledNoLimit() {
-    enableServerLimitationAt(5);
+    enableServerLimitationAt();
     setHttpParameter("userManualNotifReceiverLimitEnabled", "false");
 
     UserFull existingUser = aUser();
     existingUser.setPasswordAvailable(true);
     assertThat(existingUser.getId(), nullValue());
     assertThat(existingUser.getLogin(), nullValue());
-    assertThat(existingUser.getLastName(), isEmptyString());
-    assertThat(existingUser.getFirstName(), isEmptyString());
-    assertThat(existingUser.getEmailAddress(), isEmptyString());
+    assertThat(existingUser.getLastName(), is(emptyString()));
+    assertThat(existingUser.getFirstName(), is(emptyString()));
+    assertThat(existingUser.getEmailAddress(), is(emptyString()));
     assertThat(existingUser.getAccessLevel(), is(UserAccessLevel.USER));
     assertThat(existingUser.isPasswordValid(), is(false));
-    assertThat(existingUser.getPassword(), isEmptyString());
+    assertThat(existingUser.getPassword(), is(emptyString()));
     assertThat(existingUser.getUserManualNotificationUserReceiverLimitValue(), is(5));
     assertThat(existingUser.getNotifManualReceiverLimit(), nullValue());
 
@@ -324,9 +318,9 @@ public class UserRequestDataTest {
     UserDetail newAdmin = aUser();
     assertThat(newAdmin.getId(), nullValue());
     assertThat(newAdmin.getLogin(), nullValue());
-    assertThat(newAdmin.getLastName(), isEmptyString());
-    assertThat(newAdmin.getFirstName(), isEmptyString());
-    assertThat(newAdmin.getEmailAddress(), isEmptyString());
+    assertThat(newAdmin.getLastName(), is(emptyString()));
+    assertThat(newAdmin.getFirstName(), is(emptyString()));
+    assertThat(newAdmin.getEmailAddress(), is(emptyString()));
     assertThat(newAdmin.getAccessLevel(), is(UserAccessLevel.USER));
     assertThat(newAdmin.getUserManualNotificationUserReceiverLimitValue(), is(0));
     assertThat(newAdmin.getNotifManualReceiverLimit(), nullValue());
@@ -353,12 +347,12 @@ public class UserRequestDataTest {
     existingAdmin.setPasswordAvailable(true);
     assertThat(existingAdmin.getId(), nullValue());
     assertThat(existingAdmin.getLogin(), nullValue());
-    assertThat(existingAdmin.getLastName(), isEmptyString());
-    assertThat(existingAdmin.getFirstName(), isEmptyString());
-    assertThat(existingAdmin.getEmailAddress(), isEmptyString());
+    assertThat(existingAdmin.getLastName(), is(emptyString()));
+    assertThat(existingAdmin.getFirstName(), is(emptyString()));
+    assertThat(existingAdmin.getEmailAddress(), is(emptyString()));
     assertThat(existingAdmin.getAccessLevel(), is(UserAccessLevel.ADMINISTRATOR));
     assertThat(existingAdmin.isPasswordValid(), is(false));
-    assertThat(existingAdmin.getPassword(), isEmptyString());
+    assertThat(existingAdmin.getPassword(), is(emptyString()));
     assertThat(existingAdmin.getUserManualNotificationUserReceiverLimitValue(), is(0));
     assertThat(existingAdmin.getNotifManualReceiverLimit(), nullValue());
 
@@ -380,15 +374,15 @@ public class UserRequestDataTest {
 
   @Test
   public void applyDataOnNewAdminWithUserManualNotificationLimitEnabled() {
-    enableServerLimitationAt(5);
+    enableServerLimitationAt();
     setHttpParameter("userAccessLevel", "ADMINISTRATOR");
 
     UserDetail newAdmin = aUser();
     assertThat(newAdmin.getId(), nullValue());
     assertThat(newAdmin.getLogin(), nullValue());
-    assertThat(newAdmin.getLastName(), isEmptyString());
-    assertThat(newAdmin.getFirstName(), isEmptyString());
-    assertThat(newAdmin.getEmailAddress(), isEmptyString());
+    assertThat(newAdmin.getLastName(), is(emptyString()));
+    assertThat(newAdmin.getFirstName(), is(emptyString()));
+    assertThat(newAdmin.getEmailAddress(), is(emptyString()));
     assertThat(newAdmin.getAccessLevel(), is(UserAccessLevel.USER));
     assertThat(newAdmin.getUserManualNotificationUserReceiverLimitValue(), is(5));
     assertThat(newAdmin.getNotifManualReceiverLimit(), nullValue());
@@ -409,19 +403,19 @@ public class UserRequestDataTest {
 
   @Test
   public void applyDataOnExistingAdminWithUserManualNotificationLimitEnabled() {
-    enableServerLimitationAt(5);
+    enableServerLimitationAt();
     setHttpParameter("userAccessLevel", "ADMINISTRATOR");
 
     UserFull existingAdmin = anAdmin();
     existingAdmin.setPasswordAvailable(true);
     assertThat(existingAdmin.getId(), nullValue());
     assertThat(existingAdmin.getLogin(), nullValue());
-    assertThat(existingAdmin.getLastName(), isEmptyString());
-    assertThat(existingAdmin.getFirstName(), isEmptyString());
-    assertThat(existingAdmin.getEmailAddress(), isEmptyString());
+    assertThat(existingAdmin.getLastName(), is(emptyString()));
+    assertThat(existingAdmin.getFirstName(), is(emptyString()));
+    assertThat(existingAdmin.getEmailAddress(), is(emptyString()));
     assertThat(existingAdmin.getAccessLevel(), is(UserAccessLevel.ADMINISTRATOR));
     assertThat(existingAdmin.isPasswordValid(), is(false));
-    assertThat(existingAdmin.getPassword(), isEmptyString());
+    assertThat(existingAdmin.getPassword(), is(emptyString()));
     assertThat(existingAdmin.getUserManualNotificationUserReceiverLimitValue(), is(0));
     assertThat(existingAdmin.getNotifManualReceiverLimit(), nullValue());
 
@@ -443,16 +437,16 @@ public class UserRequestDataTest {
 
   @Test
   public void applyDataOnNewAdminWithUserManualNotificationLimitEnabledNoLimit() {
-    enableServerLimitationAt(5);
+    enableServerLimitationAt();
     setHttpParameter("userManualNotifReceiverLimitEnabled", "false");
     setHttpParameter("userAccessLevel", "ADMINISTRATOR");
 
     UserDetail newAdmin = aUser();
     assertThat(newAdmin.getId(), nullValue());
     assertThat(newAdmin.getLogin(), nullValue());
-    assertThat(newAdmin.getLastName(), isEmptyString());
-    assertThat(newAdmin.getFirstName(), isEmptyString());
-    assertThat(newAdmin.getEmailAddress(), isEmptyString());
+    assertThat(newAdmin.getLastName(), is(emptyString()));
+    assertThat(newAdmin.getFirstName(), is(emptyString()));
+    assertThat(newAdmin.getEmailAddress(), is(emptyString()));
     assertThat(newAdmin.getAccessLevel(), is(UserAccessLevel.USER));
     assertThat(newAdmin.getUserManualNotificationUserReceiverLimitValue(), is(5));
     assertThat(newAdmin.getNotifManualReceiverLimit(), nullValue());
@@ -473,7 +467,7 @@ public class UserRequestDataTest {
 
   @Test
   public void applyDataOnExistingAdminWithUserManualNotificationLimitEnabledNoLimit() {
-    enableServerLimitationAt(5);
+    enableServerLimitationAt();
     setHttpParameter("userManualNotifReceiverLimitEnabled", "false");
     setHttpParameter("userAccessLevel", "ADMINISTRATOR");
 
@@ -482,12 +476,12 @@ public class UserRequestDataTest {
     existingAdmin.setNotifManualReceiverLimit(25);
     assertThat(existingAdmin.getId(), nullValue());
     assertThat(existingAdmin.getLogin(), nullValue());
-    assertThat(existingAdmin.getLastName(), isEmptyString());
-    assertThat(existingAdmin.getFirstName(), isEmptyString());
-    assertThat(existingAdmin.getEmailAddress(), isEmptyString());
+    assertThat(existingAdmin.getLastName(), is(emptyString()));
+    assertThat(existingAdmin.getFirstName(), is(emptyString()));
+    assertThat(existingAdmin.getEmailAddress(), is(emptyString()));
     assertThat(existingAdmin.getAccessLevel(), is(UserAccessLevel.ADMINISTRATOR));
     assertThat(existingAdmin.isPasswordValid(), is(false));
-    assertThat(existingAdmin.getPassword(), isEmptyString());
+    assertThat(existingAdmin.getPassword(), is(emptyString()));
     assertThat(existingAdmin.getUserManualNotificationUserReceiverLimitValue(), is(0));
     assertThat(existingAdmin.getNotifManualReceiverLimit(), is(25));
 
@@ -515,8 +509,8 @@ public class UserRequestDataTest {
     when(httpServletRequestMock.getParameter(parameterName)).thenReturn(parameterValue);
   }
 
-  private void enableServerLimitationAt(int limit) {
-    when(mockedSettings.getInteger("notif.manual.receiver.limit", 0)).thenReturn(limit);
+  private void enableServerLimitationAt() {
+    when(mockedSettings.getInteger("notif.manual.receiver.limit", 0)).thenReturn(5);
   }
 
   private UserFull aUser() {

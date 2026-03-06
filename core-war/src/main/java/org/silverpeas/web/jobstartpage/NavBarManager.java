@@ -150,7 +150,7 @@ public class NavBarManager {
   // ----------------
 
   /**
-   * Gets the availables spaces of Silverpeas.
+   * Gets the available spaces of Silverpeas.
    * @return an unmodifiable collection of spaces.
    */
   public Collection<DisplaySorted> getAvailableSpaces() {
@@ -168,7 +168,7 @@ public class NavBarManager {
   public boolean setCurrentSpace(String theSpaceId) {
     String spaceId = getShortSpaceId(theSpaceId);
     currentSpaceId = spaceId;
-    // Reset the selected sub space
+    // Reset the selected subspace
     currentSubSpaceId = null;
     subSpaceComponents.clear();
     if (StringUtil.isDefined(currentSpaceId) && getSpaceCache(currentSpaceId) == null) {
@@ -194,7 +194,7 @@ public class NavBarManager {
   }
 
   /**
-   * Gets the availables component instances in the current space of Silverpeas.
+   * Gets the available component instances in the current space of Silverpeas.
    * @return an unmodifiable collection of component instances.
    */
   public Collection<DisplaySorted> getAvailableSpaceComponents() {
@@ -208,7 +208,7 @@ public class NavBarManager {
   // --------------------
 
   /**
-   * Gets the availables spaces children of the current space of Silverpeas.
+   * Gets the available spaces children of the current space of Silverpeas.
    * @return an unmodifiable collection of spaces.
    */
   public Collection<DisplaySorted> getAvailableSubSpaces() {
@@ -244,7 +244,7 @@ public class NavBarManager {
   }
 
   /**
-   * Gets the availables component instances in the current subspace of Silverpeas.
+   * Gets the available component instances in the current subspace of Silverpeas.
    * @return an unmodifiable collection of component instances.
    */
   public Collection<DisplaySorted> getAvailableSubSpaceComponents() {

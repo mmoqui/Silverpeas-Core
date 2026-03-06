@@ -24,6 +24,7 @@
 package org.silverpeas.core.security.authorization;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.silverpeas.core.ResourceIdentifier;
 import org.silverpeas.core.admin.user.model.SilverpeasRole;
 import org.silverpeas.core.admin.user.model.User;
@@ -45,6 +46,7 @@ import static org.silverpeas.core.security.authorization.AccessControlOperation.
  * @author ehugonnet
  */
 @Service
+@Singleton
 public class SimpleDocumentAccessController extends AbstractAccessController<SimpleDocument>
     implements SimpleDocumentAccessControl {
 

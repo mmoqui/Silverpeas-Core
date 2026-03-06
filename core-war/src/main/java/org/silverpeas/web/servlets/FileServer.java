@@ -41,12 +41,12 @@ import org.silverpeas.core.web.http.HttpRequest;
 import org.silverpeas.core.web.mvc.AbstractFileSender;
 import org.silverpeas.core.web.mvc.controller.MainSessionController;
 
-import javax.activation.FileDataSource;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.activation.FileDataSource;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

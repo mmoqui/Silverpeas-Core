@@ -24,6 +24,7 @@
 package org.silverpeas.core.security.authorization;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.silverpeas.core.admin.component.model.SilverpeasComponentInstance;
 import org.silverpeas.core.admin.service.Administration;
 import org.silverpeas.core.admin.service.OrganizationController;
@@ -54,6 +55,7 @@ import static org.silverpeas.kernel.util.StringUtil.getBooleanValue;
  * @author ehugonnet
  */
 @Service
+@Singleton
 public class ComponentAccessController extends AbstractAccessController<String>
     implements ComponentAccessControl {
 

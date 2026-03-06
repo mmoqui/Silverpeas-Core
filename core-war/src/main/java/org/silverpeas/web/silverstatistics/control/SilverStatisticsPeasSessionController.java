@@ -24,6 +24,7 @@
 package org.silverpeas.web.silverstatistics.control;
 
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.silverpeas.core.admin.component.model.ComponentInstLight;
 import org.silverpeas.core.admin.service.AdminController;
 import org.silverpeas.core.admin.service.AdminException;
@@ -35,59 +36,38 @@ import org.silverpeas.core.chart.period.PeriodChart;
 import org.silverpeas.core.chart.pie.PieChart;
 import org.silverpeas.core.contribution.contentcontainer.content.GlobalSilverContent;
 import org.silverpeas.core.date.period.PeriodType;
-import org.silverpeas.core.notification.user.client.NotificationMetaData;
-import org.silverpeas.core.notification.user.client.NotificationSender;
-import org.silverpeas.core.notification.user.client.UserRecipient;
-import org.silverpeas.core.notification.user.client.constant.BuiltInNotifAddress;
-import org.silverpeas.core.pdc.pdc.model.AxisHeader;
-import org.silverpeas.core.pdc.pdc.model.PdcException;
-import org.silverpeas.core.pdc.pdc.model.SearchContext;
-import org.silverpeas.core.pdc.pdc.model.SearchCriteria;
-import org.silverpeas.core.pdc.pdc.model.Value;
+import org.silverpeas.core.pdc.pdc.model.*;
 import org.silverpeas.core.pdc.pdc.service.PdcManager;
 import org.silverpeas.core.security.session.SessionInfo;
 import org.silverpeas.core.security.session.SessionManagement;
 import org.silverpeas.core.security.session.SessionManagementProvider;
 import org.silverpeas.core.util.ArrayUtil;
-import org.silverpeas.kernel.util.Pair;
-import org.silverpeas.kernel.bundle.ResourceLocator;
 import org.silverpeas.core.util.ServiceProvider;
-import org.silverpeas.kernel.bundle.SettingBundle;
-import org.silverpeas.kernel.util.StringUtil;
 import org.silverpeas.core.util.URLUtil;
 import org.silverpeas.core.util.UnitUtil;
 import org.silverpeas.core.util.csv.CSVRow;
-import org.silverpeas.kernel.logging.SilverLogger;
 import org.silverpeas.core.util.memory.MemoryUnit;
 import org.silverpeas.core.web.export.ExportCSVBuilder;
 import org.silverpeas.core.web.mvc.controller.AbstractAdminComponentSessionController;
 import org.silverpeas.core.web.mvc.controller.ComponentContext;
 import org.silverpeas.core.web.mvc.controller.MainSessionController;
 import org.silverpeas.core.web.selection.Selection;
-import org.silverpeas.web.silverstatistics.vo.AccessPublicationVO;
-import org.silverpeas.web.silverstatistics.vo.AxisStatsFilter;
-import org.silverpeas.web.silverstatistics.vo.CrossAxisAccessVO;
-import org.silverpeas.web.silverstatistics.vo.CrossAxisStatsFilter;
-import org.silverpeas.web.silverstatistics.vo.CrossStatisticVO;
-import org.silverpeas.web.silverstatistics.vo.StatisticAxisVO;
-import org.silverpeas.web.silverstatistics.vo.StatisticVO;
+import org.silverpeas.kernel.bundle.ResourceLocator;
+import org.silverpeas.kernel.bundle.SettingBundle;
+import org.silverpeas.kernel.logging.SilverLogger;
+import org.silverpeas.kernel.util.Pair;
+import org.silverpeas.kernel.util.StringUtil;
+import org.silverpeas.web.silverstatistics.vo.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.silverpeas.kernel.bundle.ResourceLocator.getGeneralLocalizationBundle;
 import static org.silverpeas.kernel.util.StringUtil.isDefined;
+import static org.silverpeas.web.silverstatistics.control.AbstractPieChartBuilder.buildPieChart;
 
-/**
- * Class declaration
- * @author
- */
 public class SilverStatisticsPeasSessionController extends AbstractAdminComponentSessionController {
   private static final long serialVersionUID = -8394342857531676676L;
 
@@ -116,11 +96,8 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
   private String accessFilterLibUser = null;
   private String accessFilterIdUser = null;
   private String accessSpaceId = null;
-  /**
-   * current stats list
-   */
-  private List<String[]> currentStats = new ArrayList<>();
-  private List<String[]> path = new ArrayList<>();
+  private final List<String[]> currentStats = new ArrayList<>();
+  private final List<String[]> path = new ArrayList<>();
   private Collection<String> yearsConnection = null;
   private Collection<String> yearsAccess = null;
   private Collection<String> yearsVolume = null;
@@ -148,10 +125,11 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
   }
 
   /**
-   * Initializes a new collection of years from the one given as parameter.
-   * If the given one does not exist or is empty, then the returned collection is filled with the
-   * year of the current date.
-   * @param yearsFromStatistics
+   * Initializes a new collection of years from the one given as parameter. If the given one does
+   * not exist or is empty, then the returned collection is filled with the year of the current
+   * date.
+   *
+   * @param yearsFromStatistics list of years
    * @return a never null collection of years as string.
    */
   private Collection<String> initYears(Collection<String> yearsFromStatistics) {
@@ -165,6 +143,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
 
   /**
    * Standard Session Controller Constructeur
+   *
    * @param mainSessionCtrl The user's profile
    * @param componentContext The component's profile
    *
@@ -211,9 +190,6 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return c;
   }
 
-  /**
-   * @return
-   */
   private String formatDate(String date) {// date au format AAAA-MM-JJ -> Mois
     // AAAA
     String dateFormate = "";
@@ -221,61 +197,56 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     String mois = date.substring(5, 7);
     String annee = date.substring(0, 4);
 
-    if ("01".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.January");
-    } else if ("02".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.February");
-    } else if ("03".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.March");
-    } else if ("04".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.April");
-    } else if ("05".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.May");
-    } else if ("06".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.June");
-    } else if ("07".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.July");
-    } else if ("08".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.August");
-    } else if ("09".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.September");
-    } else if ("10".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.October");
-    } else if ("11".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.November");
-    } else if ("12".equals(mois)) {
-      dateFormate += this.getString("silverStatisticsPeas.December");
+    switch (mois) {
+      case "01":
+        dateFormate += this.getString("silverStatisticsPeas.January");
+        break;
+      case "02":
+        dateFormate += this.getString("silverStatisticsPeas.February");
+        break;
+      case "03":
+        dateFormate += this.getString("silverStatisticsPeas.March");
+        break;
+      case "04":
+        dateFormate += this.getString("silverStatisticsPeas.April");
+        break;
+      case "05":
+        dateFormate += this.getString("silverStatisticsPeas.May");
+        break;
+      case "06":
+        dateFormate += this.getString("silverStatisticsPeas.June");
+        break;
+      case "07":
+        dateFormate += this.getString("silverStatisticsPeas.July");
+        break;
+      case "08":
+        dateFormate += this.getString("silverStatisticsPeas.August");
+        break;
+      case "09":
+        dateFormate += this.getString("silverStatisticsPeas.September");
+        break;
+      case "10":
+        dateFormate += this.getString("silverStatisticsPeas.October");
+        break;
+      case "11":
+        dateFormate += this.getString("silverStatisticsPeas.November");
+        break;
+      case "12":
+        dateFormate += this.getString("silverStatisticsPeas.December");
+        break;
     }
 
     return dateFormate + " " + annee;
   }
 
-  /**
-   * @return
-   */
   public PeriodChart getDistinctUserConnectionsChart(String dateBegin, String dateEnd) {
     PeriodChart axisChart = null;
     try {
-      Collection[] statsUsers = SilverStatisticsPeasDAOConnexion.getStatsUser(dateBegin, dateEnd);
+      var statsUsers = SilverStatisticsPeasDAOConnexion.getStatsUser(dateBegin, dateEnd);
 
       // title
       String title = this.getString("silverStatisticsPeas.ConnectionNumberOfDistinctUsers") + " ";
-      String mois = dateBegin.substring(5, 7);
-      if ("04".equals(mois) || "08".equals(mois) || "10".equals(mois)) {// Avril,
-        // Aout,
-        // Octobre
-        title += this.getString(STP_FROM_APRIL_AUGUST_OCTOBER);
-
-      } else {
-        title += this.getString(STP_FROM) + " ";
-      }
-
-      title += formatDate(dateBegin) + " ";
-      title += this.getString(STP_TO) + " ";
-      title += formatDate(dateEnd);
-
-      axisChart = getMonthPeriodChartFrom((List<String>) statsUsers[0], (List) statsUsers[1])
-          .withTitle(title);
+      axisChart = getPeriodChart(title, dateBegin, dateEnd, statsUsers);
       axisChart.getAxisY()
           .setTitle(getGeneralLocalizationBundle(getLanguage()).getString("GML.users"));
     } catch (Exception se) {
@@ -285,13 +256,30 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return axisChart;
   }
 
-  /**
-   * @return
-   */
+  private PeriodChart getPeriodChart(String title, String dateBegin, String dateEnd,
+      Pair<List<String>, List<Long>> statsUsers) {
+    String mois = dateBegin.substring(5, 7);
+    if ("04".equals(mois) || "08".equals(mois) || "10".equals(mois)) {// Avril,
+      // Aout,
+      // Octobre
+      title += this.getString(STP_FROM_APRIL_AUGUST_OCTOBER);
+
+    } else {
+      title += this.getString(STP_FROM) + " ";
+    }
+
+    title += formatDate(dateBegin) + " ";
+    title += this.getString(STP_TO) + " ";
+    title += formatDate(dateEnd);
+
+    return getMonthPeriodChartFrom(statsUsers.getFirst(), statsUsers.getSecond())
+        .withTitle(title);
+  }
+
   public PeriodChart getUserConnectionsChart(String dateBegin, String dateEnd) {
     PeriodChart axisChart = null;
     try {
-      Collection[] statsConnection =
+      var statsConnection =
           SilverStatisticsPeasDAOConnexion.getStatsConnexion(dateBegin, dateEnd);
 
       // title
@@ -310,7 +298,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
       title.append(formatDate(dateEnd));
 
       axisChart =
-          getMonthPeriodChartFrom((List<String>) statsConnection[0], (List) statsConnection[1])
+          getMonthPeriodChartFrom(statsConnection.getFirst(), statsConnection.getSecond())
               .withTitle(title.toString());
       axisChart.getAxisY().setTitle(this.getString(STP_CONNECTIONS));
     } catch (Exception se) {
@@ -320,9 +308,6 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return axisChart;
   }
 
-  /**
-   * @return
-   */
   public PeriodChart getUserConnectionsUserChart(String dateBegin, String dateEnd, String idUser) {
     PeriodChart axisChart = null;
     try {
@@ -331,28 +316,13 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
       if (userDetail != null) {
         lastName = userDetail.getLastName();
       }
-      Collection[] statsConnection =
+      var statsConnection =
           SilverStatisticsPeasDAOConnexion.getStatsUserConnexion(dateBegin, dateEnd, idUser);
 
       // title
       String title = this.getString(STP_LOGIN_NUMBER) + " " +
           this.getString("silverStatisticsPeas.OfUser") + " " + lastName + " ";
-      String mois = dateBegin.substring(5, 7);
-      if ("04".equals(mois) || "08".equals(mois) || "10".equals(mois)) {// Avril,
-        // Aout,
-        // Octobre
-        title += this.getString(STP_FROM_APRIL_AUGUST_OCTOBER);
-      } else {
-        title += this.getString(STP_FROM) + " ";
-      }
-
-      title += formatDate(dateBegin) + " ";
-      title += this.getString(STP_TO) + " ";
-      title += formatDate(dateEnd);
-
-      axisChart =
-          getMonthPeriodChartFrom((List<String>) statsConnection[0], (List) statsConnection[1])
-              .withTitle(title);
+      axisChart = getPeriodChart(title, dateBegin, dateEnd, statsConnection);
       axisChart.getAxisY().setTitle(this.getString(STP_CONNECTIONS));
 
     } catch (Exception se) {
@@ -363,12 +333,13 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
   }
 
   /**
-   * donne les stats pour un groupe seulement cad 2 info, la collection contient donc un seul
-   * element
-   * @param dateBegin a begin date string representation yyyy/MM/dd
+   * Gets the connexion statistics for a given user group. The statistics are made up of two kinds
+   * of information.
+   *
+   * @param dateBegin a start date string representation yyyy/MM/dd
    * @param dateEnd an end date string representation yyyy/MM/dd
    * @param idGroup a user group identifier
-   * @return
+   * @return the connexion statistics
    */
   public Collection<String[]> getStatsConnexionAllGroup(String dateBegin, String dateEnd,
       String idGroup) {
@@ -383,7 +354,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
   }
 
   /**
-   * @param dateBegin a begin date string representation yyyy/MM/dd
+   * @param dateBegin a start date string representation yyyy/MM/dd
    * @param dateEnd an end date string representation yyyy/MM/dd
    * @param idGroup a user group identifier
    * @return an {@link PeriodChart} that represents the statistic data.
@@ -392,29 +363,14 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
       String idGroup) {
     PeriodChart axisChart = null;
     try {
-      Collection[] statsConnection =
+      var statsConnection =
           SilverStatisticsPeasDAOConnexion.getStatsGroupConnexion(dateBegin, dateEnd, idGroup);
 
       // title
       String title = this.getString(STP_LOGIN_NUMBER) + " " +
           this.getString("silverStatisticsPeas.OfGroup") + " " +
           AdministrationServiceProvider.getAdminService().getGroupName(idGroup) + " ";
-      String mois = dateBegin.substring(5, 7);
-      if ("04".equals(mois) || "08".equals(mois) || "10".equals(mois)) {// Avril,
-        // Aout,
-        // Octobre
-        title += this.getString(STP_FROM_APRIL_AUGUST_OCTOBER);
-      } else {
-        title += this.getString(STP_FROM) + " ";
-      }
-
-      title += formatDate(dateBegin) + " ";
-      title += this.getString(STP_TO) + " ";
-      title += formatDate(dateEnd);
-
-      axisChart =
-          getMonthPeriodChartFrom((List<String>) statsConnection[0], (List) statsConnection[1])
-              .withTitle(title);
+      axisChart = getPeriodChart(title, dateBegin, dateEnd, statsConnection);
       axisChart.getAxisY().setTitle(this.getString(STP_CONNECTIONS));
 
     } catch (Exception se) {
@@ -425,7 +381,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
   }
 
   // donne pour chaque groupe ses stats cad 3 infos par groupe, la collection
-  // contient auant d'elements que de groupes
+  // contient aunt d'elements que de groupes
   public Collection<String[]> getStatsConnexionGroupAll(String dateBegin, String dateEnd) {
     Collection<String[]> c = null;
     try {
@@ -437,8 +393,8 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
   }
 
   // donne pour un chaque groupe d'un user les stats cad 3 infos par groupe, la
-  // collection contient autant d'elements
-  // que de groupes dont le user fait parti
+  // collection contient autant d'éléments
+  // que de groupes dont l'utilisateur fait partie
   public Collection<String[]> getStatsConnexionGroupUser(String dateBegin, String dateEnd,
       String idUser) {
     Collection<String[]> c = null;
@@ -452,7 +408,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
   }
 
   // donne pour chaque user ses stats, cad 3 infos, la collection contient
-  // autant d'elements que de users
+  // autant d'éléments que d'utilisateurs
   public Collection<String[]> getStatsConnexionUserAll(String dateBegin, String dateEnd) {
     Collection<String[]> c = null;
     try {
@@ -464,7 +420,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
   }
 
   // donne pour chaque user d'un groupe ses stats, cad 3 infos, la collection
-  // contient autant d'elements que de users dans le groupe
+  // contient autant d'éléments que d'utilisateurs dans le groupe
   public Collection<String[]> getStatsConnexionUser(String dateBegin, String dateEnd,
       String idUser) {
     Collection<String[]> c = null;
@@ -504,26 +460,6 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     sessionManagement.closeSession(sessionId);
   }
 
-  public UserDetail getTargetUserDetail(String userId) {
-    return getUserDetail(userId);
-  }
-
-  public void notifySession(String userId, String message) {
-    try {
-      NotificationSender notificationSender = new NotificationSender(null);
-      NotificationMetaData notifMetaData = new NotificationMetaData();
-
-      notifMetaData.setTitle("");
-      notifMetaData.setContent(message);
-      notifMetaData.setSource(getUserDetail().getDisplayedName());
-      notifMetaData.setSender(getUserId());
-      notifMetaData.addUserRecipient(new UserRecipient(userId));
-
-      notificationSender.notifyUser(BuiltInNotifAddress.BASIC_POPUP.getId(), notifMetaData);
-    } catch (Exception ex) {
-      SilverLogger.getLogger(this).error(ex);
-    }
-  }
   /*
    * Initialisation du UserPanel
    */
@@ -541,50 +477,50 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     String theGroup = sel.getFirstSelectedSet();
 
     // update FilterType and FilterLib, FilterId
-    if (theGroup != null && theGroup.length() != 0) {
+    if (theGroup != null && !theGroup.isEmpty()) {
       setFilterType("0");
       setFilterId(theGroup);
       setFilterLib(getOrganisationController().getGroup(theGroup).getName());
-    } else if (theUser != null && theUser.length() != 0) {
+    } else if (theUser != null && !theUser.isEmpty()) {
       setFilterType("1");
       setFilterId(theUser);
       setFilterLib(getOrganisationController().getUserDetail(theUser).getLastName());
     }
   }
 
-  /**
-   * @return
-   */
-  /**
-   * @return
-   */
   public PeriodChart getUserConnectionsFqChart(String dateBegin, String dateEnd,
       String statDetail) {
     PeriodChart axisChart = null;
     try {
       int minFreq = 0;
       int maxFreq = 0;
-      if (statDetail.equals("0")) {
-        minFreq = 0;
-        maxFreq = 5;
-      } else if (statDetail.equals("1")) {
-        minFreq = 5;
-        maxFreq = 10;
-      } else if (statDetail.equals("2")) {
-        minFreq = 10;
-        maxFreq = 15;
-      } else if (statDetail.equals("3")) {
-        minFreq = 15;
-        maxFreq = 20;
-      } else if (statDetail.equals("4")) {
-        minFreq = 20;
-        maxFreq = 25;
-      } else if (statDetail.equals("5")) {
-        minFreq = 25;
-        maxFreq = 999;
+      switch (statDetail) {
+        case "0":
+          maxFreq = 5;
+          break;
+        case "1":
+          minFreq = 5;
+          maxFreq = 10;
+          break;
+        case "2":
+          minFreq = 10;
+          maxFreq = 15;
+          break;
+        case "3":
+          minFreq = 15;
+          maxFreq = 20;
+          break;
+        case "4":
+          minFreq = 20;
+          maxFreq = 25;
+          break;
+        case "5":
+          minFreq = 25;
+          maxFreq = 999;
+          break;
       }
 
-      Collection[] statsUsersFq =
+      var statsUsersFq =
           SilverStatisticsPeasDAOConnexion.getStatsUserFq(dateBegin, dateEnd, minFreq, maxFreq);
 
       // title
@@ -592,24 +528,11 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
       title +=
           this.getString(STP_FROM) + " " + minFreq + " " + this.getString(STP_TO) + " " + maxFreq +
               " " +
-          this.getString("silverStatisticsPeas.Times") + " ";
+              this.getString("silverStatisticsPeas.Times") + " ";
 
-      String mois = dateBegin.substring(5, 7);
-      if ("04".equals(mois) || "08".equals(mois) || "10".equals(mois)) {// Avril,
-        // Aout,
-        // Octobre
-        title += this.getString(STP_FROM_APRIL_AUGUST_OCTOBER);
-      } else {
-        title += this.getString(STP_FROM) + " ";
-      }
-
-      title += formatDate(dateBegin) + " ";
-      title += this.getString(STP_TO) + " ";
-      title += formatDate(dateEnd);
-
-      axisChart = getMonthPeriodChartFrom((List<String>) statsUsersFq[0], (List) statsUsersFq[1])
-          .withTitle(title);
-      axisChart.getAxisY().setTitle(getGeneralLocalizationBundle(getLanguage()).getString("GML.users"));
+      axisChart = getPeriodChart(title, dateBegin, dateEnd, statsUsersFq);
+      axisChart.getAxisY().setTitle(getGeneralLocalizationBundle(getLanguage()).getString("GML" +
+          ".users"));
 
     } catch (Exception se) {
       SilverLogger.getLogger(this).error(se);
@@ -633,7 +556,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     String theGroup = sel.getFirstSelectedSet();
 
     // update FilterType and FilterLib, FilterId
-    if (theGroup != null && theGroup.length() != 0) {
+    if (theGroup != null && !theGroup.isEmpty()) {
       setAccessFilterIdGroup(theGroup);
       setAccessFilterLibGroup(getOrganisationController().getGroup(theGroup).getName());
     }
@@ -652,7 +575,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     Selection sel = getSelection();
     String theUser = sel.getFirstSelectedElement();
 
-    if (theUser != null && theUser.length() != 0) {
+    if (theUser != null && !theUser.isEmpty()) {
       setAccessFilterIdUser(theUser);
       setAccessFilterLibUser(getOrganisationController().getUserDetail(theUser).getLastName());
     }
@@ -680,9 +603,6 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return userBuilder.getChart(spaceId, currentStats);
   }
 
-  /**
-   * @return
-   */
   public PeriodChart getEvolutionUserChart(String entite, String entiteId,
       String filterLibGroup, String filterIdGroup, String filterLibUser,
       String filterIdUser) {
@@ -704,11 +624,11 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
       String title = getString("silverStatisticsPeas.EvolutionAccessDeb");
       if ("SPACE".equals(entite)) {
         SpaceInstLight space = getOrganisationController().getSpaceInstLightById(entiteId);
-        if (!filterIdGroup.equals("") && filterIdUser.equals("")) {
+        if (!filterIdGroup.isEmpty() && filterIdUser.isEmpty()) {
           title += " " + this.getString("silverStatisticsPeas.EvolutionAccessGroup") + " " +
               filterLibGroup;
         }
-        if (!filterIdUser.equals("")) {
+        if (!filterIdUser.isEmpty()) {
           title += " " + this.getString("silverStatisticsPeas.EvolutionAccessUser") + " " +
               filterLibUser;
         }
@@ -716,11 +636,11 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
             space.getName() + "]";
       } else {// CMP
         ComponentInstLight cmp = getOrganisationController().getComponentInstLight(entiteId);
-        if (!filterIdGroup.equals("") && filterIdUser.equals("")) {
+        if (!filterIdGroup.isEmpty() && filterIdUser.isEmpty()) {
           title += " " + this.getString("silverStatisticsPeas.EvolutionAccessGroup") + " " +
               filterLibGroup;
         }
-        if (!filterIdUser.equals("")) {
+        if (!filterIdUser.isEmpty()) {
           title += " " + this.getString("silverStatisticsPeas.EvolutionAccessUser") + " " +
               filterLibUser;
         }
@@ -738,9 +658,6 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return axisChart;
   }
 
-  /**
-   * @param spaceId
-   */
   private void buildPath(String spaceId) {
     if (StringUtil.isDefined(spaceId) && (!spaceId.equals("WA0"))) {
       try {
@@ -755,35 +672,27 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     }
   }
 
-  /**
-   * @param spaceId
-   */
   private void resetPath(String spaceId) {
     path.clear();
     buildPath(spaceId);
   }
 
-  /**
-   * @return
-   */
   public PieChart getVolumeServicesChart() {
     PieChart pieChart = null;
     try {
-      Collection[] statsKMsInstances = SilverStatisticsPeasDAOVolumeServices.
+      var statsKMsInstances = SilverStatisticsPeasDAOVolumeServices.
           getStatsInstancesServices();
 
       // build stats array collection
       currentStats.clear();
-      String[] kms =
-          (String[]) statsKMsInstances[0].toArray(new String[statsKMsInstances[0].size()]);
-      String[] counts =
-          (String[]) statsKMsInstances[1].toArray(new String[statsKMsInstances[1].size()]);
-      for (int i = 0; i < kms.length; i++) {
-        currentStats.add(new String[]{kms[i], counts[i]});
+      List<String> kms = statsKMsInstances.getFirst();
+      List<Long> counts = statsKMsInstances.getSecond();
+      for (int i = 0; i < kms.size(); i++) {
+        currentStats.add(new String[]{kms.get(i), String.valueOf(counts.get(i))});
       }
 
       pieChart =
-          getPieChartFrom((List<String>) statsKMsInstances[0], (List) statsKMsInstances[1])
+          getPieChartFrom(statsKMsInstances.getFirst(), statsKMsInstances.getSecond())
               .withTitle(getString("silverStatisticsPeas.ServicesNumber"));
     } catch (Exception se) {
       SilverLogger.getLogger(this).error(se);
@@ -792,9 +701,6 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return pieChart;
   }
 
-  /**
-   * @return
-   */
   public PieChart getPubliVentilChart(String dateStat, String filterIdGroup,
       String filterIdUser, String spaceId) {
     PubliPieChartBuilder publiBuilder =
@@ -804,28 +710,18 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return publiBuilder.getChart(spaceId, currentStats);
   }
 
-  /**
-   * @return
-   */
   public PieChart getDocsVentilChart(String spaceId) {
     DocPieChartBuilder userBuilder = new DocPieChartBuilder(spaceId, this.getMultilang());
     resetPath(spaceId);
     return userBuilder.getChart(spaceId, currentStats);
   }
 
-  /**
-   * @param spaceId
-   * @return
-   */
   public PieChart getDocsSizeVentilChart(String spaceId) {
     DocSizePieChartBuilder userBuilder = new DocSizePieChartBuilder(spaceId, this.getMultilang());
     resetPath(spaceId);
     return userBuilder.getChart(spaceId, currentStats);
   }
 
-  /**
-   * @return
-   */
   public PeriodChart getEvolutionDocsSizeChart() {
     PeriodChart axisChart = null;
     try {
@@ -840,7 +736,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
         values = itStats.next();
         dates.add(values[0]);
         size.add(UnitUtil.convertTo(new BigDecimal(values[2]), MemoryUnit.KB, MemoryUnit.MB)
-            .setScale(2, BigDecimal.ROUND_DOWN)); // size en Mo
+            .setScale(2, RoundingMode.DOWN)); // size en Mo
 
         currentStats.add(new String[]{values[0], values[1], values[2]});
       }
@@ -1165,16 +1061,10 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return accessSpaceId;
   }
 
-  /**
-   * @return Returns the currentStats.
-   */
   public List<String[]> getCurrentStats() {
     return currentStats;
   }
 
-  /**
-   * @return Returns the currentStats.
-   */
   public void clearCurrentStats() {
     this.currentStats.clear();
   }
@@ -1237,6 +1127,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
 
   /**
    * Retrieve statistics on axis
+   *
    * @param statsFilter an axis stats filter
    * @return a Statistic value object
    */
@@ -1248,7 +1139,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     List<String> components = buildCustomComponentListWhereToSearch();
 
     // Global silver content declaration
-    List<GlobalSilverContent> gSC = null;
+    List<GlobalSilverContent> gSC;
 
     int curAxisId = statsFilter.getAxisId();
 
@@ -1268,7 +1159,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
         // Retrieve publications on axis
         for (AxisHeader axisHeader : axis) {
           String axisId = axisHeader.getPK().getId();
-          int nbAxisAccess = 0;
+          int nbAxisAccess;
           // String axisVlue = axisHeader.get
           gSC = getPdCPublications(axisId, "/0/", components);
           nbAxisAccess = computeAxisAccessStatistics(accessPublis, gSC);
@@ -1290,7 +1181,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
         List<Value> values = getPdcManager().getAxisValues(statsFilter.getAxisId());
         for (Value curValue : values) {
           String curAxisValue = curValue.getFullPath();
-          int nbAxisAccess = 0;
+          int nbAxisAccess;
           // Check axis level number
           if ((axisFilter && curAxisValue.startsWith(axisValue) &&
               curValue.getLevelNumber() == curLevel) ||
@@ -1315,13 +1206,6 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return stats;
   }
 
-  /**
-   * SEARCH ONLY PDC publications on current selected axis
-   * @param axisId
-   * @param valueId
-   * @param componentIds
-   * @return
-   */
   private List<GlobalSilverContent> getPdCPublications(String axisId, String valueId,
       List<String> componentIds) {
     // Create search context with a new search criteria
@@ -1329,7 +1213,13 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     SearchCriteria criteria = new SearchCriteria(Integer.parseInt(axisId), valueId);
     context.addCriteria(criteria);
 
-    // Retrieve the list of PDC publications using EJB call
+    // Retrieve the list of PDC publications
+    return getGlobalSilverContents(componentIds, context);
+  }
+
+  @Nullable
+  private List<GlobalSilverContent> getGlobalSilverContents(List<String> componentIds,
+      SearchContext context) {
     List<GlobalSilverContent> silverContentsMetier = null;
     if (!componentIds.isEmpty()) {
       try {
@@ -1342,25 +1232,10 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return silverContentsMetier;
   }
 
-  /**
-   * SEARCH ONLY PDC publications on current selected axis
-   * @param searchContext
-   * @param componentIds
-   * @return
-   */
   private List<GlobalSilverContent> getPdCPublications(SearchContext searchContext,
       List<String> componentIds) {
-    // Retrieve the list of PDC publications using EJB call
-    List<GlobalSilverContent> silverContentsMetier = null;
-    if (!componentIds.isEmpty()) {
-      try {
-        silverContentsMetier =
-            getPdcManager().findGlobalSilverContents(searchContext, componentIds, true, true);
-      } catch (Exception e) {
-        SilverLogger.getLogger(this).error(e);
-      }
-    }
-    return silverContentsMetier;
+    // Retrieve the list of PDC publications
+    return getGlobalSilverContents(componentIds, searchContext);
   }
 
   /**
@@ -1389,11 +1264,6 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     }
   }
 
-  /**
-   * Retrieve cross axis statistics
-   * @param statsFilter
-   * @return list of statistic value object
-   */
   public CrossStatisticVO getCrossAxisStats(CrossAxisStatsFilter statsFilter) {
     // Cross PDC statistics
     CrossStatisticVO crossStat = null;
@@ -1435,7 +1305,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
         SearchCriteria firstSC = new SearchCriteria(firstAxisId, fValue);
         for (Value secondValue : secondValues) {
           // Loop variable declaration
-          int nbAxisAccess = 0;
+          int nbAxisAccess;
           String sValue = secondValue.getFullPath();
 
           // Build PDC search context
@@ -1461,6 +1331,7 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
 
   /**
    * Compute the number of axis access
+   *
    * @param accessPublis the list of publications that have been accessed on specific time period
    * @param gSC the list of publication which are classified on an axis
    * @return the global number of access on a specific axis
@@ -1482,32 +1353,19 @@ public class SilverStatisticsPeasSessionController extends AbstractAdminComponen
     return nbAxisAccess;
   }
 
-  @SuppressWarnings("unchecked")
-  private PeriodChart getMonthPeriodChartFrom(List<String> dates, List values) {
+  private PeriodChart getMonthPeriodChartFrom(List<String> dates, List<? extends Number> values) {
     PeriodChart chart = PeriodChart.withoutTitle();
     Iterator<String> itDates = dates.iterator();
-    Iterator<Object> itValues = values.iterator();
+    Iterator<? extends Number> itValues = values.iterator();
     while (itDates.hasNext()) {
-      final Object value = itValues.next();
-      final Number chartValue;
-      if (value instanceof Number) {
-        chartValue = (Number) value;
-      } else {
-        chartValue = Long.valueOf(String.valueOf(value));
-      }
-      chart.forX(java.sql.Date.valueOf(itDates.next()), PeriodType.month).add(chartValue);
+      final Number value = itValues.next();
+      //noinspection deprecation
+      chart.forX(java.sql.Date.valueOf(itDates.next()), PeriodType.month).add(value);
     }
     return chart;
   }
 
-  @SuppressWarnings("unchecked")
-  private PieChart getPieChartFrom(List<String> labels, List values) {
-    PieChart chart = PieChart.withoutTitle();
-    Iterator<String> itLabels = labels.iterator();
-    Iterator<Long> itValues = values.iterator();
-    while (itLabels.hasNext()) {
-      chart.add(itLabels.next(), Long.valueOf(String.valueOf(itValues.next())));
-    }
-    return chart;
+  private PieChart getPieChartFrom(List<String> labels, List<Long> values) {
+    return buildPieChart(labels, values);
   }
 }

@@ -24,6 +24,7 @@
 
 package org.silverpeas.core.util.file;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -104,4 +105,11 @@ public interface FileItem {
    * @return The content type passed by the agent or {@code null} if not defined.
    */
   String getContentType();
+
+  /**
+   * Saves the content to the specified file.
+   * @param file the file into which the content will be saved.
+   * @throws IOException if the saving fails.
+   */
+  void saveTo(File file) throws IOException;
 }

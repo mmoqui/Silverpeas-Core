@@ -27,8 +27,8 @@ import org.silverpeas.kernel.bundle.ResourceLocator;
 import org.silverpeas.kernel.bundle.SettingBundle;
 
 /**
- * This class manage the informations needed for job start page
- * @c.bonin
+ * This class manage the information needed for job start page
+ * @author c.bonin
  */
 public class JobStartPagePeasSettings {
   public static boolean m_IsProfileEditable;
@@ -45,7 +45,7 @@ public class JobStartPagePeasSettings {
   public static boolean recoverRightsEnable;
   public static String TEMPLATE_PATH;
   public static String CUSTOMERS_TEMPLATE_PATH;
-  public static boolean componentsInSpaceQuotaActivated = false;
+  public static boolean componentsInSpaceQuotaActivated;
   public static boolean dataStorageInSpaceQuotaActivated;
   public static long dataStorageInSpaceQuotaDefaultMaxCount;
   public static long dataStorageInPersonalSpaceQuotaDefaultMaxCount;

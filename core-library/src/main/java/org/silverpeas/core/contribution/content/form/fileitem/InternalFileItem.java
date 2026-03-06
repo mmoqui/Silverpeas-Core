@@ -25,6 +25,7 @@ package org.silverpeas.core.contribution.content.form.fileitem;
 
 import org.silverpeas.core.util.file.FileItem;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -83,5 +84,10 @@ public class InternalFileItem implements FileItem {
   @Override
   public String getContentType() {
     return null;
+  }
+
+  @Override
+  public void saveTo(File file) {
+    // does nothing. There is no content
   }
 }

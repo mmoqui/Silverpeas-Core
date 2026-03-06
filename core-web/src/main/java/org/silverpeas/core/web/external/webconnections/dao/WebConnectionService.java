@@ -31,7 +31,6 @@ import org.silverpeas.core.security.authorization.ForbiddenRuntimeException;
 import org.silverpeas.core.web.external.webconnections.model.ConnectionDetail;
 import org.silverpeas.core.web.external.webconnections.model.WebConnectionsInterface;
 
-import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;

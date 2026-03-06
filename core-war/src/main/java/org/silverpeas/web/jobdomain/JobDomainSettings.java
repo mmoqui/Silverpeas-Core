@@ -30,22 +30,21 @@ import org.silverpeas.kernel.bundle.ResourceLocator;
 import org.silverpeas.kernel.bundle.SettingBundle;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
- * This class manage the informations needed for groups navigation and browse PRE-REQUIRED : the
- * Group passed in the constructor MUST BE A {@link GroupState#VALID} GROUP (with Id, etc...)
- * @t.leroi
+ * This class manage the information needed for groups navigation and browse PRE-REQUIRED : the
+ * Group passed in the constructor MUST BE A {@link GroupState#VALID} GROUP (with id, etc...)
+ * @author t.leroi
  */
 public class JobDomainSettings {
 
-  public static int m_UsersByPage = 10;
-  public static int m_GroupsByPage = 10;
-  public static int m_MinLengthLogin = 5;
-  public static boolean m_UserAddingAllowedForGroupManagers = false;
-  public static boolean m_UseCommunityManagement = false;
-  public static boolean usersInDomainQuotaActivated = false;
-  public static boolean lastConnectionColumnEnabled = true;
+  public static int m_UsersByPage;
+  public static int m_GroupsByPage;
+  public static int m_MinLengthLogin;
+  public static boolean m_UserAddingAllowedForGroupManagers;
+  public static boolean m_UseCommunityManagement;
+  public static boolean usersInDomainQuotaActivated;
+  public static boolean lastConnectionColumnEnabled;
 
   static {
     SettingBundle rs = ResourceLocator.getSettingBundle(
@@ -61,21 +60,10 @@ public class JobDomainSettings {
   }
 
   static public void sortGroups(Group[] toSort) {
-    Arrays.sort(toSort, new Comparator<Group>() {
-
-      public int compare(Group o1, Group o2) {
-        return o1.compareTo(o2);
-        }
-            });
+    Arrays.sort(toSort, Comparable::compareTo);
   }
 
   static public void sortUsers(UserDetail[] toSort) {
-    Arrays.sort(toSort, new Comparator<UserDetail>() {
-
-      public int compare(UserDetail o1, UserDetail o2) {
-        return o1.compareTo(o2);
-        }
-
-    });
+    Arrays.sort(toSort, UserDetail::compareTo);
   }
 }

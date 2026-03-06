@@ -23,6 +23,7 @@
  */
 package org.silverpeas.core.security.authorization;
 
+import jakarta.inject.Singleton;
 import org.silverpeas.core.admin.service.OrganizationController;
 import org.silverpeas.core.admin.service.UserSpaceAvailabilityChecker;
 import org.silverpeas.core.admin.user.model.SilverpeasRole;
@@ -47,6 +48,7 @@ import static org.silverpeas.kernel.util.StringUtil.EMPTY;
  * @author Yohann Chastagnier
  */
 @Service
+@Singleton
 public class SpaceAccessController extends AbstractAccessController<String>
     implements SpaceAccessControl {
 

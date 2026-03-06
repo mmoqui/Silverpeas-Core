@@ -44,8 +44,8 @@ import org.silverpeas.web.pdc.QueryParameters;
 import org.silverpeas.web.pdc.control.PdcSearchSessionController;
 import org.silverpeas.web.pdc.vo.ResultFilterVO;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -140,20 +140,8 @@ public class PdcSearchRequestRouter extends ComponentRequestRouter<PdcSearchSess
         destination = getDestinationForResults(pdcSC);
       } else if ("SortResults".equals(function)) {
 
-        String paramNbResToDisplay = request.getParameter("nbRes");
-        if (StringUtil.isDefined(paramNbResToDisplay)) {
-          int nbResToDisplay = Integer.parseInt(paramNbResToDisplay);
-          pdcSC.setNbResToDisplay(nbResToDisplay);
-        }
-        String paramSortRes = request.getParameter("sortRes");
-        if (StringUtil.isDefined(paramSortRes)) {
-          int sortRes = Integer.parseInt(paramSortRes);
-          pdcSC.setSortType(sortRes);
-        }
-        String paramSortOrder = request.getParameter("sortOrder");
-        if (StringUtil.isDefined(paramSortOrder)) {
-          pdcSC.setSortOrder(paramSortOrder);
-        }
+        setSorting(pdcSC, request.getParameter("nbRes"), request.getParameter("sortRes"),
+            request.getParameter("sortOrder"));
 
         setDefaultDataToNavigation(true, request, pdcSC);
 
@@ -373,6 +361,21 @@ public class PdcSearchRequestRouter extends ComponentRequestRouter<PdcSearchSess
       return "/admin/jsp/errorpageMain.jsp";
     }
     return destination;
+  }
+
+  static void setSorting(PdcSearchSessionController pdcSC, String nbRes, String sortRes2,
+      String sortOrder) {
+    if (StringUtil.isDefined(nbRes)) {
+      int nbResToDisplay = Integer.parseInt(nbRes);
+      pdcSC.setNbResToDisplay(nbResToDisplay);
+    }
+    if (StringUtil.isDefined(sortRes2)) {
+      int sortRes = Integer.parseInt(sortRes2);
+      pdcSC.setSortType(sortRes);
+    }
+    if (StringUtil.isDefined(sortOrder)) {
+      pdcSC.setSortOrder(sortOrder);
+    }
   }
 
   private String toUserPanel(final PdcSearchSessionController pdcSC) {

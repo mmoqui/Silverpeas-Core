@@ -23,7 +23,6 @@
  */
 package org.silverpeas.web.jobstartpage.control;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -54,6 +53,7 @@ import org.silverpeas.core.contribution.template.publication.PublicationTemplate
 import org.silverpeas.core.template.SilverpeasTemplate;
 import org.silverpeas.core.template.SilverpeasTemplates;
 import org.silverpeas.core.ui.DisplayI18NHelper;
+import org.silverpeas.core.util.file.FileItem;
 import org.silverpeas.kernel.bundle.LocalizationBundle;
 import org.silverpeas.kernel.util.Pair;
 import org.silverpeas.kernel.bundle.ResourceLocator;
@@ -81,8 +81,6 @@ import org.silverpeas.web.jobstartpage.SpaceLookHelper;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.*;
-
-import static org.silverpeas.core.admin.component.model.ComponentInst.getComponentLocalId;
 
 public class JobStartPagePeasSessionController extends AbstractAdminComponentSessionController {
 
@@ -487,9 +485,9 @@ public class JobStartPagePeasSessionController extends AbstractAdminComponentSes
   }
 
   private void processSpaceWallpaper(List<FileItem> items, String path) throws Exception {
-    FileItem file = FileUploadUtil.getFile(items, "wallPaper");
-    if (file != null && StringUtil.isDefined(file.getName())) {
-      String extension = FileRepositoryManager.getFileExtension(file.getName());
+    FileItem item = FileUploadUtil.getFile(items, "wallPaper");
+    if (item != null && StringUtil.isDefined(item.getFileName())) {
+      String extension = FileRepositoryManager.getFileExtension(item.getFileName());
       if (extension != null && extension.equalsIgnoreCase("jpeg")) {
         extension = "jpg";
       }
@@ -504,20 +502,21 @@ public class JobStartPagePeasSessionController extends AbstractAdminComponentSes
       }
 
       String imgExtension = extension != null ? "." + extension.toLowerCase() : "";
-      file.write(new File(path + File.separatorChar + "wallPaper" + imgExtension));
+      File wallpaper = new File(path + File.separatorChar + "wallPaper" + imgExtension);
+      item.saveTo(wallpaper);
     }
   }
 
   private void processSpaceCSS(List<FileItem> items, String path) throws Exception {
-    FileItem file = FileUploadUtil.getFile(items, "css");
-    if (file != null && StringUtil.isDefined(file.getName())) {
+    FileItem item = FileUploadUtil.getFile(items, "css");
+    if (item != null && StringUtil.isDefined(item.getFileName())) {
       // Remove previous file
       File css = new File(path, SilverpeasLook.SPACE_CSS + ".css");
       if (css.exists()) {
         Files.delete(css.toPath());
       }
 
-      file.write(css);
+      item.saveTo(css);
     }
   }
 
@@ -875,8 +874,8 @@ public class JobStartPagePeasSessionController extends AbstractAdminComponentSes
   }
 
   // ArrayList de ProfileInst dont l'id est vide ou pas
-  // role non cree : id vide - name - label (identique à name)
-  // role cree : id non vide - name - label
+  // role non créé : id vide, name, label (identique à name)
+  // role créé : id non vide, name, label
   public List<ProfileInst> getAllProfiles(ComponentInst m_FatherComponentInst) {
     ArrayList<ProfileInst> alShowProfile = new ArrayList<>();
     String sComponentName = m_FatherComponentInst.getName();
@@ -1011,7 +1010,9 @@ public class JobStartPagePeasSessionController extends AbstractAdminComponentSes
     profile.setGroups(Arrays.asList(groupIds));
 
     if (!StringUtil.isDefined(profile.getId())) {
-      profile.setComponentFatherId(getComponentLocalId(getManagedInstanceId()));
+      int localId =
+          SilverpeasComponentInstance.getIdentity(getManagedInstanceId()).getInstanceLocalId();
+      profile.setComponentFatherId(localId);
       // Add the profile
       adminController.addProfileInst(profile, getUserId());
 
@@ -1126,7 +1127,8 @@ public class JobStartPagePeasSessionController extends AbstractAdminComponentSes
             if (!clipObject.isCut()) {
               String[] componentIds = getOrganisationController().getAllComponentIdsRecur(space.getId());
               for (String componentId : componentIds) {
-                String componentName = ComponentInst.getComponentName(componentId);
+                String componentName =
+                    SilverpeasComponentInstance.getIdentity(componentId).getComponentName();
                 copiedComponents.add(componentName);
               }
             }
@@ -1197,7 +1199,7 @@ public class JobStartPagePeasSessionController extends AbstractAdminComponentSes
     if (isSpaceInMaintenance(getManagedSpaceId())) {
       return JobStartPagePeasSessionController.MAINTENANCE_THISSPACE;
     }
-    // check if a parent is is maintenance
+    // check if a parent is in maintenance
     List<SpaceInstLight> spaces = getOrganisationController().getPathToSpace(getManagedSpaceId());
     for (SpaceInstLight space : spaces) {
       if (isSpaceInMaintenance(space.getId())) {

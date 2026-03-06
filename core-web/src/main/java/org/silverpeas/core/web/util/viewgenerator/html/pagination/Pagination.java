@@ -30,7 +30,6 @@ import org.silverpeas.core.util.PaginationList;
 import org.silverpeas.core.util.SilverpeasList;
 import org.silverpeas.core.web.util.viewgenerator.html.SimpleGraphicElement;
 
-import javax.portlet.RenderParameters;
 import javax.portlet.RenderRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -38,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Pagination is an interface to be implemented by a graphic element to print a pages index or a
+ * Pagination is an interface to be implemented by a graphic element to print a pages index or
  * elements counter.
  * @author neysseri
  */
@@ -56,9 +55,7 @@ public interface Pagination extends SimpleGraphicElement {
   static PaginationPage getPaginationPageFrom(final RenderRequest request,
       final PaginationPage currentPagination) {
     final Map<String, String> parameters = new HashMap<>();
-    RenderParameters renderParameters = request.getRenderParameters();
-    renderParameters.getNames().forEach(name ->
-        parameters.put(name, renderParameters.getValue(name)));
+    request.getParameterMap().forEach((key, value) -> parameters.put(key, value[0]));
     return getPaginationPageFrom(parameters, currentPagination);
   }
 

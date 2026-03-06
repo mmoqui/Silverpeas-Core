@@ -32,7 +32,6 @@ response.setHeader("Cache-Control","no-store"); //HTTP 1.1
 response.setHeader("Pragma","no-cache"); //HTTP 1.0
 response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 %>
-<%@page import="org.apache.commons.fileupload.FileItem"%>
 <%@ page import="org.silverpeas.core.web.http.HttpRequest"%>
 <%@ page import="org.silverpeas.core.util.WebEncodeHelper"%>
 <%@ page import="org.silverpeas.kernel.bundle.LocalizationBundle"%>
@@ -45,6 +44,7 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 <%@ page import="java.io.File" %>
 <%@ page import="org.silverpeas.core.util.file.FileUploadUtil" %>
 <%@ page import="org.silverpeas.core.util.WebEncodeHelper" %>
+<%@ page import="org.silverpeas.core.util.file.FileItem" %>
 
 <%
   GraphicElementFactory gef = (GraphicElementFactory) session.getAttribute(
@@ -68,7 +68,7 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 	    {
 			String fichierName = FileUploadUtil.getFileName(fileItem);
 			File fichier = new File(thePath, fichierName);
-			FileUploadUtil.saveToFile(fichier, fileItem);
+			fileItem.saveTo(fichier);
 
 			String urlPath = thePath.substring(thePath.indexOf("/website"));
 

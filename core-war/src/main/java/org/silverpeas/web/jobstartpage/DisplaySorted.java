@@ -23,6 +23,8 @@
  */
 package org.silverpeas.web.jobstartpage;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -45,7 +47,7 @@ public class DisplaySorted implements Comparable<DisplaySorted> {
   private boolean visible = true;
 
   @Override
-  public int compareTo(DisplaySorted other) {
+  public int compareTo(@NonNull DisplaySorted other) {
     return COMPARATOR.compare(this, other);
   }
 

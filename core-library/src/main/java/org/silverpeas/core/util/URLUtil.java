@@ -205,7 +205,7 @@ public class URLUtil {
   }
 
   public static String getURL(String sSpace, String sComponentId) {
-    return getURL(null, null, sComponentId);
+    return getURL(null, sSpace, sComponentId);
   }
 
   /**
@@ -388,9 +388,7 @@ public class URLUtil {
    * @return the encoded URL.
    */
   public static String encodeURL(String url) {
-    String encodedUrl = url;
-    encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8);
-    return encodedUrl;
+    return URLEncoder.encode(url, StandardCharsets.UTF_8);
   }
 
   /**

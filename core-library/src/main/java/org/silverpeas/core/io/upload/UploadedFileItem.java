@@ -24,11 +24,13 @@
 
 package org.silverpeas.core.io.upload;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.james.mime4j.Charsets;
 import org.silverpeas.core.util.file.FileItem;
 import org.silverpeas.core.util.file.FileUtil;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,6 +88,11 @@ public class UploadedFileItem implements FileItem {
   @Override
   public InputStream getInputStream() throws IOException {
     return new FileInputStream(uploadedFile.getFile());
+  }
+
+  @Override
+  public void saveTo(File file) throws IOException {
+    FileUtils.copyInputStreamToFile(getInputStream(), file);
   }
 
   private byte[] read() {

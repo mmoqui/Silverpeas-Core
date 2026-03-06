@@ -34,7 +34,7 @@ import org.silverpeas.kernel.util.StringUtil;
 import org.silverpeas.web.pdc.QueryParameters;
 import org.silverpeas.web.pdc.control.PdcSearchSessionController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -132,20 +132,8 @@ public class PdcSearchRequestRouterHelper {
       queryParameters.setFolder(request.getParameter(QueryParameters.PARAM_FOLDER));
     }
 
-    String paramNbResToDisplay = request.getParameter("nbRes");
-    if (StringUtil.isDefined(paramNbResToDisplay)) {
-      int nbResToDisplay = Integer.parseInt(paramNbResToDisplay);
-      pdcSC.setNbResToDisplay(nbResToDisplay);
-    }
-    String paramSortRes = request.getParameter("sortRes");
-    if (StringUtil.isDefined(paramSortRes)) {
-      int sortRes = Integer.parseInt(paramSortRes);
-      pdcSC.setSortType(sortRes);
-    }
-    String paramSortOrder = request.getParameter("sortOrder");
-    if (StringUtil.isDefined(paramSortOrder)) {
-      pdcSC.setSortOrder(paramSortOrder);
-    }
+    PdcSearchRequestRouter.setSorting(pdcSC, request.getParameter("nbRes"),
+        request.getParameter("sortRes"), request.getParameter("sortOrder"));
 
     // Set component search type
     pdcSC.setDataType(request.getParameter("dataType"));
@@ -249,7 +237,7 @@ public class PdcSearchRequestRouterHelper {
   public static void setContext(PdcSearchSessionController pdcSC,
       HttpServletRequest request) {
 
-    // on retire du searchcontext tous les criteres qui ne sont pas dans
+    // On retire du searchcontext tous les criteres qui ne sont pas dans
     // l'espace choisi par l'utilisateur.
     // Dans ce cas, on retire de la list de searchContext, le critere de
     // recherche.

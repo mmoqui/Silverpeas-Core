@@ -24,6 +24,7 @@
 package org.silverpeas.core.security.authorization;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.silverpeas.core.ResourceIdentifier;
 import org.silverpeas.core.admin.ProfiledObjectId;
 import org.silverpeas.core.admin.ProfiledObjectIds;
@@ -56,6 +57,7 @@ import static org.silverpeas.core.security.authorization.AccessControlOperation.
  * @author ehugonnet
  */
 @Service
+@Singleton
 public class NodeAccessController extends AbstractAccessController<NodePK>
     implements NodeAccessControl {
 

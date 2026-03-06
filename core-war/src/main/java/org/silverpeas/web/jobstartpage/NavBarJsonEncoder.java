@@ -72,7 +72,7 @@ public class NavBarJsonEncoder {
    *  <li><strong>currentRootSpace</strong>: the data of current root space if any, undefined
    *  otherwise</li>
    *  <li><strong>spacePath</strong>: an array representing the space path to the current
-   *  sub-space</li>
+   *  subspace</li>
    *  <li><strong>spaces</strong>: an array of current spaces</li>
    *  <li><strong>applications</strong>: an array of current application instances</li>
    * </ul>
@@ -125,7 +125,7 @@ public class NavBarJsonEncoder {
   }
 
   /**
-   * Encodes if any the full path to the current sub-space.
+   * Encodes if any the full path to the current subspace.
    *
    * @param jsonObject the JSON object to fill.
    */

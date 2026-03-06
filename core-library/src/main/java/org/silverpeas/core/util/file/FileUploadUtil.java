@@ -28,7 +28,6 @@ import org.apache.commons.fileupload2.core.DiskFileItem;
 import org.apache.commons.fileupload2.core.DiskFileItemFactory;
 import org.apache.commons.fileupload2.core.FileUploadException;
 import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
-import org.apache.commons.io.FileUtils;
 import org.silverpeas.core.util.Charsets;
 import org.silverpeas.kernel.SilverpeasRuntimeException;
 import org.silverpeas.kernel.util.StringUtil;
@@ -183,7 +182,7 @@ public class FileUploadUtil {
   }
 
   public static void saveToFile(File file, FileItem item) throws IOException {
-    FileUtils.copyInputStreamToFile(item.getInputStream(), file);
+    item.saveTo(file);
   }
 
   private static Charset toCharset(String encoding) {

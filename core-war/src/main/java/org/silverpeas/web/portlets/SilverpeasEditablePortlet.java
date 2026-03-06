@@ -51,14 +51,13 @@ public abstract class SilverpeasEditablePortlet extends GenericPortlet implement
   @Override
   public void processAction(ActionRequest request, ActionResponse response)
       throws PortletException {
-    RenderParameters parameters = request.getRenderParameters();
-    if (parameters.getValue(SUBMIT_FINISHED) != null) {
+    if (request.getParameter(SUBMIT_FINISHED) != null) {
       //
       // handle "finished" button on edit page
       // return to view mode
       //
       processEditFinishedAction(request, response);
-    } else if (parameters.getValue(SUBMIT_CANCEL) != null) {
+    } else if (request.getParameter(SUBMIT_CANCEL) != null) {
       //
       // handle "cancel" button on edit page
       // return to view mode
